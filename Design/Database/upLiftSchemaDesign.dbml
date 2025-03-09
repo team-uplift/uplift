@@ -2,31 +2,31 @@
 // Docs: https://dbml.dbdiagram.io/docs
 
 // ----------------------------------------------
-// ---- Static Table Definitions ---- NOTE: These are not all of the table definitions. There are automated tables generated from the associations defined in the "Refernce table definition" section
+// ---- Static Table Definitions ---- NOTE: These are not all of the table definitions. There are automated tables generated from the associations defined in the "Reference table definition" section
 // ----------------------------------------------
 Table recipients { // Tracks our known recipients
   id integer [primary key] // We may not need an ID if we're only going to allow recipients to be created through Cognito.
   cognito_id uuid [not null] 
-  username integer // Might be useful to track username for UI purposes so we aren't hitting cognito for everything.
-  email varchar [not null]
+  username varchar(64) // Might be useful to track username for UI purposes so we aren't hitting cognito for everything.
+  email varchar(320) [not null, unique]
   last_profile_text text [not null] // This is the latest collective text that is/will be utilized to generate the tags through a single prompt.
   amount_received double
   income_verified bool // True for verified, False for unverified
-  nickname varchar
+  nickname nvarchar(64)
   created_at timestamp 
 }
 
 Table donors { // Tracks our known donors
   id integer [primary key] // Since donor's don't need to sign up, we'll need an ID to track them regardkess
   cognito_id uuid // Optional id if donors decide to sign up. 
-  username varchar // Might be useful to track username for UI purposes so we aren't hitting cognito for everything.
-  email varchar [not null]
+  username varchar(64) // Might be useful to track username for UI purposes so we aren't hitting cognito for everything.
+  email varchar(320) [not null, unique]
   last_quiz_text text [not null] // This is a collective text that is/will be utilized to generate the tags through a single prompt from their last donation quiz.
-  nickname varchar
+  nickname nvarchar(64)
   created_at timestamp
 }
 
-Table donations { // Tracks all of the donation transactions that have occured
+Table donations { // Tracks all of the donation transactions that have occurred
   id integer [primary key]
   donor_id integer [not null] // Will be foreign key to donor table (defined below)
   recipient_id integer [not null] // Will be foreign key to recipient table (defined below)
@@ -35,7 +35,7 @@ Table donations { // Tracks all of the donation transactions that have occured
 }
 
 Table tags { // Tracks all the known tags
-  tag_name varchar [primary key]
+  tag_name varchar(64) [primary key]
   created_at timestamp
 }
 
@@ -47,14 +47,14 @@ Table messages { // Tracks messages between users
   created_at timestamp
 }
 
-Table historical_recipient_promps { // Tracks historical prompts that recipient made.
+Table historical_recipient_prompts { // Tracks historical prompts that recipient made.
   id integer [primary key]
   recipient_id integer // Will be foreign key to recipient table (defined below)
   prompt text [not null]
   created_at timestamp
 }
 
-Table historical_donor_promps { // Tracks historical prompts that donor made.
+Table historical_donor_prompts { // Tracks historical prompts that donor made.
   id integer [primary key]
   donor_id integer // Will be foreign key to donor table (defined below)
   prompt text [not null]
@@ -73,7 +73,7 @@ Ref recipient_tags: tags.tag_name <> recipients.id
 // many-to-many. Many recipients can share a tag and a recipient can have many tags.
 //Ref last_shown_tags: tags.tag_name <> donors.id 
 Table last_shown_tags {
-   tag_name varchar [pk, ref: > tags.tag_name] 
+   tag_name varchar(64) [pk, ref: > tags.tag_name]
    donor_id integer [pk, ref: > donors.id]
    shown_at timestamp
 } 
@@ -93,7 +93,7 @@ Ref: recipients.id - donations.recipient_id
 Ref: donors.id - messages.donor_id
 Ref: recipients.id - messages.recipient_id 
 
-// many-to-one. Each recepient should have many prompts. Prompts should be assigned to a single recipient.
-Ref: recipients.id < historical_recipient_promps.recipient_id
+// many-to-one. Each recipient should have many prompts. Prompts should be assigned to a single recipient.
+Ref: recipients.id < historical_recipient_prompts.recipient_id
 // Same applies for donors
-Ref: donors.id < historical_donor_promps.donor_id
+Ref: donors.id < historical_donor_prompts.donor_id
