@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uplift/components/drawer_widget.dart';
 import 'package:uplift/components/standard_button.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('uplift'),
       ),
+      drawer: const DrawerWidget(),
       body: Column(
         children: [
           SizedBox(
@@ -47,7 +49,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 StandardButton(
                   title: 'Take the quiz',
-                  onPressed: ()=> context.pushNamed('/quiz'),
+                  onPressed: () => context.pushNamed('/quiz'),
                 ),
               ],
             ),
@@ -57,3 +59,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
