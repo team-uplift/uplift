@@ -13,12 +13,14 @@ class QuizModule extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          child: Text(question),
-        ),
-        for choice in choices {
-
-        }
+        Text(question),
+        ...choices.map((choice) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: ElevatedButton(
+              onPressed: () {}, // Add logic for button press
+              child: Text(choice),
+            ),
+        ))
       ],
     );
   }
