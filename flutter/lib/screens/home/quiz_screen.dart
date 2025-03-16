@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uplift/components/quiz_module.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key});
@@ -14,9 +15,7 @@ class _QuizPageState extends State<QuizPage> {
       appBar: AppBar(title: const Text('Quiz'),),
       body: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Column(children: [
-          Text('question 1')
-        ],),
+        child: QuizModule(question: 'This is question1', choices: ["hello"])
       ),
     );
   }

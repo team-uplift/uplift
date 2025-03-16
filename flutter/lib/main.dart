@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/screens/auth/login_screen.dart';
 import 'package:uplift/screens/auth/registration_screen.dart';
+import 'package:uplift/screens/home/dashboard_screen.dart';
 import 'package:uplift/screens/home/home_screen.dart';
+import 'package:uplift/screens/home/profile_screen.dart';
 import 'package:uplift/screens/home/quiz_screen.dart';
 
 void main() {
@@ -39,6 +41,20 @@ final GoRouter _router = GoRouter(
       name: '/quiz',
       builder: (BuildContext context, GoRouterState state) {
         return const QuizPage();
+      },
+    ),
+    GoRoute(
+      path: '/profile',
+      name: '/profile',
+      builder: (BuildContext context, GoRouterState state) {
+        return const ProfilePage();
+      },
+    ),
+    GoRoute(
+      path: '/dashboard',
+      name: '/dashboard',
+      builder: (BuildContext context, GoRouterState state) {
+        return const DashboardPage();
       },
     ),
   ],
