@@ -6,6 +6,7 @@ import 'package:uplift/screens/home/dashboard_screen.dart';
 import 'package:uplift/screens/home/home_screen.dart';
 import 'package:uplift/screens/home/profile_screen.dart';
 import 'package:uplift/screens/home/quiz_screen.dart';
+import 'package:uplift/recipients/recipient_home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,6 +56,13 @@ final GoRouter _router = GoRouter(
       name: '/dashboard',
       builder: (BuildContext context, GoRouterState state) {
         return const DashboardPage();
+      },
+    ),
+    GoRoute(
+      path: '/recipient_home',
+      name: '/recipient_home',
+      builder: (BuildContext context, GoRouterState state) {
+        return const RecipientHome();
       },
     ),
   ],

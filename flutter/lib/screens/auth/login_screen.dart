@@ -40,7 +40,11 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 40,
                 ),
-                StandardButton(title: 'LOG IN', onPressed: () => context.goNamed('/home'),),
+                StandardButton(title: 'LOG IN AS DONOR', onPressed: () => context.goNamed('/home'),),
+                const SizedBox(
+                  height: 10,
+                ),
+                StandardButton(title: 'LOG IN AS RECIPIENT', onPressed: () => context.goNamed('/recipient_home'),),
                 const SizedBox(
                   height: 10,
                 ),
@@ -48,6 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () => context.pushNamed('/registration'),
                   child: const Text('Register for an account'),
                 ),
+                
               ],
             ),
           ),
