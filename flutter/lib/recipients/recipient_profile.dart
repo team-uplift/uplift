@@ -75,3 +75,8 @@ class ProfileSection extends StatelessWidget {
   
 }
 
+
+// TODO add editing funcitonality
+// TODO make camera button functional for user to take photo of documents
+  // TODO maybe use just the camera roll and not allow photos to be taken?
+

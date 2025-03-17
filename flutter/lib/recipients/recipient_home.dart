@@ -5,6 +5,7 @@ import 'recipient_history.dart';
 import 'recipient_profile.dart';
 import 'recipient_tags.dart';
 import 'recipient_settings.dart';
+import 'package:go_router/go_router.dart';
 
 class RecipientHome extends StatefulWidget {
   const RecipientHome({super.key});
@@ -18,7 +19,7 @@ class _RecipientHomeState extends State<RecipientHome> {
 
   final List<Widget> _screens = [
     const RecipientProfile(),
-    const RecipientTags(),
+    RecipientTags(),
     const RecipientHistory(),
     const RecipientSettings(),
   ];
@@ -33,9 +34,19 @@ class _RecipientHomeState extends State<RecipientHome> {
     return Scaffold(
       // drawer: const DrawerWidget(),
       appBar: AppBar(
-        title: const Center(
-          child: Text("uplift")
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.goNamed('/home');
+            }, 
+            icon: const Icon(Icons.logout),
+          )
+        ],
+        leading: IconButton(
+          onPressed: () {context.goNamed('/home');}, 
+          icon: const Icon(Icons.home),
         ),
+        title: const Text("uplift logo")
       ),
       body: _screens[_selectedItem],
       bottomNavigationBar: BottomNavBar(
@@ -45,3 +56,5 @@ class _RecipientHomeState extends State<RecipientHome> {
     );
   }
 }
+
+// TODO sort hamburger vs home button and app bar stuff

@@ -20,7 +20,7 @@ class BottomNavBar extends StatelessWidget {
       
       items: const [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
+          icon: Icon(Icons.person),
           label: 'Profile',
           backgroundColor: Colors.green,
         ),
