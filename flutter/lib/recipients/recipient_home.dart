@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:uplift/components/drawer_widget.dart';
 import 'package:uplift/components/bottom_nav_bar.dart';
 import 'recipient_history.dart';
 import 'recipient_profile.dart';

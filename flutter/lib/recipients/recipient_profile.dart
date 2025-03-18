@@ -66,7 +66,7 @@ class ProfileSection extends StatelessWidget {
                 onPressed: () {
                   print("Will eventually open camera");
                 }, 
-                icon: Icon(Icons.camera_alt, color: Colors.blue,))
+                icon: const Icon(Icons.camera_alt, color: Colors.blue,))
           ],
         ),
       ),

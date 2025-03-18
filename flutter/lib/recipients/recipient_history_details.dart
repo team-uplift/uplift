@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class HistoryDetailScreen extends StatelessWidget {
   final Map<String, String> item; // Receive history item data
 
-  const HistoryDetailScreen({Key? key, required this.item}) : super(key: key);
+  const HistoryDetailScreen({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +22,15 @@ class HistoryDetailScreen extends StatelessWidget {
         // ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(item["title"]!, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
+            Text(item["title"]!, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
             Text("Date: ${item["date"]}", style: TextStyle(fontSize: 16, color: Colors.grey[700])),
-            SizedBox(height: 16),
-            Text(item["details"]!, style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 16),
+            Text(item["details"]!, style: const TextStyle(fontSize: 18)),
           ],
         ),
       ),

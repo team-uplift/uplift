@@ -22,9 +22,9 @@ class _RecipientHistoryState extends State<RecipientHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('History')),
+      appBar: AppBar(title: const Text('History')),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: ListView(
           children: historyItems.map((item) => _buildHistoryCard(context, item)).toList(),
         ),
@@ -36,14 +36,14 @@ class _RecipientHistoryState extends State<RecipientHistory> {
   // 🔹 Creates a clickable history item card
   Widget _buildHistoryCard(BuildContext context, Map<String, String> item) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Card(
         elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: ListTile(
-          title: Text(item["title"]!, style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(item["title"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text(item["date"]!, style: TextStyle(color: Colors.grey[700])),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+          trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
           onTap: () {
             Navigator.push(
               context,

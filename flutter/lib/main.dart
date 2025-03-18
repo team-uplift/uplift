@@ -7,8 +7,6 @@ import 'package:uplift/screens/home/home_screen.dart';
 import 'package:uplift/screens/home/profile_screen.dart';
 import 'package:uplift/screens/home/quiz_screen.dart';
 import 'package:uplift/recipients/recipient_home.dart';
-import 'package:uplift/recipients/recipient_tags.dart';
-import 'package:uplift/recipients/recipient_history.dart';
 
 void main() {
   runApp(const MyApp());
