@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: 10,
                 ),
                 TextButton(
-                  onPressed: () => context.pushNamed('/registration'),
+                  onPressed: () => context.pushNamed('/donor_or_recipient'),
                   child: const Text('Register for an account'),
                 ),
                 

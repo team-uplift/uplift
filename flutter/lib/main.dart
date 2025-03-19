@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uplift/screens/auth/donor_or_recipient.dart';
 import 'package:uplift/screens/auth/login_screen.dart';
-import 'package:uplift/screens/auth/registration_screen.dart';
+import 'package:uplift/screens/auth/donor_registration_screen.dart';
+import 'package:uplift/screens/auth/recipient_registration_screen.dart';
 import 'package:uplift/screens/home/dashboard_screen.dart';
 import 'package:uplift/screens/home/home_screen.dart';
 import 'package:uplift/screens/home/profile_screen.dart';
@@ -25,11 +27,19 @@ final GoRouter _router = GoRouter(
       
     ),
     GoRoute(
-        path: '/registration',
-        name: '/registration',
-        builder: (BuildContext context, GoRouterState state) {
-          return const RegistrationPage();
-        }),
+      path: '/donor_registration',
+      name: '/donor_registration',
+      builder: (BuildContext context, GoRouterState state) {
+        return const DonorRegistrationPage();
+      }
+    ),
+    GoRoute(
+      path: '/recipient_registration',
+      name: '/recipient_registration',
+      builder: (BuildContext context, GoRouterState state) {
+        return const RecipientRegistrationPage();
+      }
+    ),
     GoRoute(
       path: '/home',
       name: '/home',
@@ -63,6 +73,13 @@ final GoRouter _router = GoRouter(
       name: '/recipient_home',
       builder: (BuildContext context, GoRouterState state) {
         return const RecipientHome();
+      },
+    ),
+    GoRoute(
+      path: '/donor_or_recipient',
+      name: '/donor_or_recipient',
+      builder: (BuildContext context, GoRouterState state) {
+        return const DonorOrRecipient();
       },
     ),
     // GoRoute(

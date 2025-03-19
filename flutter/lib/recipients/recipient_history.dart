@@ -14,7 +14,7 @@ class _RecipientHistoryState extends State<RecipientHistory> {
 
   List<Map<String, String>> historyItems = [
     {"title": "Donation 1", "date": "date", "details": "You received \$50"},
-    {"title": "Donation 2", "date": "date", "details": "You received \$25"},
+    {"title": "Donation 2", "date": "date", "details": "You received \$25", "thankYou": "I really appreciate the help!"},
     {"title": "Donation 3", "date": "date", "details": "You received \$10."},
   ];
 
