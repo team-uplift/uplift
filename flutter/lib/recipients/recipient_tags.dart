@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:uplift/components/drawer_widget.dart';
 
 class RecipientTags extends StatefulWidget {
+  const RecipientTags({super.key});
+
   @override
   _RecipientTagsState createState() => _RecipientTagsState();
 }

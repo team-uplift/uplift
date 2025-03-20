@@ -4,14 +4,14 @@ import 'package:uplift/components/standard_button.dart';
 import 'package:uplift/components/standard_text_field.dart';
 import 'package:uplift/constants/constants.dart';
 
-class RegistrationPage extends StatefulWidget {
-  const RegistrationPage({super.key});
+class DonorRegistrationPage extends StatefulWidget {
+  const DonorRegistrationPage({super.key});
 
   @override
-  State<RegistrationPage> createState() => _RegistrationPageState();
+  State<DonorRegistrationPage> createState() => _DonorRegistrationPageState();
 }
 
-class _RegistrationPageState extends State<RegistrationPage> {
+class _DonorRegistrationPageState extends State<DonorRegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,6 +29,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  const Text(
+                    "Donor Registration",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    )
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   const StandardTextField(title: 'First Name'),
                   const SizedBox(height: 10),
                   const StandardTextField(title: 'Last Name'),

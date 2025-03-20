@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:uplift/components/drawer_widget.dart';
 
 class RecipientSettings extends StatefulWidget {
   const RecipientSettings({super.key});
