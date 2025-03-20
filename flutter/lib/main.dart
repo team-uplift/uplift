@@ -9,6 +9,8 @@ import 'package:uplift/screens/home/home_screen.dart';
 import 'package:uplift/screens/home/profile_screen.dart';
 import 'package:uplift/screens/home/quiz_screen.dart';
 import 'package:uplift/recipients/recipient_home.dart';
+import 'package:uplift/screens/home/recipient_detail_screen.dart';
+import 'package:uplift/screens/home/recipient_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -82,20 +84,20 @@ final GoRouter _router = GoRouter(
         return const DonorOrRecipient();
       },
     ),
-    // GoRoute(
-    //   path: '/recipient_tags',
-    //   name: '/recipient_tags',
-    //   builder: (BuildContext context, GoRouterState state) {
-    //     return const RecipientTags();
-    //   },
-    // ),
-    // GoRoute(
-    //   path: '/recipient_history',
-    //   name: '/recipient_history',
-    //   builder: (BuildContext context, GoRouterState state) {
-    //     return const RecipientHistory();
-    //   },
-    // ),
+    GoRoute(
+      path: '/recipient_list',
+      name: '/recipient_list',
+      builder: (BuildContext context, GoRouterState state) {
+        return const RecipientList();
+      },
+    ),
+    GoRoute(
+      path: '/recipient_detail',
+      name: '/recipient_detail',
+      builder: (BuildContext context, GoRouterState state) {
+        return const RecipientDetailPage();
+      },
+    ),
   ],
 );
 
