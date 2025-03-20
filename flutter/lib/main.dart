@@ -6,6 +6,7 @@ import 'package:uplift/screens/auth/login_screen.dart';
 import 'package:uplift/screens/auth/donor_registration_screen.dart';
 import 'package:uplift/screens/auth/recipient_registration_screen.dart';
 import 'package:uplift/screens/home/dashboard_screen.dart';
+import 'package:uplift/screens/home/donate_screen.dart';
 import 'package:uplift/screens/home/home_screen.dart';
 import 'package:uplift/screens/home/profile_screen.dart';
 import 'package:uplift/screens/home/quiz_screen.dart';
@@ -98,6 +99,14 @@ final GoRouter _router = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final recipient = state.extra as Recipient; 
         return RecipientDetailPage(recipient: recipient);
+      },
+    ),
+    GoRoute(
+      path: '/donate',
+      name: '/donate',
+      builder: (BuildContext context, GoRouterState state) {
+        final recipient = state.extra as Recipient;
+        return DonatePage(recipient: recipient);
       },
     ),
   ],

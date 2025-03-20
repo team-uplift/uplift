@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uplift/components/standard_button.dart';
 import 'package:uplift/models/recipient_model.dart';
 
@@ -63,7 +64,7 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
           /// Fixed Donate Button at the Bottom with a Background
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
             decoration: const BoxDecoration(
               color: Colors.white, // Ensures text is not visible below button
               boxShadow: [
@@ -75,8 +76,9 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
                 )
               ],
             ),
-            child: const StandardButton(
+            child: StandardButton(
               title: "DONATE",
+              onPressed: ()=> context.pushNamed('/donate', extra: widget.recipient),
             ),
           ),
         ],
