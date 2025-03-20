@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/screens/auth/donor_or_recipient.dart';
 import 'package:uplift/screens/auth/login_screen.dart';
 import 'package:uplift/screens/auth/donor_registration_screen.dart';
@@ -88,14 +89,15 @@ final GoRouter _router = GoRouter(
       path: '/recipient_list',
       name: '/recipient_list',
       builder: (BuildContext context, GoRouterState state) {
-        return const RecipientList();
+        return RecipientList();
       },
     ),
     GoRoute(
       path: '/recipient_detail',
       name: '/recipient_detail',
       builder: (BuildContext context, GoRouterState state) {
-        return const RecipientDetailPage();
+        final recipient = state.extra as Recipient; 
+        return RecipientDetailPage(recipient: recipient);
       },
     ),
   ],
