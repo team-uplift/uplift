@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:uplift/constants/constants.dart';
+
 
 class BottomNavBar extends StatelessWidget {
   final int selectedItem;

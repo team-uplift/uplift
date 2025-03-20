@@ -18,7 +18,7 @@ class _RecipientHomeState extends State<RecipientHome> {
 
   final List<Widget> _screens = [
     const RecipientProfile(),
-    RecipientTags(),
+    const RecipientTags(),
     const RecipientHistory(),
     const RecipientSettings(),
   ];
@@ -57,3 +57,5 @@ class _RecipientHomeState extends State<RecipientHome> {
 }
 
 // TODO sort hamburger vs home button and app bar stuff
+// TODO flow more like pinterest --> recipient signs up, then is provided list of generated tags, tags organized by temperature, can select 10 or whatever
+// 
