@@ -38,6 +38,7 @@ dependencies:
   go_router: ^14.6.2
   carousel_slider: ^5.0.0
   hidden_drawer_menu: ^3.0.1
+  stretchy_header: ^2.0.0
 
 dev_dependencies:
   flutter_test:
