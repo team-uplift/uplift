@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'recipient_send_thank_you.dart';
+import 'recipient_send_thank_you_screen.dart';
 
 
 // combo of chatgpt and me
