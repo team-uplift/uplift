@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uplift/models/recipient_model.dart';
 
 class DonatePage extends StatefulWidget {
@@ -103,7 +104,7 @@ class _DonatePageState extends State<DonatePage> {
                   ),
                   onPressed: () {
                     _focusNode.unfocus(); // Close keyboard when pressed
-                    // Handle donation logic here
+                    context.goNamed('/dashboard');
                   },
                   child: const Text(
                     "Donate",
