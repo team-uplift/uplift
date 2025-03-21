@@ -1,5 +1,6 @@
 package org.upLift;
 
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.upLift.configuration.LocalDateConverter;
 import org.upLift.configuration.LocalDateTimeConverter;
 
@@ -15,9 +16,8 @@ import com.fasterxml.jackson.databind.Module;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 @SpringBootApplication
-@ComponentScan(basePackages = { "io.swagger", "io.swagger.api" , "io.swagger.configuration"})
+@ComponentScan(basePackages = { "org.upLift", "org.upLift.api" , "org.upLift.configuration"})
 public class UpLiftOrchestrator implements CommandLineRunner {
 
     @Override
@@ -36,7 +36,7 @@ public class UpLiftOrchestrator implements CommandLineRunner {
     }
 
     @Configuration
-    static class CustomDateConfig extends WebMvcConfigurerAdapter {
+    static class CustomDateConfig extends WebMvcConfigurationSupport {
         @Override
         public void addFormatters(FormatterRegistry registry) {
             registry.addConverter(new LocalDateConverter("yyyy-MM-dd"));

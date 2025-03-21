@@ -6,14 +6,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 import org.upLift.configuration.NotUndefined;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 
 /**
  * MessageSearchInput
  */
 @Validated
 @NotUndefined
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2025-03-16T14:18:35.909799305Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2025-03-16T14:18:35.909799305Z[GMT]")
 
 
 public class MessageSearchInput   {
