@@ -25,51 +25,67 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import jakarta.validation.Valid;
 import java.util.List;
 
-@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2025-03-16T14:18:35.909799305Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
+		date = "2025-03-16T14:18:35.909799305Z[GMT]")
 @Validated
 public interface HistoricalRecipientPromptsApi {
 
-    @Operation(summary = "Get all recipient prompts", description = "Retrieves all historical prompts created by recipients.", tags={ "Historical Recipient Prompts" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "List of recipient prompts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = HistoricalRecipientPrompt.class)))),
-        
-        @ApiResponse(responseCode = "500", description = "Server error") })
-    @RequestMapping(value = "/historical_recipient_prompts",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<HistoricalRecipientPrompt>> historicalRecipientPromptsGet(@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-);
+	@Operation(summary = "Get all recipient prompts",
+			description = "Retrieves all historical prompts created by recipients.",
+			tags = { "Historical Recipient Prompts" })
+	@ApiResponses(
+			value = {
+					@ApiResponse(responseCode = "200", description = "List of recipient prompts",
+							content = @Content(mediaType = "application/json",
+									array = @ArraySchema(
+											schema = @Schema(implementation = HistoricalRecipientPrompt.class)))),
 
+					@ApiResponse(responseCode = "500", description = "Server error") })
+	@RequestMapping(value = "/historical_recipient_prompts", produces = { "application/json" },
+			method = RequestMethod.GET)
+	ResponseEntity<List<HistoricalRecipientPrompt>> historicalRecipientPromptsGet(@Parameter(in = ParameterIn.HEADER,
+			description = "Tracks the session for the given set of requests.", required = true,
+			schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
 
-    @Operation(summary = "Create a recipient prompt", description = "Stores a new historical prompt from a recipient.", tags={ "Historical Recipient Prompts" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "Recipient prompt created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = HistoricalRecipientPrompt.class))),
-        
-        @ApiResponse(responseCode = "400", description = "Invalid request data"),
-        
-        @ApiResponse(responseCode = "500", description = "Server error") })
-    @RequestMapping(value = "/historical_recipient_prompts",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<HistoricalRecipientPrompt> historicalRecipientPromptsPost(@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody HistoricalRecipientPrompt body
-);
+	@Operation(summary = "Create a recipient prompt", description = "Stores a new historical prompt from a recipient.",
+			tags = { "Historical Recipient Prompts" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "Recipient prompt created successfully",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = HistoricalRecipientPrompt.class))),
 
+			@ApiResponse(responseCode = "400", description = "Invalid request data"),
 
-    @Operation(summary = "Get recipient prompts by recipient ID", description = "Retrieves historical prompts for a specific recipient.", tags={ "Historical Recipient Prompts" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "List of recipient's prompts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = HistoricalRecipientPrompt.class)))),
-        
-        @ApiResponse(responseCode = "404", description = "No prompts found for the recipient"),
-        
-        @ApiResponse(responseCode = "500", description = "Server error") })
-    @RequestMapping(value = "/historical_recipient_prompts/{recipient_id}",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<HistoricalRecipientPrompt>> historicalRecipientPromptsRecipientIdGet(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("recipient_id") Integer recipientId
-, @Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-);
+			@ApiResponse(responseCode = "500", description = "Server error") })
+	@RequestMapping(value = "/historical_recipient_prompts", produces = { "application/json" },
+			consumes = { "application/json" }, method = RequestMethod.POST)
+	ResponseEntity<HistoricalRecipientPrompt> historicalRecipientPromptsPost(
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
+			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
+					schema = @Schema()) @Valid @RequestBody HistoricalRecipientPrompt body);
+
+	@Operation(summary = "Get recipient prompts by recipient ID",
+			description = "Retrieves historical prompts for a specific recipient.",
+			tags = { "Historical Recipient Prompts" })
+	@ApiResponses(
+			value = {
+					@ApiResponse(responseCode = "200", description = "List of recipient's prompts",
+							content = @Content(mediaType = "application/json",
+									array = @ArraySchema(
+											schema = @Schema(implementation = HistoricalRecipientPrompt.class)))),
+
+					@ApiResponse(responseCode = "404", description = "No prompts found for the recipient"),
+
+					@ApiResponse(responseCode = "500", description = "Server error") })
+	@RequestMapping(value = "/historical_recipient_prompts/{recipient_id}", produces = { "application/json" },
+			method = RequestMethod.GET)
+	ResponseEntity<List<HistoricalRecipientPrompt>> historicalRecipientPromptsRecipientIdGet(
+			@Parameter(in = ParameterIn.PATH, description = "", required = true,
+					schema = @Schema()) @PathVariable("recipient_id") Integer recipientId,
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
 
 }
-
