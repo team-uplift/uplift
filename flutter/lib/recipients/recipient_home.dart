@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:uplift/components/bottom_nav_bar.dart';
-import 'recipient_history.dart';
-import 'recipient_profile.dart';
-import 'recipient_tags.dart';
-import 'recipient_settings.dart';
+import 'recipient_history_screen.dart';
+import 'recipient_profile_screen.dart';
+import 'recipient_tags_screen.dart';
+import 'recipient_settings_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class RecipientHome extends StatefulWidget {
@@ -17,10 +17,9 @@ class _RecipientHomeState extends State<RecipientHome> {
   int _selectedItem = 0;
 
   final List<Widget> _screens = [
-    const RecipientProfile(),
-    const RecipientTags(),
-    const RecipientHistory(),
-    const RecipientSettings(),
+    RecipientProfileScreen(),
+    const RecipientHistoryScreen(),
+    const RecipientSettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -33,14 +32,14 @@ class _RecipientHomeState extends State<RecipientHome> {
     return Scaffold(
       // drawer: const DrawerWidget(),
       appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () {
-              context.goNamed('/home');
-            }, 
-            icon: const Icon(Icons.logout),
-          )
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       context.goNamed('/home');
+        //     }, 
+        //     icon: const Icon(Icons.logout),
+        //   )
+        // ],
         leading: IconButton(
           onPressed: () {context.goNamed('/home');}, 
           icon: const Icon(Icons.home),
@@ -51,6 +50,7 @@ class _RecipientHomeState extends State<RecipientHome> {
       bottomNavigationBar: BottomNavBar(
         selectedItem: _selectedItem, 
         onItemTapped: _onItemTapped,
+
       ),
     );
   }

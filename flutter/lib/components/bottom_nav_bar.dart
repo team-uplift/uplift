@@ -16,6 +16,7 @@ class BottomNavBar extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: selectedItem,
       onTap: onItemTapped,
+      type: BottomNavigationBarType.shifting,
       
       items: const [
         BottomNavigationBarItem(
@@ -23,11 +24,11 @@ class BottomNavBar extends StatelessWidget {
           label: 'Profile',
           backgroundColor: Colors.green,
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.tag),
-          label: 'Tags',
-          backgroundColor: Colors.blue,
-        ),
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.tag),
+        //   label: 'Tags',
+        //   backgroundColor: Colors.blue,
+        // ),
         BottomNavigationBarItem(
           icon: Icon(Icons.history),
           label: 'History',
