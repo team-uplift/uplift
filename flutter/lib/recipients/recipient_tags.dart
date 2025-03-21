@@ -36,6 +36,7 @@ class _RecipientTagsState extends State<RecipientTags>{
             ),
             const SizedBox(height: 16,),
             ElevatedButton.icon(
+              icon: const Icon(Icons.abc),
               onPressed: _regenAllTags,
               label: const Text("Regenerate All Tags"),
               style: ElevatedButton.styleFrom(
