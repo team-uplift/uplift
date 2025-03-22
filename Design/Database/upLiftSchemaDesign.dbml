@@ -7,11 +7,18 @@
 // Note that total donation amount to recipient is tracked using separate donations table to avoid issues with
 // possible inconsistent values
 Table recipients { // Tracks our known recipients
-  id integer [primary key] // We may not need an ID if we're only going to allow recipients to be created through Cognito.
-  cognito_id uuid [not null] 
-  username varchar(64) // Might be useful to track username for UI purposes so we aren't hitting cognito for everything.
-  email varchar(320) [not null, unique]
-  last_profile_text text [not null] // This is the latest collective text that is/will be utilized to generate the tags through a single prompt.
+  id integer [primary key, increment] // We may not need an ID if we're only going to allow recipients to be created through Cognito.
+  cognito_id uuid [not null]
+  email varchar(320) [not null, unique] // email is serving as username for Cognito accounts
+  first_name varchar(255)
+  last_name varchar(255)
+  street_address1 nvarchar(255)
+  street_address2 nvarchar(255)
+  city nvarchar(255)
+  state char(2)
+  zip_code varchar(10)
+  last_about_me text [not null] // latest "about me" text that is/will be utilized to generate the tags
+  last_reason_for_help text [not null] // latest "why I need help" text that is/will be utilized to generate the tags through a single prompt.
   identity_last_verified timestamp // Date/time the recipient's identity was last verified, used to determine if recipient identity needs to be re-verified
   income_last_verified timestamp // Date/time the recipient's income was last verified, used to determine if recipient income needs to be re-verified
   nickname nvarchar(64)
@@ -19,24 +26,22 @@ Table recipients { // Tracks our known recipients
 }
 
 Table donors { // Tracks our known donors
-  id integer [primary key] // Since donor's don't need to sign up, we'll need an ID to track them regardless
-  cognito_id uuid // Optional id if donors decide to sign up. 
-  username varchar(64) // Might be useful to track username for UI purposes so we aren't hitting cognito for everything.
-  email varchar(320) [not null, unique]
-  last_quiz_text text [not null] // This is a collective text that is/will be utilized to generate the tags through a single prompt from their last donation quiz.
+  id integer [primary key, increment] // Since donor's don't need to sign up, we'll need an ID to track them regardless
+  cognito_id uuid // Optional id if donors decide to sign up.
+  email varchar(320) // email is serving as username for Cognito accounts
   nickname nvarchar(64)
   created_at timestamp
 }
 
 // Tracks each time a donor has started the process to donate to a recipient via the matching system.
 Table donor_sessions {
-  id integer [primary key]
+  id integer [primary key, increment]
   donor_id integer [not null] // foreign key to donor table
   session_started timestamp // date/time the session started
 }
 
 Table donations { // Tracks all of the donation transactions that have occurred
-  id integer [primary key]
+  id integer [primary key, increment]
   donor_id integer [not null] // Will be foreign key to donor table
   recipient_id integer [not null] // Will be foreign key to recipient table
   amount integer [not null]
@@ -49,7 +54,7 @@ Table tags { // Tracks all the known tags
 }
 
 Table messages { // Tracks messages between users
-  id integer [primary key]
+  id integer [primary key, increment]
   donor_id integer [not null] // Will be foreign key to donor table (defined below)
   recipient_id integer [not null] // Will be foreign key to recipient table (defined below)
   message text [not null]
@@ -57,58 +62,82 @@ Table messages { // Tracks messages between users
 }
 
 Table historical_recipient_prompts { // Tracks historical prompts that recipient made.
-  id integer [primary key]
+  id integer [primary key, increment]
   recipient_id integer // Will be foreign key to recipient table (defined below)
   prompt text [not null]
   created_at timestamp
 }
 
 Table historical_donor_prompts { // Tracks historical prompts that donor made.
-  id integer [primary key]
+  id integer [primary key, increment]
   donor_id integer // Will be foreign key to donor table (defined below)
   prompt text [not null]
   created_at timestamp
 }
 
 // ----------------------------------------------
-// ---- Reference table definitions ---- These will automatically generate tables based on our relationship definitions (Export to SQL and see for yourself!).
+// ---- Reference table definitions ----
 // ----------------------------------------------
+// Explicitly define join tables to control table and column names
 
 // Create a table to track tags to recipients
 // many-to-many. Many recipients can share a tag and a recipient can have many tags.
-Ref recipient_tags: tags.tag_name <> recipients.id 
+Table recipient_tags {
+    tag_name varchar(64) [pk]
+    recipient_id integer [pk]
+}
 
 // Create table to track which tags were shown to a donor
 // many-to-many. Many donors can shown the same tag and a donor can be shown many tags.
-//Ref last_shown_tags: tags.tag_name <> donors.id 
 Table last_shown_tags {
-   tag_name varchar(64) [pk, ref: > tags.tag_name]
-   donor_session_id integer [pk, ref: > donor_sessions.id] // foreign key to donor_session, marking when the tags were shown
+   tag_name varchar(64) [pk] // foreign key to the tag shown
+   donor_session_id integer [pk] // foreign key to donor_session, marking when the tags were shown
 }
 
 // Create table to track the last tags that a donor selected.
 // many-to-many. Many tags can be selected by the same donor and a donor can select many tags.
 Table last_selected_tags {
-   tag_name varchar(64) [pk, ref: > tags.tag_name]
-   donor_session_id integer [pk, ref: > donor_sessions.id] // foreign key to donor_session, marking when the tags were selected
+   tag_name varchar(64) [pk] // foreign key to the tag shown
+   donor_session_id integer [pk] // foreign key to donor_session, marking when the tags were selected
 }
 
 // Create table to track a donor's favorite recipients.
-// many-to-many. A donor can favorite many recipients. Recipients can be favorited by many donors.  
-Ref favorite_recipients: donors.id <> recipients.id
+// many-to-many. A donor can favorite many recipients. Recipients can be favorited by many donors.
+Table favorite_recipients {
+    donor_id integer [pk]
+    recipient_id integer [pk]
+}
 
 // ----------------------------------------------
 // ---- Foreign Key Relationship definitions ----
 // ----------------------------------------------
+// Define FKs here rather than inline because this allows specification of constraint names
+
 // Each donation should be one donor to one recipient
-Ref: donors.id - donations.donor_id
-Ref: recipients.id - donations.recipient_id 
+Ref FK_donations_donor: donors.id - donations.donor_id
+Ref FK_donations_recipient: recipients.id - donations.recipient_id
 
 // Each message should be one donor to one recipient
-Ref: donors.id - messages.donor_id
-Ref: recipients.id - messages.recipient_id 
+Ref FK_messages_donor: donors.id - messages.donor_id
+Ref FK_messages_recipient: recipients.id - messages.recipient_id
 
 // many-to-one. Each recipient should have many prompts. Prompts should be assigned to a single recipient.
-Ref: recipients.id < historical_recipient_prompts.recipient_id
+Ref FK_historical_recipient_prompts_recipient: recipients.id < historical_recipient_prompts.recipient_id
 // Same applies for donors
-Ref: donors.id < historical_donor_prompts.donor_id
+Ref FK_historical_donor_prompts_donor: donors.id < historical_donor_prompts.donor_id
+
+// Foreign keys for recipient_tags join table
+Ref FK_recipient_tags_tag: recipient_tags.tag_name > tags.tag_name
+Ref FK_recipient_tags_recipient: recipient_tags.recipient_id > recipients.id
+
+// Foreign keys for last_shown_tags table
+Ref FK_last_shown_tags_tag: last_shown_tags.tag_name > tags.tag_name
+Ref FK_last_shown_tags_donor_session: last_shown_tags.donor_session_id > donor_sessions.id
+
+// Foreign keys for last_selected_tags table
+Ref FK_last_selected_tags_tag: last_selected_tags.tag_name > tags.tag_name
+Ref FK_last_shown_tags_donor_session: last_selected_tags.donor_session_id > donor_sessions.id
+
+// Foreign keys for favorite_recipients table
+Ref FK_favorite_recipients_donor: favorite_recipients.donor_id > donors.id
+Ref FK_favorite_recipients_recipient: favorite_recipients.recipient_id > recipients.id
