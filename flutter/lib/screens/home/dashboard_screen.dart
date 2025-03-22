@@ -1,56 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stretchy_header/stretchy_header.dart';
 import 'package:uplift/components/drawer_widget.dart';
+import 'package:uplift/models/recipient_model.dart';
+import 'package:uplift/models/transaction_model.dart';
+import 'package:uplift/providers/transaction_notifier_provider.dart';
 
-class DashboardPage extends StatefulWidget {
+class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
-}
-
-class _DashboardPageState extends State<DashboardPage> {
-  /// **Make donations a state variable**
-  List<Map<String, dynamic>> donations = [
-    {"id": 1, "amount": 50.0, "recipient": "Aaron Watkins"},
-    {"id": 2, "amount": 50.0, "recipient": "Cami Watkins"},
-    {"id": 3, "amount": 50.0, "recipient": "Finley Watkins"},
-    {"id": 4, "amount": 10.0, "recipient": "Barbara Watkins"},
-  ];
-
-  /// **Calculates total donation amount**
-  double getTotal() {
-    return donations.fold(
-        0.0, (sum, donation) => sum + (donation['amount'] as double));
-  }
-
-  /// **Function to add a new donation**
-  void addDonation(String recipient, double amount) {
-    setState(() {
-      donations.add({
-        "id": donations.length + 1, // Incremental ID
-        "amount": amount,
-        "recipient": recipient,
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    double totalAmount = getTotal(); // Get total amount before UI builds
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the transactions from the provider
+    final transactions = ref.watch(transactionNotifierProvider);
+    print(transactions.length);
+    // Calculate total donations
+    double totalDonations = transactions.fold(
+      0.0,
+      (sum, transaction) => sum + transaction.amount,
+    );
 
     return Scaffold(
       drawer: const DrawerWidget(),
       appBar: AppBar(
         title: const Text("Dashboard"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              addDonation("New Recipient", 25.0); // Example new donation
-            },
-          )
-        ],
       ),
       body: StretchyHeader.singleChild(
         headerData: HeaderData(
@@ -61,43 +34,118 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView(
-            shrinkWrap: true,
-            physics:
-                const NeverScrollableScrollPhysics(), // Prevents double scrolling
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// **Total Donations Display**
-              Text(
-                'Total Donations: \$${totalAmount.toStringAsFixed(2)}',
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              // Total Donations Display
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.volunteer_activism, size: 28),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Total Donations',
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                        Text(
+                          '\$${totalDonations.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
 
-              /// **Donations List**
+              // Donations List Header
               const Text(
                 'Your Donations',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
 
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: donations.length,
-                itemBuilder: (context, index) {
-                  final donation = donations[index];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    child: ListTile(
-                      leading: const Icon(Icons.attach_money),
-                      title: Text('Recipient: ${donation['recipient']}'),
-                      subtitle: Text('Amount: \$${donation['amount']}'),
+              // Check if there are transactions
+              transactions.isEmpty
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Text(
+                          "No donations yet. Start by adding a new donation!",
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: transactions.length,
+                      itemBuilder: (context, index) {
+                        final transaction = transactions[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          child: ListTile(
+                            leading: const Icon(Icons.attach_money,
+                                color: Colors.green),
+                            title: Text(
+                              'Recipient: ${transaction.recipient.name}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Amount: \$${transaction.amount.toStringAsFixed(2)}',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                Text(
+                                  'Date: ${transaction.date}',
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            isThreeLine: true,
+                          ),
+                        );
+                      },
                     ),
+              FloatingActionButton(
+                onPressed: () {
+                  final testTransaction = Transaction(
+                    id: DateTime.now().toString(),
+                    recipient: const Recipient(
+                        id: "1",
+                        name: "Test User",
+                        imageUrl: "",
+                        description: ""),
+                    amount: 25.0,
+                    date: DateTime.now(),
                   );
+
+                  ref
+                      .read(transactionNotifierProvider.notifier)
+                      .addTransaction(testTransaction);
+                  print(
+                      "🚀 Manually added transaction: ${testTransaction.amount}");
                 },
-              ),
+                child: const Icon(Icons.add),
+              )
             ],
           ),
         ),

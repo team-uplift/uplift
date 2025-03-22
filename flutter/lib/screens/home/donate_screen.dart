@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/models/recipient_model.dart';
+import 'package:uplift/models/transaction_model.dart';
+import 'package:uplift/providers/transaction_notifier_provider.dart';
 
-class DonatePage extends StatefulWidget {
+class DonatePage extends ConsumerStatefulWidget {
   final Recipient recipient;
   const DonatePage({super.key, required this.recipient});
 
   @override
-  State<DonatePage> createState() => _DonatePageState();
+  ConsumerState<DonatePage> createState() => _DonatePageState();
 }
 
-class _DonatePageState extends State<DonatePage> {
+class _DonatePageState extends ConsumerState<DonatePage> {
   final TextEditingController _amountController = TextEditingController();
   final FocusNode _focusNode = FocusNode(); // Focus node for input field
 
@@ -103,8 +106,32 @@ class _DonatePageState extends State<DonatePage> {
                     ),
                   ),
                   onPressed: () {
-                    _focusNode.unfocus(); // Close keyboard when pressed
-                    context.goNamed('/dashboard');
+                    _focusNode.unfocus();
+
+                    if (_amountController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Please enter a valid amount"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+
+                    double amount = double.parse(_amountController.text);
+                    final newTransaction = Transaction.create(
+                      recipient: widget.recipient,
+                      amount: amount,
+                    );
+
+                    print(
+                        "✅ Adding transaction: ${newTransaction.amount} to ${newTransaction.recipient.name}");
+
+                    // ✅ Add transaction
+                    ref
+                        .read(transactionNotifierProvider.notifier)
+                        .addTransaction(newTransaction);
+                        context.goNamed('/dashboard');
                   },
                   child: const Text(
                     "Donate",
