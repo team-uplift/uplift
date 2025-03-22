@@ -61,16 +61,9 @@ Table messages { // Tracks messages between users
   created_at timestamp
 }
 
-Table historical_recipient_prompts { // Tracks historical prompts that recipient made.
+Table donor_prompts { // Tracks historical prompts that donor was given in a specific session
   id integer [primary key, increment]
-  recipient_id integer // Will be foreign key to recipient table (defined below)
-  prompt text [not null]
-  created_at timestamp
-}
-
-Table historical_donor_prompts { // Tracks historical prompts that donor made.
-  id integer [primary key, increment]
-  donor_id integer // Will be foreign key to donor table (defined below)
+  donor_session_id integer [not null] // Will be foreign key to donor_sessions table
   prompt text [not null]
   created_at timestamp
 }
@@ -87,16 +80,16 @@ Table recipient_tags {
     recipient_id integer [pk]
 }
 
-// Create table to track which tags were shown to a donor
-// many-to-many. Many donors can shown the same tag and a donor can be shown many tags.
-Table last_shown_tags {
+// Create table to track which tags were shown to a donor in a specific session
+// many-to-many. Many donors can be shown the same tag and a donor can be shown many tags.
+Table donor_shown_tags {
    tag_name varchar(64) [pk] // foreign key to the tag shown
    donor_session_id integer [pk] // foreign key to donor_session, marking when the tags were shown
 }
 
-// Create table to track the last tags that a donor selected.
+// Create table to track the tags that a donor selected in a specific session
 // many-to-many. Many tags can be selected by the same donor and a donor can select many tags.
-Table last_selected_tags {
+Table donor_selected_tags {
    tag_name varchar(64) [pk] // foreign key to the tag shown
    donor_session_id integer [pk] // foreign key to donor_session, marking when the tags were selected
 }
@@ -121,22 +114,20 @@ Ref FK_donations_recipient: recipients.id - donations.recipient_id
 Ref FK_messages_donor: donors.id - messages.donor_id
 Ref FK_messages_recipient: recipients.id - messages.recipient_id
 
-// many-to-one. Each recipient should have many prompts. Prompts should be assigned to a single recipient.
-Ref FK_historical_recipient_prompts_recipient: recipients.id < historical_recipient_prompts.recipient_id
-// Same applies for donors
-Ref FK_historical_donor_prompts_donor: donors.id < historical_donor_prompts.donor_id
+// many-to-one. Each donor should have many prompts. Prompts should be assigned to a single donor session.
+Ref FK_donor_prompts_donor_session: donor_sessions.id < donor_prompts.donor_session_id
 
 // Foreign keys for recipient_tags join table
 Ref FK_recipient_tags_tag: recipient_tags.tag_name > tags.tag_name
 Ref FK_recipient_tags_recipient: recipient_tags.recipient_id > recipients.id
 
-// Foreign keys for last_shown_tags table
-Ref FK_last_shown_tags_tag: last_shown_tags.tag_name > tags.tag_name
-Ref FK_last_shown_tags_donor_session: last_shown_tags.donor_session_id > donor_sessions.id
+// Foreign keys for donor_shown_tags table
+Ref FK_donor_shown_tags_tag: donor_shown_tags.tag_name > tags.tag_name
+Ref FK_donor_shown_tags_donor_session: donor_shown_tags.donor_session_id > donor_sessions.id
 
-// Foreign keys for last_selected_tags table
-Ref FK_last_selected_tags_tag: last_selected_tags.tag_name > tags.tag_name
-Ref FK_last_selected_tags_donor_session: last_selected_tags.donor_session_id > donor_sessions.id
+// Foreign keys for donor_selected_tags table
+Ref FK_donor_selected_tags_tag: donor_selected_tags.tag_name > tags.tag_name
+Ref FK_donor_selected_tags_donor_session: donor_selected_tags.donor_session_id > donor_sessions.id
 
 // Foreign keys for favorite_recipients table
 Ref FK_favorite_recipients_donor: favorite_recipients.donor_id > donors.id

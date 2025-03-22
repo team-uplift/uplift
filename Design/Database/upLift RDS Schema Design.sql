@@ -52,16 +52,9 @@ CREATE TABLE `messages` (
   `created_at` timestamp
 );
 
-CREATE TABLE `historical_recipient_prompts` (
+CREATE TABLE `donor_prompts` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `recipient_id` integer,
-  `prompt` text NOT NULL,
-  `created_at` timestamp
-);
-
-CREATE TABLE `historical_donor_prompts` (
-  `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `donor_id` integer,
+  `donor_session_id` integer NOT NULL,
   `prompt` text NOT NULL,
   `created_at` timestamp
 );
@@ -72,13 +65,13 @@ CREATE TABLE `recipient_tags` (
   PRIMARY KEY (`tag_name`, `recipient_id`)
 );
 
-CREATE TABLE `last_shown_tags` (
+CREATE TABLE `donor_shown_tags` (
   `tag_name` varchar(64),
   `donor_session_id` integer,
   PRIMARY KEY (`tag_name`, `donor_session_id`)
 );
 
-CREATE TABLE `last_selected_tags` (
+CREATE TABLE `donor_selected_tags` (
   `tag_name` varchar(64),
   `donor_session_id` integer,
   PRIMARY KEY (`tag_name`, `donor_session_id`)
@@ -98,21 +91,19 @@ ALTER TABLE `messages` ADD CONSTRAINT `FK_messages_donor` FOREIGN KEY (`donor_id
 
 ALTER TABLE `messages` ADD CONSTRAINT `FK_messages_recipient` FOREIGN KEY (`recipient_id`) REFERENCES `recipients` (`id`);
 
-ALTER TABLE `historical_recipient_prompts` ADD CONSTRAINT `FK_historical_recipient_prompts_recipient` FOREIGN KEY (`recipient_id`) REFERENCES `recipients` (`id`);
-
-ALTER TABLE `historical_donor_prompts` ADD CONSTRAINT `FK_historical_donor_prompts_donor` FOREIGN KEY (`donor_id`) REFERENCES `donors` (`id`);
+ALTER TABLE `donor_prompts` ADD CONSTRAINT `FK_donor_prompts_donor_session` FOREIGN KEY (`donor_session_id`) REFERENCES `donor_sessions` (`id`);
 
 ALTER TABLE `recipient_tags` ADD CONSTRAINT `FK_recipient_tags_tag` FOREIGN KEY (`tag_name`) REFERENCES `tags` (`tag_name`);
 
 ALTER TABLE `recipient_tags` ADD CONSTRAINT `FK_recipient_tags_recipient` FOREIGN KEY (`recipient_id`) REFERENCES `recipients` (`id`);
 
-ALTER TABLE `last_shown_tags` ADD CONSTRAINT `FK_last_shown_tags_tag` FOREIGN KEY (`tag_name`) REFERENCES `tags` (`tag_name`);
+ALTER TABLE `donor_shown_tags` ADD CONSTRAINT `FK_donor_shown_tags_tag` FOREIGN KEY (`tag_name`) REFERENCES `tags` (`tag_name`);
 
-ALTER TABLE `last_shown_tags` ADD CONSTRAINT `FK_last_shown_tags_donor_session` FOREIGN KEY (`donor_session_id`) REFERENCES `donor_sessions` (`id`);
+ALTER TABLE `donor_shown_tags` ADD CONSTRAINT `FK_donor_shown_tags_donor_session` FOREIGN KEY (`donor_session_id`) REFERENCES `donor_sessions` (`id`);
 
-ALTER TABLE `last_selected_tags` ADD CONSTRAINT `FK_last_selected_tags_tag` FOREIGN KEY (`tag_name`) REFERENCES `tags` (`tag_name`);
+ALTER TABLE `donor_selected_tags` ADD CONSTRAINT `FK_donor_selected_tags_tag` FOREIGN KEY (`tag_name`) REFERENCES `tags` (`tag_name`);
 
-ALTER TABLE `last_selected_tags` ADD CONSTRAINT `FK_last_selected_tags_donor_session` FOREIGN KEY (`donor_session_id`) REFERENCES `donor_sessions` (`id`);
+ALTER TABLE `donor_selected_tags` ADD CONSTRAINT `FK_donor_selected_tags_donor_session` FOREIGN KEY (`donor_session_id`) REFERENCES `donor_sessions` (`id`);
 
 ALTER TABLE `favorite_recipients` ADD CONSTRAINT `FK_favorite_recipients_donor` FOREIGN KEY (`donor_id`) REFERENCES `donors` (`id`);
 
