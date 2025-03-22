@@ -53,10 +53,9 @@ Table tags { // Tracks all the known tags
   created_at timestamp
 }
 
-Table messages { // Tracks messages between users
+Table messages { // Tracks "thank-you" message from recipient to donor, linked to specific donation
   id integer [primary key, increment]
-  donor_id integer [not null] // Will be foreign key to donor table (defined below)
-  recipient_id integer [not null] // Will be foreign key to recipient table (defined below)
+  donation_id integer [not null] // Will be foreign key to donation table
   message text [not null]
   created_at timestamp
 }
@@ -110,9 +109,8 @@ Table favorite_recipients {
 Ref FK_donations_donor: donors.id - donations.donor_id
 Ref FK_donations_recipient: recipients.id - donations.recipient_id
 
-// Each message should be one donor to one recipient
-Ref FK_messages_donor: donors.id - messages.donor_id
-Ref FK_messages_recipient: recipients.id - messages.recipient_id
+// Each message should be linked to a specific donation
+Ref FK_messages_donation: messages.donation_id > donations.id
 
 // many-to-one. Each donor should have many prompts. Prompts should be assigned to a single donor session.
 Ref FK_donor_prompts_donor_session: donor_sessions.id < donor_prompts.donor_session_id

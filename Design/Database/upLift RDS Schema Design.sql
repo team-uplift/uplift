@@ -46,8 +46,7 @@ CREATE TABLE `tags` (
 
 CREATE TABLE `messages` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `donor_id` integer NOT NULL,
-  `recipient_id` integer NOT NULL,
+  `donation_id` integer NOT NULL,
   `message` text NOT NULL,
   `created_at` timestamp
 );
@@ -87,9 +86,7 @@ ALTER TABLE `donations` ADD CONSTRAINT `FK_donations_donor` FOREIGN KEY (`donor_
 
 ALTER TABLE `donations` ADD CONSTRAINT `FK_donations_recipient` FOREIGN KEY (`recipient_id`) REFERENCES `recipients` (`id`);
 
-ALTER TABLE `messages` ADD CONSTRAINT `FK_messages_donor` FOREIGN KEY (`donor_id`) REFERENCES `donors` (`id`);
-
-ALTER TABLE `messages` ADD CONSTRAINT `FK_messages_recipient` FOREIGN KEY (`recipient_id`) REFERENCES `recipients` (`id`);
+ALTER TABLE `messages` ADD CONSTRAINT `FK_messages_donation` FOREIGN KEY (`donation_id`) REFERENCES `donations` (`id`);
 
 ALTER TABLE `donor_prompts` ADD CONSTRAINT `FK_donor_prompts_donor_session` FOREIGN KEY (`donor_session_id`) REFERENCES `donor_sessions` (`id`);
 
