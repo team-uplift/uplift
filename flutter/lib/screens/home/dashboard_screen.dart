@@ -125,27 +125,6 @@ class DashboardPage extends ConsumerWidget {
                         );
                       },
                     ),
-              FloatingActionButton(
-                onPressed: () {
-                  final testTransaction = Transaction(
-                    id: DateTime.now().toString(),
-                    recipient: const Recipient(
-                        id: "1",
-                        name: "Test User",
-                        imageUrl: "",
-                        description: ""),
-                    amount: 25.0,
-                    date: DateTime.now(),
-                  );
-
-                  ref
-                      .read(transactionNotifierProvider.notifier)
-                      .addTransaction(testTransaction);
-                  print(
-                      "🚀 Manually added transaction: ${testTransaction.amount}");
-                },
-                child: const Icon(Icons.add),
-              )
             ],
           ),
         ),
