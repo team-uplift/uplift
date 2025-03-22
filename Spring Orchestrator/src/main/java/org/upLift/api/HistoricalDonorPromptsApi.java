@@ -22,54 +22,67 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2025-03-16T14:18:35.909799305Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
+		date = "2025-03-16T14:18:35.909799305Z[GMT]")
 @Validated
 public interface HistoricalDonorPromptsApi {
 
-    @Operation(summary = "Get donor prompts by donor ID", description = "Retrieves historical prompts for a specific donor.", tags={ "Historical Donor Prompts" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "List of donor's prompts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = HistoricalDonorPrompt.class)))),
-        
-        @ApiResponse(responseCode = "404", description = "No prompts found for the donor"),
-        
-        @ApiResponse(responseCode = "500", description = "Server error") })
-    @RequestMapping(value = "/historical_donor_prompts/{donor_id}",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<HistoricalDonorPrompt>> historicalDonorPromptsDonorIdGet(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("donor_id") Integer donorId
-, @Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-);
+	@Operation(summary = "Get donor prompts by donor ID",
+			description = "Retrieves historical prompts for a specific donor.", tags = { "Historical Donor Prompts" })
+	@ApiResponses(
+			value = {
+					@ApiResponse(responseCode = "200", description = "List of donor's prompts",
+							content = @Content(mediaType = "application/json",
+									array = @ArraySchema(
+											schema = @Schema(implementation = HistoricalDonorPrompt.class)))),
 
+					@ApiResponse(responseCode = "404", description = "No prompts found for the donor"),
 
-    @Operation(summary = "Get all donor prompts", description = "Retrieves all historical prompts created by donors.", tags={ "Historical Donor Prompts" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "List of donor prompts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = HistoricalDonorPrompt.class)))),
-        
-        @ApiResponse(responseCode = "500", description = "Server error") })
-    @RequestMapping(value = "/historical_donor_prompts",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<HistoricalDonorPrompt>> historicalDonorPromptsGet(@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-);
+					@ApiResponse(responseCode = "500", description = "Server error") })
+	@RequestMapping(value = "/historical_donor_prompts/{donor_id}", produces = { "application/json" },
+			method = RequestMethod.GET)
+	ResponseEntity<List<HistoricalDonorPrompt>> historicalDonorPromptsDonorIdGet(
+			@Parameter(in = ParameterIn.PATH, description = "", required = true,
+					schema = @Schema()) @PathVariable("donor_id") Integer donorId,
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
 
+	@Operation(summary = "Get all donor prompts", description = "Retrieves all historical prompts created by donors.",
+			tags = { "Historical Donor Prompts" })
+	@ApiResponses(
+			value = {
+					@ApiResponse(responseCode = "200", description = "List of donor prompts",
+							content = @Content(mediaType = "application/json",
+									array = @ArraySchema(
+											schema = @Schema(implementation = HistoricalDonorPrompt.class)))),
 
-    @Operation(summary = "Create a donor prompt", description = "Stores a new historical prompt from a donor.", tags={ "Historical Donor Prompts" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "Donor prompt created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = HistoricalDonorPrompt.class))),
-        
-        @ApiResponse(responseCode = "400", description = "Invalid request data"),
-        
-        @ApiResponse(responseCode = "500", description = "Server error") })
-    @RequestMapping(value = "/historical_donor_prompts",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<HistoricalDonorPrompt> historicalDonorPromptsPost(@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody HistoricalDonorPrompt body
-);
+					@ApiResponse(responseCode = "500", description = "Server error") })
+	@RequestMapping(value = "/historical_donor_prompts", produces = { "application/json" }, method = RequestMethod.GET)
+	ResponseEntity<List<HistoricalDonorPrompt>> historicalDonorPromptsGet(@Parameter(in = ParameterIn.HEADER,
+			description = "Tracks the session for the given set of requests.", required = true,
+			schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
+
+	@Operation(summary = "Create a donor prompt", description = "Stores a new historical prompt from a donor.",
+			tags = { "Historical Donor Prompts" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "Donor prompt created successfully",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = HistoricalDonorPrompt.class))),
+
+			@ApiResponse(responseCode = "400", description = "Invalid request data"),
+
+			@ApiResponse(responseCode = "500", description = "Server error") })
+	@RequestMapping(value = "/historical_donor_prompts", produces = { "application/json" },
+			consumes = { "application/json" }, method = RequestMethod.POST)
+	ResponseEntity<HistoricalDonorPrompt> historicalDonorPromptsPost(
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
+			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
+					schema = @Schema()) @Valid @RequestBody HistoricalDonorPrompt body);
 
 }
-

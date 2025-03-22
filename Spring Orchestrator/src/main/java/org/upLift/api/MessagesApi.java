@@ -23,72 +23,83 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2025-03-16T14:18:35.909799305Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
+		date = "2025-03-16T14:18:35.909799305Z[GMT]")
 @Validated
 public interface MessagesApi {
 
-    @Operation(summary = "Get all messages", description = "Retrieves all messages between donors and recipients.", tags={ "Messages" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "List of messages", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Message.class)))),
-        
-        @ApiResponse(responseCode = "500", description = "Server error") })
-    @RequestMapping(value = "/messages",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<Message>> messagesGet(@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-);
+	@Operation(summary = "Get all messages", description = "Retrieves all messages between donors and recipients.",
+			tags = { "Messages" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "List of messages",
+					content = @Content(mediaType = "application/json",
+							array = @ArraySchema(schema = @Schema(implementation = Message.class)))),
 
+			@ApiResponse(responseCode = "500", description = "Server error") })
+	@RequestMapping(value = "/messages", produces = { "application/json" }, method = RequestMethod.GET)
+	ResponseEntity<List<Message>> messagesGet(@Parameter(in = ParameterIn.HEADER,
+			description = "Tracks the session for the given set of requests.", required = true,
+			schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
 
-    @Operation(summary = "Get a message by ID", description = "Retrieves a specific message by its ID.", tags={ "Messages" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Message details", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Message.class))),
-        
-        @ApiResponse(responseCode = "404", description = "Message not found"),
-        
-        @ApiResponse(responseCode = "500", description = "Server error") })
-    @RequestMapping(value = "/messages/{id}",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<Message> messagesIdGet(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("id") Integer id
-, @Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-);
+	@Operation(summary = "Get a message by ID", description = "Retrieves a specific message by its ID.",
+			tags = { "Messages" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Message details",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = Message.class))),
 
+			@ApiResponse(responseCode = "404", description = "Message not found"),
 
-    @Operation(summary = "Send a message", description = "Allows a donor or recipient to send a message.", tags={ "Messages" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "Message sent successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Message.class))),
-        
-        @ApiResponse(responseCode = "400", description = "Invalid request data"),
-        
-        @ApiResponse(responseCode = "500", description = "Server error") })
-    @RequestMapping(value = "/messages",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<Message> messagesPost(@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody Message body
-);
+			@ApiResponse(responseCode = "500", description = "Server error") })
+	@RequestMapping(value = "/messages/{id}", produces = { "application/json" }, method = RequestMethod.GET)
+	ResponseEntity<Message> messagesIdGet(
+			@Parameter(in = ParameterIn.PATH, description = "", required = true,
+					schema = @Schema()) @PathVariable("id") Integer id,
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
 
+	@Operation(summary = "Send a message", description = "Allows a donor or recipient to send a message.",
+			tags = { "Messages" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "Message sent successfully",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = Message.class))),
 
-    @Operation(summary = "Get messages between a specific donor and recipient", description = "Retrieves messages exchanged between a given donor and recipient.", tags={ "Messages" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "List of messages between donor and recipient", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Message.class)))),
-        
-        @ApiResponse(responseCode = "400", description = "Invalid request data"),
-        
-        @ApiResponse(responseCode = "404", description = "No messages found"),
-        
-        @ApiResponse(responseCode = "500", description = "Server error") })
-    @RequestMapping(value = "/messages/search",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<List<Message>> messagesSearchPost(@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-, @Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody MessageSearchInput body
-);
+			@ApiResponse(responseCode = "400", description = "Invalid request data"),
+
+			@ApiResponse(responseCode = "500", description = "Server error") })
+	@RequestMapping(value = "/messages", produces = { "application/json" }, consumes = { "application/json" },
+			method = RequestMethod.POST)
+	ResponseEntity<Message> messagesPost(
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
+			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
+					schema = @Schema()) @Valid @RequestBody Message body);
+
+	@Operation(summary = "Get messages between a specific donor and recipient",
+			description = "Retrieves messages exchanged between a given donor and recipient.", tags = { "Messages" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "List of messages between donor and recipient",
+					content = @Content(mediaType = "application/json",
+							array = @ArraySchema(schema = @Schema(implementation = Message.class)))),
+
+			@ApiResponse(responseCode = "400", description = "Invalid request data"),
+
+			@ApiResponse(responseCode = "404", description = "No messages found"),
+
+			@ApiResponse(responseCode = "500", description = "Server error") })
+	@RequestMapping(value = "/messages/search", produces = { "application/json" }, consumes = { "application/json" },
+			method = RequestMethod.POST)
+	ResponseEntity<List<Message>> messagesSearchPost(
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
+			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
+					schema = @Schema()) @Valid @RequestBody MessageSearchInput body);
 
 }
-
