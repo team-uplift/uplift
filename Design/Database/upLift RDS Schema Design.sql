@@ -112,7 +112,7 @@ ALTER TABLE `last_shown_tags` ADD CONSTRAINT `FK_last_shown_tags_donor_session` 
 
 ALTER TABLE `last_selected_tags` ADD CONSTRAINT `FK_last_selected_tags_tag` FOREIGN KEY (`tag_name`) REFERENCES `tags` (`tag_name`);
 
-ALTER TABLE `last_selected_tags` ADD CONSTRAINT `FK_last_shown_tags_donor_session` FOREIGN KEY (`donor_session_id`) REFERENCES `donor_sessions` (`id`);
+ALTER TABLE `last_selected_tags` ADD CONSTRAINT `FK_last_selected_tags_donor_session` FOREIGN KEY (`donor_session_id`) REFERENCES `donor_sessions` (`id`);
 
 ALTER TABLE `favorite_recipients` ADD CONSTRAINT `FK_favorite_recipients_donor` FOREIGN KEY (`donor_id`) REFERENCES `donors` (`id`);
 

@@ -136,7 +136,7 @@ Ref FK_last_shown_tags_donor_session: last_shown_tags.donor_session_id > donor_s
 
 // Foreign keys for last_selected_tags table
 Ref FK_last_selected_tags_tag: last_selected_tags.tag_name > tags.tag_name
-Ref FK_last_shown_tags_donor_session: last_selected_tags.donor_session_id > donor_sessions.id
+Ref FK_last_selected_tags_donor_session: last_selected_tags.donor_session_id > donor_sessions.id
 
 // Foreign keys for favorite_recipients table
 Ref FK_favorite_recipients_donor: favorite_recipients.donor_id > donors.id
