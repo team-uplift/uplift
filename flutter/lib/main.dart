@@ -13,6 +13,7 @@ import 'package:uplift/screens/home/quiz_screen.dart';
 import 'package:uplift/recipients/recipient_home.dart';
 import 'package:uplift/screens/home/recipient_detail_screen.dart';
 import 'package:uplift/screens/home/recipient_list_screen.dart';
+import 'package:uplift/screens/recipient_reg_screens/registration_controller.dart';
 
 void main() {
   runApp(const MyApp());
@@ -41,7 +42,7 @@ final GoRouter _router = GoRouter(
       path: '/recipient_registration',
       name: '/recipient_registration',
       builder: (BuildContext context, GoRouterState state) {
-        return const RecipientRegistrationPage();
+        return const RegistrationController();
       }
     ),
     GoRoute(
