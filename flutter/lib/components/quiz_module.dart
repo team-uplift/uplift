@@ -3,24 +3,35 @@ import 'package:flutter/material.dart';
 class QuizModule extends StatelessWidget {
   final String question;
   final List<String> choices;
-  const QuizModule({
-    super.key,
-    required this.question,
-    required this.choices
-    });
+  final VoidCallback onPress;
+  const QuizModule(
+      {super.key,
+      required this.question,
+      required this.choices,
+      required this.onPress});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Text(question),
-        ...choices.map((choice) => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: ElevatedButton(
-              onPressed: () {}, // Add logic for button press
-              child: Text(choice),
+        const SizedBox(
+          height: 40,
+        ),
+        ...choices.map(
+          (choice) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: GestureDetector(
+              onTap: onPress,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(border: Border.all()),
+                child: Text(choice),
+              ),
             ),
-        ))
+          ),
+        )
       ],
     );
   }

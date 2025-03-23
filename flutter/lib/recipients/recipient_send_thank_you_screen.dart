@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SendThankYouScreen extends StatelessWidget {
   final Map<String, String> historyItem;
 
-  const SendThankYouScreen({Key? key, required this.historyItem}) : super(key: key);
+  const SendThankYouScreen({super.key, required this.historyItem});
 
   @override
   Widget build(BuildContext context) {

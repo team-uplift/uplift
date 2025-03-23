@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uplift/models/recipient_model.dart';
+import 'package:uplift/models/transaction_model.dart';
 import 'package:uplift/screens/auth/donor_or_recipient.dart';
 import 'package:uplift/screens/auth/login_screen.dart';
 import 'package:uplift/screens/auth/donor_registration_screen.dart';
 import 'package:uplift/screens/auth/recipient_registration_screen.dart';
 import 'package:uplift/screens/home/dashboard_screen.dart';
+import 'package:uplift/screens/home/donate_screen.dart';
 import 'package:uplift/screens/home/home_screen.dart';
 import 'package:uplift/screens/home/profile_screen.dart';
 import 'package:uplift/screens/home/quiz_screen.dart';
 import 'package:uplift/recipients/recipient_home.dart';
+import 'package:uplift/screens/home/recipient_detail_screen.dart';
+import 'package:uplift/screens/home/recipient_list_screen.dart';
+import 'package:uplift/screens/recipient_reg_screens/registration_controller.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 /// The route configuration.
@@ -37,7 +44,7 @@ final GoRouter _router = GoRouter(
       path: '/recipient_registration',
       name: '/recipient_registration',
       builder: (BuildContext context, GoRouterState state) {
-        return const RecipientRegistrationPage();
+        return const RegistrationController();
       }
     ),
     GoRoute(
@@ -82,20 +89,29 @@ final GoRouter _router = GoRouter(
         return const DonorOrRecipient();
       },
     ),
-    // GoRoute(
-    //   path: '/recipient_tags',
-    //   name: '/recipient_tags',
-    //   builder: (BuildContext context, GoRouterState state) {
-    //     return const RecipientTags();
-    //   },
-    // ),
-    // GoRoute(
-    //   path: '/recipient_history',
-    //   name: '/recipient_history',
-    //   builder: (BuildContext context, GoRouterState state) {
-    //     return const RecipientHistory();
-    //   },
-    // ),
+    GoRoute(
+      path: '/recipient_list',
+      name: '/recipient_list',
+      builder: (BuildContext context, GoRouterState state) {
+        return RecipientList();
+      },
+    ),
+    GoRoute(
+      path: '/recipient_detail',
+      name: '/recipient_detail',
+      builder: (BuildContext context, GoRouterState state) {
+        final recipient = state.extra as Recipient; 
+        return RecipientDetailPage(recipient: recipient);
+      },
+    ),
+    GoRoute(
+      path: '/donate',
+      name: '/donate',
+      builder: (BuildContext context, GoRouterState state) {
+        final recipient = state.extra as Recipient;
+        return DonatePage(recipient: recipient);
+      },
+    ),
   ],
 );
 

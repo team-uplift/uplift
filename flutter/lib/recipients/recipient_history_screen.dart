@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'recipient_history_details.dart';
+import 'recipient_history_details_screen.dart';
 
 
 // combo of chatgpt and me
-class RecipientHistory extends StatefulWidget {
-  const RecipientHistory({super.key});
+class RecipientHistoryScreen extends StatefulWidget {
+  const RecipientHistoryScreen({super.key});
 
   @override
-  State<RecipientHistory> createState() => _RecipientHistoryState();
+  State<RecipientHistoryScreen> createState() => _RecipientHistoryScreenState();
 }
 
-class _RecipientHistoryState extends State<RecipientHistory> {
+class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
 
   List<Map<String, String>> historyItems = [
     {"title": "Donation 1", "date": "date", "details": "You received \$50"},
