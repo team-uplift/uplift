@@ -1,0 +1,66 @@
+name: Orchestrator CICD
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ Spring Orchestrator/** ]
+  pull_request:
+    branches: [ main ]
+    paths: [ Spring Orchestrator/** ]
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up JDK 23
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '23-jre-alpine'
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+      - name: Login to docker hub
+        run: docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
+      - name: Build docker image
+        run: docker build -t als5289/uplift-orchestrator.
+      - name: Push docker image
+        run: docker push als5289/uplift-orchestrator:latest
+
+  deploy:
+    needs: build
+    runs-on: [ip-172-30-0-119]
+    steps:
+      - name: Check Docker Installation
+        run: |
+          if ! [ -x "$(command -v docker)" ]; then
+            echo "Error: Docker is not installed." >&2
+            exit 1
+          fi
+      - name: Pull image from docker hub
+        run: sudo docker pull als5289/uplift-orchestrator:latest
+      - name: Delete existing container
+        run: |
+          if [ "$(sudo docker ps -aq -f name=demo)" ]; then
+            sudo docker rm -f demo
+          fi
+      - name: Run docker container
+        run: sudo docker run -d -p 8080:8080 --name uplift-orchestrator als5289/uplift-orchestrator
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dbdocs
+        run: sudo npm install -g dbdocs
+
+      - name: Check dbdocs
+        run: dbdocs
+
+      - name: Update dbdocs project
+        env:
+          DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
+        run: dbdocs build ./Design/Database/upLiftSchemaDesign.dbml --project cs599-uplift
