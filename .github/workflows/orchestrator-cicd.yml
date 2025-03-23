@@ -7,12 +7,6 @@ on:
   pull_request:
     branches: [ main, cicd-ec2-configs ]
     paths: [ Spring Orchestrator/** ]
-  workflow_dispatch:
-    inputs:
-      test_input1:
-        description: 'Enter anything.'
-        required: true
-        default: 'test1'
 
 jobs:
   build:
