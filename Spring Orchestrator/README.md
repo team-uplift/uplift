@@ -1,6 +1,6 @@
 # Swagger generated server
 
-Uplift Orchestrator - Spring Boot Server 
+Uplift Orchestrator - Spring Boot API
 
 
 ## Overview  
