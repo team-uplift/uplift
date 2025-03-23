@@ -19,10 +19,10 @@ Table recipients { // Tracks our known recipients
   zip_code varchar(10)
   last_about_me text [not null] // latest "about me" text that is/will be utilized to generate the tags
   last_reason_for_help text [not null] // latest "why I need help" text that is/will be utilized to generate the tags through a single prompt.
-  identity_last_verified timestamp // Date/time the recipient's identity was last verified, used to determine if recipient identity needs to be re-verified
-  income_last_verified timestamp // Date/time the recipient's income was last verified, used to determine if recipient income needs to be re-verified
+  identity_last_verified timestamp(3) // Date/time the recipient's identity was last verified, used to determine if recipient identity needs to be re-verified
+  income_last_verified timestamp(3) // Date/time the recipient's income was last verified, used to determine if recipient income needs to be re-verified
   nickname nvarchar(64)
-  created_at timestamp
+  created_at timestamp(3)
 }
 
 Table donors { // Tracks our known donors
@@ -30,14 +30,14 @@ Table donors { // Tracks our known donors
   cognito_id uuid // Optional id if donors decide to sign up.
   email varchar(320) // email is serving as username for Cognito accounts
   nickname nvarchar(64)
-  created_at timestamp
+  created_at timestamp(3)
 }
 
 // Tracks each time a donor has started the process to donate to a recipient via the matching system.
 Table donor_sessions {
   id integer [primary key, increment]
   donor_id integer [not null] // foreign key to donor table
-  session_started timestamp // date/time the session started
+  session_started timestamp(3) // date/time the session started
 }
 
 Table donations { // Tracks all of the donation transactions that have occurred
@@ -45,26 +45,26 @@ Table donations { // Tracks all of the donation transactions that have occurred
   donor_id integer [not null] // Will be foreign key to donor table
   recipient_id integer [not null] // Will be foreign key to recipient table
   amount integer [not null]
-  created_at timestamp
+  created_at timestamp(3)
 }
 
 Table tags { // Tracks all the known tags
   tag_name varchar(64) [primary key]
-  created_at timestamp
+  created_at timestamp(3)
 }
 
 Table messages { // Tracks "thank-you" message from recipient to donor, linked to specific donation
   id integer [primary key, increment]
   donation_id integer [not null] // Will be foreign key to donation table
   message text [not null]
-  created_at timestamp
+  created_at timestamp(3)
 }
 
 Table donor_prompts { // Tracks historical prompts that donor was given in a specific session
   id integer [primary key, increment]
   donor_session_id integer [not null] // Will be foreign key to donor_sessions table
   prompt text [not null]
-  created_at timestamp
+  created_at timestamp(3)
 }
 
 // ----------------------------------------------

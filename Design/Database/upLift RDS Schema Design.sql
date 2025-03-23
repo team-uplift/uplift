@@ -11,10 +11,10 @@ CREATE TABLE `recipients` (
   `zip_code` varchar(10),
   `last_about_me` text NOT NULL,
   `last_reason_for_help` text NOT NULL,
-  `identity_last_verified` timestamp,
-  `income_last_verified` timestamp,
+  `identity_last_verified` timestamp(3),
+  `income_last_verified` timestamp(3),
   `nickname` nvarchar(64),
-  `created_at` timestamp
+  `created_at` timestamp(3)
 );
 
 CREATE TABLE `donors` (
@@ -22,13 +22,13 @@ CREATE TABLE `donors` (
   `cognito_id` uuid,
   `email` varchar(320),
   `nickname` nvarchar(64),
-  `created_at` timestamp
+  `created_at` timestamp(3)
 );
 
 CREATE TABLE `donor_sessions` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `donor_id` integer NOT NULL,
-  `session_started` timestamp
+  `session_started` timestamp(3)
 );
 
 CREATE TABLE `donations` (
@@ -36,26 +36,26 @@ CREATE TABLE `donations` (
   `donor_id` integer NOT NULL,
   `recipient_id` integer NOT NULL,
   `amount` integer NOT NULL,
-  `created_at` timestamp
+  `created_at` timestamp(3)
 );
 
 CREATE TABLE `tags` (
   `tag_name` varchar(64) PRIMARY KEY,
-  `created_at` timestamp
+  `created_at` timestamp(3)
 );
 
 CREATE TABLE `messages` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `donation_id` integer NOT NULL,
   `message` text NOT NULL,
-  `created_at` timestamp
+  `created_at` timestamp(3)
 );
 
 CREATE TABLE `donor_prompts` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `donor_session_id` integer NOT NULL,
   `prompt` text NOT NULL,
-  `created_at` timestamp
+  `created_at` timestamp(3)
 );
 
 CREATE TABLE `recipient_tags` (
