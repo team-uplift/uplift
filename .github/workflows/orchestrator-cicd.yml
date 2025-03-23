@@ -19,6 +19,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '23'
+      - name: Enter Directory
+        run: cd ./Spring Orchestrator
       - name: Build with Maven
         run: mvn clean install -DskipTests
       - name: Login to docker hub

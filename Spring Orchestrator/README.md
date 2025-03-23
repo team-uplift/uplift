@@ -1,6 +1,6 @@
 # Swagger generated server
 
-Spring Boot Server - Orchestrator
+Spring Boot Server - Uplift Orchestrator
 
 
 ## Overview  
