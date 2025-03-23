@@ -7,6 +7,7 @@ on:
   pull_request:
     branches: [ main, cicd-ec2-configs ]
     paths: [ Spring Orchestrator/** ]
+  on: workflow_dispatch
 
 jobs:
   build:
