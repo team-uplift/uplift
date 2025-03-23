@@ -2,10 +2,10 @@ name: Orchestrator CICD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, cicd-ec2-configs ]
     paths: [ Spring Orchestrator/** ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, cicd-ec2-configs ]
     paths: [ Spring Orchestrator/** ]
 
 jobs:
@@ -47,20 +47,4 @@ jobs:
           fi
       - name: Run docker container
         run: sudo docker run -d -p 8080:8080 --name uplift-orchestrator als5289/uplift-orchestrator
-jobs:
-  build:
-    runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install dbdocs
-        run: sudo npm install -g dbdocs
-
-      - name: Check dbdocs
-        run: dbdocs
-
-      - name: Update dbdocs project
-        env:
-          DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
-        run: dbdocs build ./Design/Database/upLiftSchemaDesign.dbml --project cs599-uplift
