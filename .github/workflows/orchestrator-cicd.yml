@@ -2,10 +2,10 @@ name: Orchestrator CICD
 
 on:
   push:
-    branches: [ main, cicd-ec2-configs ]
+    branches: [ main ]
     paths: [ Spring Orchestrator/** ]
   pull_request:
-    branches: [ main, cicd-ec2-configs ]
+    branches: [ main ]
     paths: [ Spring Orchestrator/** ]
 
 jobs:
