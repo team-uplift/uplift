@@ -9,207 +9,196 @@ import org.upLift.configuration.NotUndefined;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 /**
  * Message
  */
 @Validated
 @NotUndefined
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2025-03-16T14:18:35.909799305Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
+		date = "2025-03-16T14:18:35.909799305Z[GMT]")
 
+public class Message {
 
-public class Message   {
-  @JsonProperty("id")
+	@JsonProperty("id")
 
-  @JsonInclude(JsonInclude.Include.NON_ABSENT)  // Exclude from JSON if absent
-  @JsonSetter(nulls = Nulls.FAIL)    // FAIL setting if the value is null
-  private Integer id = null;
+	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
+	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
+	private Integer id = null;
 
-  @JsonProperty("donor_id")
+	@JsonProperty("donor_id")
 
-  @JsonInclude(JsonInclude.Include.NON_ABSENT)  // Exclude from JSON if absent
-  @JsonSetter(nulls = Nulls.FAIL)    // FAIL setting if the value is null
-  private Integer donorId = null;
+	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
+	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
+	private Integer donorId = null;
 
-  @JsonProperty("recipient_id")
+	@JsonProperty("recipient_id")
 
-  @JsonInclude(JsonInclude.Include.NON_ABSENT)  // Exclude from JSON if absent
-  @JsonSetter(nulls = Nulls.FAIL)    // FAIL setting if the value is null
-  private Integer recipientId = null;
+	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
+	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
+	private Integer recipientId = null;
 
-  @JsonProperty("message")
+	@JsonProperty("message")
 
-  @JsonInclude(JsonInclude.Include.NON_ABSENT)  // Exclude from JSON if absent
-  @JsonSetter(nulls = Nulls.FAIL)    // FAIL setting if the value is null
-  private String message = null;
+	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
+	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
+	private String message = null;
 
-  @JsonProperty("created_at")
+	@JsonProperty("created_at")
 
-  @JsonInclude(JsonInclude.Include.NON_ABSENT)  // Exclude from JSON if absent
-  @JsonSetter(nulls = Nulls.FAIL)    // FAIL setting if the value is null
-  private OffsetDateTime createdAt = null;
+	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
+	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
+	private OffsetDateTime createdAt = null;
 
+	public Message id(Integer id) {
 
-  public Message id(Integer id) { 
+		this.id = id;
+		return this;
+	}
 
-    this.id = id;
-    return this;
-  }
+	/**
+	 * Get id
+	 * @return id
+	 **/
 
-  /**
-   * Get id
-   * @return id
-   **/
-  
-  @Schema(example = "1", description = "")
-  
-  public Integer getId() {  
-    return id;
-  }
+	@Schema(example = "1", description = "")
 
+	public Integer getId() {
+		return id;
+	}
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-  public void setId(Integer id) { 
-    this.id = id;
-  }
+	public Message donorId(Integer donorId) {
 
-  public Message donorId(Integer donorId) { 
+		this.donorId = donorId;
+		return this;
+	}
 
-    this.donorId = donorId;
-    return this;
-  }
+	/**
+	 * Get donorId
+	 * @return donorId
+	 **/
 
-  /**
-   * Get donorId
-   * @return donorId
-   **/
-  
-  @Schema(example = "101", description = "")
-  
-  public Integer getDonorId() {  
-    return donorId;
-  }
+	@Schema(example = "101", description = "")
 
+	public Integer getDonorId() {
+		return donorId;
+	}
 
+	public void setDonorId(Integer donorId) {
+		this.donorId = donorId;
+	}
 
-  public void setDonorId(Integer donorId) { 
-    this.donorId = donorId;
-  }
+	public Message recipientId(Integer recipientId) {
 
-  public Message recipientId(Integer recipientId) { 
+		this.recipientId = recipientId;
+		return this;
+	}
 
-    this.recipientId = recipientId;
-    return this;
-  }
+	/**
+	 * Get recipientId
+	 * @return recipientId
+	 **/
 
-  /**
-   * Get recipientId
-   * @return recipientId
-   **/
-  
-  @Schema(example = "202", description = "")
-  
-  public Integer getRecipientId() {  
-    return recipientId;
-  }
+	@Schema(example = "202", description = "")
 
+	public Integer getRecipientId() {
+		return recipientId;
+	}
 
+	public void setRecipientId(Integer recipientId) {
+		this.recipientId = recipientId;
+	}
 
-  public void setRecipientId(Integer recipientId) { 
-    this.recipientId = recipientId;
-  }
+	public Message message(String message) {
 
-  public Message message(String message) { 
+		this.message = message;
+		return this;
+	}
 
-    this.message = message;
-    return this;
-  }
+	/**
+	 * Get message
+	 * @return message
+	 **/
 
-  /**
-   * Get message
-   * @return message
-   **/
-  
-  @Schema(example = "Hello, how can I help?", description = "")
-  
-  public String getMessage() {  
-    return message;
-  }
+	@Schema(example = "Hello, how can I help?", description = "")
 
+	public String getMessage() {
+		return message;
+	}
 
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-  public void setMessage(String message) { 
-    this.message = message;
-  }
+	public Message createdAt(OffsetDateTime createdAt) {
 
-  public Message createdAt(OffsetDateTime createdAt) { 
+		this.createdAt = createdAt;
+		return this;
+	}
 
-    this.createdAt = createdAt;
-    return this;
-  }
+	/**
+	 * Get createdAt
+	 * @return createdAt
+	 **/
 
-  /**
-   * Get createdAt
-   * @return createdAt
-   **/
-  
-  @Schema(example = "2024-03-15T10:00Z", description = "")
-  
-@Valid
-  public OffsetDateTime getCreatedAt() {  
-    return createdAt;
-  }
+	@Schema(example = "2024-03-15T10:00Z", description = "")
 
+	@Valid
+	public OffsetDateTime getCreatedAt() {
+		return createdAt;
+	}
 
+	public void setCreatedAt(OffsetDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
 
-  public void setCreatedAt(OffsetDateTime createdAt) { 
-    this.createdAt = createdAt;
-  }
+	@Override
+	public boolean equals(java.lang.Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Message message = (Message) o;
+		return Objects.equals(this.id, message.id) && Objects.equals(this.donorId, message.donorId)
+				&& Objects.equals(this.recipientId, message.recipientId)
+				&& Objects.equals(this.message, message.message) && Objects.equals(this.createdAt, message.createdAt);
+	}
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Message message = (Message) o;
-    return Objects.equals(this.id, message.id) &&
-        Objects.equals(this.donorId, message.donorId) &&
-        Objects.equals(this.recipientId, message.recipientId) &&
-        Objects.equals(this.message, message.message) &&
-        Objects.equals(this.createdAt, message.createdAt);
-  }
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, donorId, recipientId, message, createdAt);
+	}
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, donorId, recipientId, message, createdAt);
-  }
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("class Message {\n");
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class Message {\n");
-    
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    donorId: ").append(toIndentedString(donorId)).append("\n");
-    sb.append("    recipientId: ").append(toIndentedString(recipientId)).append("\n");
-    sb.append("    message: ").append(toIndentedString(message)).append("\n");
-    sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
+		sb.append("    id: ").append(toIndentedString(id)).append("\n");
+		sb.append("    donorId: ").append(toIndentedString(donorId)).append("\n");
+		sb.append("    recipientId: ").append(toIndentedString(recipientId)).append("\n");
+		sb.append("    message: ").append(toIndentedString(message)).append("\n");
+		sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
+		sb.append("}");
+		return sb.toString();
+	}
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
+	/**
+	 * Convert the given object to string with each line indented by 4 spaces (except the
+	 * first line).
+	 */
+	private String toIndentedString(java.lang.Object o) {
+		if (o == null) {
+			return "null";
+		}
+		return o.toString().replace("\n", "\n    ");
+	}
+
 }

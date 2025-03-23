@@ -24,129 +24,148 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2025-03-16T14:18:35.909799305Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
+		date = "2025-03-16T14:18:35.909799305Z[GMT]")
 @Validated
 public interface RecipientsApi {
 
-    @Operation(summary = "Add a new recipient to the store", description = "Add a new recipient to the store", security = {
-        @SecurityRequirement(name = "userstore_auth", scopes = {
-            "write:recipients",
-"read:recipients"        })    }, tags={ "Recipient" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Recipient.class))),
-        
-        @ApiResponse(responseCode = "400", description = "Invalid input"),
-        
-        @ApiResponse(responseCode = "422", description = "Validation exception") })
-    @RequestMapping(value = "/recipients",
-        produces = { "application/json", "application/xml" }, 
-        consumes = { "application/json", "application/xml", "application/x-www-form-urlencoded" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<Recipient> addRecipient(@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-, @Parameter(in = ParameterIn.DEFAULT, description = "Create a new recipient in the store", required=true, schema=@Schema()) @Valid @RequestBody Recipient body
-);
+	@Operation(summary = "Add a new recipient to the store", description = "Add a new recipient to the store",
+			security = {
+					@SecurityRequirement(name = "userstore_auth", scopes = { "write:recipients", "read:recipients" }) },
+			tags = { "Recipient" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successful operation",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = Recipient.class))),
 
+			@ApiResponse(responseCode = "400", description = "Invalid input"),
 
-    @Operation(summary = "Deletes a recipient", description = "delete a recipient", security = {
-        @SecurityRequirement(name = "userstore_auth", scopes = {
-            "write:recipients",
-"read:recipients"        })    }, tags={ "Recipient" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "400", description = "Invalid recipient value") })
-    @RequestMapping(value = "/recipients/{recipientId}",
-        method = RequestMethod.DELETE)
-    ResponseEntity<Void> deleteRecipient(@Parameter(in = ParameterIn.PATH, description = "Recipient id to delete", required=true, schema=@Schema()) @PathVariable("recipientId") Long recipientId
-, @Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-, @Parameter(in = ParameterIn.HEADER, description = "" ,schema=@Schema()) @RequestHeader(value="api_key", required=false) String apiKey
-);
+			@ApiResponse(responseCode = "422", description = "Validation exception") })
+	@RequestMapping(value = "/recipients", produces = { "application/json", "application/xml" },
+			consumes = { "application/json", "application/xml", "application/x-www-form-urlencoded" },
+			method = RequestMethod.POST)
+	ResponseEntity<Recipient> addRecipient(
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
+			@Parameter(in = ParameterIn.DEFAULT, description = "Create a new recipient in the store", required = true,
+					schema = @Schema()) @Valid @RequestBody Recipient body);
 
+	@Operation(summary = "Deletes a recipient", description = "delete a recipient",
+			security = {
+					@SecurityRequirement(name = "userstore_auth", scopes = { "write:recipients", "read:recipients" }) },
+			tags = { "Recipient" })
+	@ApiResponses(value = { @ApiResponse(responseCode = "400", description = "Invalid recipient value") })
+	@RequestMapping(value = "/recipients/{recipientId}", method = RequestMethod.DELETE)
+	ResponseEntity<Void> deleteRecipient(
+			@Parameter(in = ParameterIn.PATH, description = "Recipient id to delete", required = true,
+					schema = @Schema()) @PathVariable("recipientId") Long recipientId,
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
+			@Parameter(in = ParameterIn.HEADER, description = "", schema = @Schema()) @RequestHeader(value = "api_key",
+					required = false) String apiKey);
 
-    @Operation(summary = "Finds Recipients by tags", description = "Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.", security = {
-        @SecurityRequirement(name = "userstore_auth", scopes = {
-            "write:recipients",
-"read:recipients"        })    }, tags={ "Recipient" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Recipient.class)))),
-        
-        @ApiResponse(responseCode = "400", description = "Invalid tag value") })
-    @RequestMapping(value = "/recipients/findByTags",
-        produces = { "application/json", "application/xml" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<Recipient>> findRecipientsByTags(@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-, @Parameter(in = ParameterIn.QUERY, description = "Tags to filter by" ,schema=@Schema()) @Valid @RequestParam(value = "tags", required = false) List<String> tags
-);
+	@Operation(summary = "Finds Recipients by tags",
+			description = "Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.",
+			security = {
+					@SecurityRequirement(name = "userstore_auth", scopes = { "write:recipients", "read:recipients" }) },
+			tags = { "Recipient" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "successful operation",
+					content = @Content(mediaType = "application/json",
+							array = @ArraySchema(schema = @Schema(implementation = Recipient.class)))),
 
+			@ApiResponse(responseCode = "400", description = "Invalid tag value") })
+	@RequestMapping(value = "/recipients/findByTags", produces = { "application/json", "application/xml" },
+			method = RequestMethod.GET)
+	ResponseEntity<List<Recipient>> findRecipientsByTags(
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
+			@Parameter(in = ParameterIn.QUERY, description = "Tags to filter by",
+					schema = @Schema()) @Valid @RequestParam(value = "tags", required = false) List<String> tags);
 
-    @Operation(summary = "Find recipient by ID", description = "Returns a single recipient", security = {
-        @SecurityRequirement(name = "api_key"),
-@SecurityRequirement(name = "userstore_auth", scopes = {
-            "write:recipients",
-"read:recipients"        })    }, tags={ "Recipient" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Recipient.class))),
-        
-        @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
-        
-        @ApiResponse(responseCode = "404", description = "Recipient not found") })
-    @RequestMapping(value = "/recipients/{recipientId}",
-        produces = { "application/json", "application/xml" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<Recipient> getRecipientById(@Parameter(in = ParameterIn.PATH, description = "ID of recipient to return", required=true, schema=@Schema()) @PathVariable("recipientId") Long recipientId
-, @Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-);
+	@Operation(summary = "Find recipient by ID", description = "Returns a single recipient",
+			security = { @SecurityRequirement(name = "api_key"),
+					@SecurityRequirement(name = "userstore_auth", scopes = { "write:recipients", "read:recipients" }) },
+			tags = { "Recipient" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "successful operation",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = Recipient.class))),
 
+			@ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
 
-    @Operation(summary = "Update an existing recipient", description = "Update an existing recipient by Id", security = {
-        @SecurityRequirement(name = "userstore_auth", scopes = {
-            "write:recipients",
-"read:recipients"        })    }, tags={ "Recipient" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Recipient.class))),
-        
-        @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
-        
-        @ApiResponse(responseCode = "404", description = "Recipient not found"),
-        
-        @ApiResponse(responseCode = "422", description = "Validation exception") })
-    @RequestMapping(value = "/recipients",
-        produces = { "application/json", "application/xml" }, 
-        consumes = { "application/json", "application/xml", "application/x-www-form-urlencoded" }, 
-        method = RequestMethod.PUT)
-    ResponseEntity<Recipient> updateRecipient(@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-, @Parameter(in = ParameterIn.DEFAULT, description = "Update an existent recipient in the store", required=true, schema=@Schema()) @Valid @RequestBody Recipient body
-);
+			@ApiResponse(responseCode = "404", description = "Recipient not found") })
+	@RequestMapping(value = "/recipients/{recipientId}", produces = { "application/json", "application/xml" },
+			method = RequestMethod.GET)
+	ResponseEntity<Recipient> getRecipientById(
+			@Parameter(in = ParameterIn.PATH, description = "ID of recipient to return", required = true,
+					schema = @Schema()) @PathVariable("recipientId") Long recipientId,
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
 
+	@Operation(summary = "Update an existing recipient", description = "Update an existing recipient by Id",
+			security = {
+					@SecurityRequirement(name = "userstore_auth", scopes = { "write:recipients", "read:recipients" }) },
+			tags = { "Recipient" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successful operation",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = Recipient.class))),
 
-    @Operation(summary = "Updates a recipient's tags with form data", description = "", tags={ "Recipient" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "Created"),
-        
-        @ApiResponse(responseCode = "400", description = "Invalid input") })
-    @RequestMapping(value = "/recipients/tagGeneration/{recipientId}",
-        method = RequestMethod.POST)
-    ResponseEntity<Void> updateRecipientTags(@Parameter(in = ParameterIn.PATH, description = "Recipient id to generate tags for", required=true, schema=@Schema()) @PathVariable("recipientId") Long recipientId
-, @Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-, @Parameter(in = ParameterIn.HEADER, description = "" ,schema=@Schema()) @RequestHeader(value="api_key", required=false) String apiKey
-, @Parameter(in = ParameterIn.QUERY, description = "A combined set of text or paragraph detailing the description to be used for tag generation" ,schema=@Schema()) @Valid @RequestParam(value = "query_text", required = false) String queryText
-);
+			@ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
 
+			@ApiResponse(responseCode = "404", description = "Recipient not found"),
 
-    @Operation(summary = "Updates a recipient in the store with form data", description = "", security = {
-        @SecurityRequirement(name = "userstore_auth", scopes = {
-            "write:recipients",
-"read:recipients"        })    }, tags={ "Recipient" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "400", description = "Invalid input") })
-    @RequestMapping(value = "/recipients/{recipientId}",
-        method = RequestMethod.POST)
-    ResponseEntity<Void> updateRecipientWithForm(@Parameter(in = ParameterIn.PATH, description = "ID of recipient that needs to be updated", required=true, schema=@Schema()) @PathVariable("recipientId") Long recipientId
-, @Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests." ,required=true,schema=@Schema()) @RequestHeader(value="session_id", required=true) String sessionId
-, @Parameter(in = ParameterIn.QUERY, description = "Name of recipient that needs to be updated" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name
-, @Parameter(in = ParameterIn.QUERY, description = "Status of recipient that needs to be updated" ,schema=@Schema()) @Valid @RequestParam(value = "status", required = false) String status
-);
+			@ApiResponse(responseCode = "422", description = "Validation exception") })
+	@RequestMapping(value = "/recipients", produces = { "application/json", "application/xml" },
+			consumes = { "application/json", "application/xml", "application/x-www-form-urlencoded" },
+			method = RequestMethod.PUT)
+	ResponseEntity<Recipient> updateRecipient(
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
+			@Parameter(in = ParameterIn.DEFAULT, description = "Update an existent recipient in the store",
+					required = true, schema = @Schema()) @Valid @RequestBody Recipient body);
+
+	@Operation(summary = "Updates a recipient's tags with form data", description = "", tags = { "Recipient" })
+	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Created"),
+
+			@ApiResponse(responseCode = "400", description = "Invalid input") })
+	@RequestMapping(value = "/recipients/tagGeneration/{recipientId}", method = RequestMethod.POST)
+	ResponseEntity<Void> updateRecipientTags(
+			@Parameter(in = ParameterIn.PATH, description = "Recipient id to generate tags for", required = true,
+					schema = @Schema()) @PathVariable("recipientId") Long recipientId,
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
+			@Parameter(in = ParameterIn.HEADER, description = "", schema = @Schema()) @RequestHeader(value = "api_key",
+					required = false) String apiKey,
+			@Parameter(in = ParameterIn.QUERY,
+					description = "A combined set of text or paragraph detailing the description to be used for tag generation",
+					schema = @Schema()) @Valid @RequestParam(value = "query_text", required = false) String queryText);
+
+	@Operation(summary = "Updates a recipient in the store with form data", description = "",
+			security = {
+					@SecurityRequirement(name = "userstore_auth", scopes = { "write:recipients", "read:recipients" }) },
+			tags = { "Recipient" })
+	@ApiResponses(value = { @ApiResponse(responseCode = "400", description = "Invalid input") })
+	@RequestMapping(value = "/recipients/{recipientId}", method = RequestMethod.POST)
+	ResponseEntity<Void> updateRecipientWithForm(
+			@Parameter(in = ParameterIn.PATH, description = "ID of recipient that needs to be updated", required = true,
+					schema = @Schema()) @PathVariable("recipientId") Long recipientId,
+			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+					required = true,
+					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
+			@Parameter(in = ParameterIn.QUERY, description = "Name of recipient that needs to be updated",
+					schema = @Schema()) @Valid @RequestParam(value = "name", required = false) String name,
+			@Parameter(in = ParameterIn.QUERY, description = "Status of recipient that needs to be updated",
+					schema = @Schema()) @Valid @RequestParam(value = "status", required = false) String status);
 
 }
-
