@@ -4,12 +4,21 @@
 // ----------------------------------------------
 // ---- Static Table Definitions ---- NOTE: These are not all of the table definitions. There are automated tables generated from the associations defined in the "Reference table definition" section
 // ----------------------------------------------
+
+// Tracks all users and their current primary role.
+// This is because users could potentially switch between donor and recipient and we don't want to lose past
+// data associated with them in the previous role, but when they log in they should come in as only one role
+Table users {
+    id integer [primary key, increment]
+    cognito_id uuid
+    email varchar(320) // email is serving as username for Cognito accounts
+    recipient boolean // tracks whether the user is currently primarily a recipient or a donor
+}
+
 // Note that total donation amount to recipient is tracked using separate donations table to avoid issues with
 // possible inconsistent values
 Table recipients { // Tracks our known recipients
-  id integer [primary key, increment] // We may not need an ID if we're only going to allow recipients to be created through Cognito.
-  cognito_id uuid [not null]
-  email varchar(320) [not null, unique] // email is serving as username for Cognito accounts
+  id integer [primary key] // foreign key to users table
   first_name varchar(255)
   last_name varchar(255)
   street_address1 nvarchar(255)
@@ -26,9 +35,7 @@ Table recipients { // Tracks our known recipients
 }
 
 Table donors { // Tracks our known donors
-  id integer [primary key, increment] // Since donor's don't need to sign up, we'll need an ID to track them regardless
-  cognito_id uuid // Optional id if donors decide to sign up.
-  email varchar(320) // email is serving as username for Cognito accounts
+  id integer [primary key] // foreign key to users table
   nickname nvarchar(64)
   created_at timestamp(3)
 }
@@ -105,12 +112,20 @@ Table favorite_recipients {
 // ----------------------------------------------
 // Define FKs here rather than inline because this allows specification of constraint names
 
+// Both recipients and donors share the same PK as the corresponding parent users table entry,
+// to help keep them linked
+Ref FK_recipients_user: recipients.id > users.id
+Ref FK_donors_user: donors.id > users.id
+
 // Each donation should be one donor to one recipient
 Ref FK_donations_donor: donors.id - donations.donor_id
 Ref FK_donations_recipient: recipients.id - donations.recipient_id
 
 // Each message should be linked to a specific donation
 Ref FK_messages_donation: messages.donation_id > donations.id
+
+// many-to-one link between donor and donor_session
+Ref FK_donor_sessions_donor: donor_sessions.donor_id > donors.id
 
 // many-to-one. Each donor should have many prompts. Prompts should be assigned to a single donor session.
 Ref FK_donor_prompts_donor_session: donor_sessions.id < donor_prompts.donor_session_id
