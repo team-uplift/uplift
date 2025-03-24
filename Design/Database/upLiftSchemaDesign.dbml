@@ -13,14 +13,13 @@ Table users {
     cognito_id uuid
     email varchar(320) // email is serving as username for Cognito accounts
     recipient boolean // tracks whether the user is currently primarily a recipient or a donor
-    created_at timestamp(3)
+    created_at timestamp(3) [not null]
 }
 
 // Note that total donation amount to recipient is tracked using separate donations table to avoid issues with
 // possible inconsistent values
 Table recipients { // Tracks our known recipients
-  id integer [primary key, increment]
-  user_id integer [not null] // FK to parent users entry
+  id integer [primary key] // FK to parent user entry
   first_name varchar(255)
   last_name varchar(255)
   street_address1 nvarchar(255)
@@ -33,22 +32,22 @@ Table recipients { // Tracks our known recipients
   identity_last_verified timestamp(3) // Date/time the recipient's identity was last verified, used to determine if recipient identity needs to be re-verified
   income_last_verified timestamp(3) // Date/time the recipient's income was last verified, used to determine if recipient income needs to be re-verified
   nickname nvarchar(64)
-  created_at timestamp(3)   // keep a separate created_at for recipients and donors since these entries
-                            // may be added after initial user registration if user switches roles
+  created_at timestamp(3) [not null] // keep a separate created_at for recipients and donors since these entries
+                                     // may be added after initial user registration if user switches roles
 }
 
 Table donors { // Tracks our known donors
-  id integer [primary key, increment]
-  user_id integer [not null] // FK to parent users entry
+  id integer [primary key] // FK to parent user entry
   nickname nvarchar(64)
-  created_at timestamp(3)
+  created_at timestamp(3) [not null] // keep a separate created_at for recipients and donors since these entries
+                                       // may be added after initial user registration if user switches roles
 }
 
 // Tracks each time a donor has started the process to donate to a recipient via the matching system.
 Table donor_sessions {
   id integer [primary key, increment]
   donor_id integer [not null] // foreign key to donor table
-  session_started timestamp(3) // date/time the session started
+  created_at timestamp(3) [not null] // date/time the session started
 }
 
 Table donations { // Tracks all of the donation transactions that have occurred
@@ -56,26 +55,26 @@ Table donations { // Tracks all of the donation transactions that have occurred
   donor_id integer [not null] // Will be foreign key to donor table
   recipient_id integer [not null] // Will be foreign key to recipient table
   amount integer [not null]
-  created_at timestamp(3)
+  created_at timestamp(3) [not null]
 }
 
 Table tags { // Tracks all the known tags
   tag_name varchar(64) [primary key]
-  created_at timestamp(3)
+  created_at timestamp(3) [not null]
 }
 
 Table messages { // Tracks "thank-you" message from recipient to donor, linked to specific donation
   id integer [primary key, increment]
   donation_id integer [not null] // Will be foreign key to donation table
   message text [not null]
-  created_at timestamp(3)
+  created_at timestamp(3) [not null]
 }
 
 Table donor_prompts { // Tracks historical prompts that donor was given in a specific session
   id integer [primary key, increment]
   donor_session_id integer [not null] // Will be foreign key to donor_sessions table
   prompt text [not null]
-  created_at timestamp(3)
+  created_at timestamp(3) [not null]
 }
 
 // ----------------------------------------------
@@ -118,8 +117,8 @@ Table favorite_recipients {
 
 // Both recipients and donors share the same PK as the corresponding parent users table entry,
 // to help keep them linked
-Ref FK_recipients_user: recipients.user_id > users.id
-Ref FK_donors_user: donors.user_id > users.id
+Ref FK_recipients_user: recipients.id > users.id
+Ref FK_donors_user: donors.id > users.id
 
 // Each donation should be one donor to one recipient
 Ref FK_donations_donor: donors.id - donations.donor_id
