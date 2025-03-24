@@ -13,6 +13,7 @@ Table users {
     cognito_id uuid
     email varchar(320) // email is serving as username for Cognito accounts
     recipient boolean // tracks whether the user is currently primarily a recipient or a donor
+    created_at timestamp(3)
 }
 
 // Note that total donation amount to recipient is tracked using separate donations table to avoid issues with
@@ -31,7 +32,8 @@ Table recipients { // Tracks our known recipients
   identity_last_verified timestamp(3) // Date/time the recipient's identity was last verified, used to determine if recipient identity needs to be re-verified
   income_last_verified timestamp(3) // Date/time the recipient's income was last verified, used to determine if recipient income needs to be re-verified
   nickname nvarchar(64)
-  created_at timestamp(3)
+  created_at timestamp(3)   // keep a separate created_at for recipients and donors since these entries
+                            // may be added after initial user registration if user switches roles
 }
 
 Table donors { // Tracks our known donors

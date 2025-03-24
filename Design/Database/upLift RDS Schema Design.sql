@@ -2,7 +2,8 @@ CREATE TABLE `users` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `cognito_id` uuid,
   `email` varchar(320),
-  `recipient` boolean
+  `recipient` boolean,
+  `created_at` timestamp(3)
 );
 
 CREATE TABLE `recipients` (
