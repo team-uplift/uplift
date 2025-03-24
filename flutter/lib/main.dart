@@ -31,7 +31,6 @@ final GoRouter _router = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         return const LoginPage();
       },
-      
     ),
     GoRoute(
       path: '/donor_registration',
