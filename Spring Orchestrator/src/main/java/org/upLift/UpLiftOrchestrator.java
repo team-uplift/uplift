@@ -1,24 +1,16 @@
 package org.upLift;
 
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.upLift.configuration.LocalDateConverter;
-import org.upLift.configuration.LocalDateTimeConverter;
-
+import com.fasterxml.jackson.databind.Module;
+import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.context.annotation.Bean;
-import com.fasterxml.jackson.databind.Module;
+import org.springframework.context.annotation.ComponentScan;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistry;
-
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
-@ComponentScan(basePackages = { "org.upLift", "org.upLift.api", "org.upLift.configuration" })
+@SpringBootApplication
+@ComponentScan(basePackages = { "org.upLift", "org.upLift.api", "org.upLift.configuration", "org.upLift.services" })
 public class UpLiftOrchestrator implements CommandLineRunner {
 
 	@Override
@@ -37,16 +29,20 @@ public class UpLiftOrchestrator implements CommandLineRunner {
 		return new JsonNullableModule();
 	}
 
-	@Configuration
-	static class CustomDateConfig extends WebMvcConfigurationSupport {
-
-		@Override
-		public void addFormatters(FormatterRegistry registry) {
-			registry.addConverter(new LocalDateConverter("yyyy-MM-dd"));
-			registry.addConverter(new LocalDateTimeConverter("yyyy-MM-dd'T'HH:mm:ss.SSS"));
-		}
-
-	}
+	// Don't need this, Spring/Jackson have standard support for JDK 8 Date/Time types
+	// and it messes up the automated Jackson config
+	// @foramtter:off
+//	@Configuration
+//	static class CustomDateConfig extends WebMvcConfigurationSupport {
+//
+//		@Override
+//		public void addFormatters(FormatterRegistry registry) {
+//			registry.addConverter(new LocalDateConverter("yyyy-MM-dd"));
+//			registry.addConverter(new LocalDateTimeConverter("yyyy-MM-dd'T'HH:mm:ss.SSS"));
+//		}
+//
+//	}
+	// @formatter:on
 
 	class ExitException extends RuntimeException implements ExitCodeGenerator {
 
