@@ -4,12 +4,22 @@
 // ----------------------------------------------
 // ---- Static Table Definitions ---- NOTE: These are not all of the table definitions. There are automated tables generated from the associations defined in the "Reference table definition" section
 // ----------------------------------------------
+
+// Tracks all users and their current primary role.
+// This is because users could potentially switch between donor and recipient and we don't want to lose past
+// data associated with them in the previous role, but when they log in they should come in as only one role
+Table users {
+    id integer [primary key, increment]
+    cognito_id uuid
+    email varchar(320) // email is serving as username for Cognito accounts
+    recipient boolean // tracks whether the user is currently primarily a recipient or a donor
+    created_at timestamp(3) [not null]
+}
+
 // Note that total donation amount to recipient is tracked using separate donations table to avoid issues with
 // possible inconsistent values
 Table recipients { // Tracks our known recipients
-  id integer [primary key, increment] // We may not need an ID if we're only going to allow recipients to be created through Cognito.
-  cognito_id uuid [not null]
-  email varchar(320) [not null, unique] // email is serving as username for Cognito accounts
+  id integer [primary key] // FK to parent user entry
   first_name varchar(255)
   last_name varchar(255)
   street_address1 nvarchar(255)
@@ -19,25 +29,25 @@ Table recipients { // Tracks our known recipients
   zip_code varchar(10)
   last_about_me text [not null] // latest "about me" text that is/will be utilized to generate the tags
   last_reason_for_help text [not null] // latest "why I need help" text that is/will be utilized to generate the tags through a single prompt.
-  identity_last_verified timestamp // Date/time the recipient's identity was last verified, used to determine if recipient identity needs to be re-verified
-  income_last_verified timestamp // Date/time the recipient's income was last verified, used to determine if recipient income needs to be re-verified
+  identity_last_verified timestamp(3) // Date/time the recipient's identity was last verified, used to determine if recipient identity needs to be re-verified
+  income_last_verified timestamp(3) // Date/time the recipient's income was last verified, used to determine if recipient income needs to be re-verified
   nickname nvarchar(64)
-  created_at timestamp
+  created_at timestamp(3) [not null] // keep a separate created_at for recipients and donors since these entries
+                                     // may be added after initial user registration if user switches roles
 }
 
 Table donors { // Tracks our known donors
-  id integer [primary key, increment] // Since donor's don't need to sign up, we'll need an ID to track them regardless
-  cognito_id uuid // Optional id if donors decide to sign up.
-  email varchar(320) // email is serving as username for Cognito accounts
+  id integer [primary key] // FK to parent user entry
   nickname nvarchar(64)
-  created_at timestamp
+  created_at timestamp(3) [not null] // keep a separate created_at for recipients and donors since these entries
+                                       // may be added after initial user registration if user switches roles
 }
 
 // Tracks each time a donor has started the process to donate to a recipient via the matching system.
 Table donor_sessions {
   id integer [primary key, increment]
   donor_id integer [not null] // foreign key to donor table
-  session_started timestamp // date/time the session started
+  created_at timestamp(3) [not null] // date/time the session started
 }
 
 Table donations { // Tracks all of the donation transactions that have occurred
@@ -45,26 +55,26 @@ Table donations { // Tracks all of the donation transactions that have occurred
   donor_id integer [not null] // Will be foreign key to donor table
   recipient_id integer [not null] // Will be foreign key to recipient table
   amount integer [not null]
-  created_at timestamp
+  created_at timestamp(3) [not null]
 }
 
 Table tags { // Tracks all the known tags
   tag_name varchar(64) [primary key]
-  created_at timestamp
+  created_at timestamp(3) [not null]
 }
 
 Table messages { // Tracks "thank-you" message from recipient to donor, linked to specific donation
   id integer [primary key, increment]
   donation_id integer [not null] // Will be foreign key to donation table
   message text [not null]
-  created_at timestamp
+  created_at timestamp(3) [not null]
 }
 
 Table donor_prompts { // Tracks historical prompts that donor was given in a specific session
   id integer [primary key, increment]
   donor_session_id integer [not null] // Will be foreign key to donor_sessions table
   prompt text [not null]
-  created_at timestamp
+  created_at timestamp(3) [not null]
 }
 
 // ----------------------------------------------
@@ -105,12 +115,20 @@ Table favorite_recipients {
 // ----------------------------------------------
 // Define FKs here rather than inline because this allows specification of constraint names
 
+// Both recipients and donors share the same PK as the corresponding parent users table entry,
+// to help keep them linked
+Ref FK_recipients_user: recipients.id > users.id
+Ref FK_donors_user: donors.id > users.id
+
 // Each donation should be one donor to one recipient
 Ref FK_donations_donor: donors.id - donations.donor_id
 Ref FK_donations_recipient: recipients.id - donations.recipient_id
 
 // Each message should be linked to a specific donation
 Ref FK_messages_donation: messages.donation_id > donations.id
+
+// many-to-one link between donor and donor_session
+Ref FK_donor_sessions_donor: donor_sessions.donor_id > donors.id
 
 // many-to-one. Each donor should have many prompts. Prompts should be assigned to a single donor session.
 Ref FK_donor_prompts_donor_session: donor_sessions.id < donor_prompts.donor_session_id
