@@ -19,7 +19,8 @@ Table users {
 // Note that total donation amount to recipient is tracked using separate donations table to avoid issues with
 // possible inconsistent values
 Table recipients { // Tracks our known recipients
-  id integer [primary key] // foreign key to users table
+  id integer [primary key, increment]
+  user_id integer [not null] // FK to parent users entry
   first_name varchar(255)
   last_name varchar(255)
   street_address1 nvarchar(255)
@@ -37,7 +38,8 @@ Table recipients { // Tracks our known recipients
 }
 
 Table donors { // Tracks our known donors
-  id integer [primary key] // foreign key to users table
+  id integer [primary key, increment]
+  user_id integer [not null] // FK to parent users entry
   nickname nvarchar(64)
   created_at timestamp(3)
 }
@@ -116,8 +118,8 @@ Table favorite_recipients {
 
 // Both recipients and donors share the same PK as the corresponding parent users table entry,
 // to help keep them linked
-Ref FK_recipients_user: recipients.id > users.id
-Ref FK_donors_user: donors.id > users.id
+Ref FK_recipients_user: recipients.user_id > users.id
+Ref FK_donors_user: donors.user_id > users.id
 
 // Each donation should be one donor to one recipient
 Ref FK_donations_donor: donors.id - donations.donor_id

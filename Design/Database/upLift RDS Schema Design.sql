@@ -7,7 +7,8 @@ CREATE TABLE `users` (
 );
 
 CREATE TABLE `recipients` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
+  `user_id` integer NOT NULL,
   `first_name` varchar(255),
   `last_name` varchar(255),
   `street_address1` nvarchar(255),
@@ -24,7 +25,8 @@ CREATE TABLE `recipients` (
 );
 
 CREATE TABLE `donors` (
-  `id` integer PRIMARY KEY,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
+  `user_id` integer NOT NULL,
   `nickname` nvarchar(64),
   `created_at` timestamp(3)
 );
@@ -86,9 +88,9 @@ CREATE TABLE `favorite_recipients` (
   PRIMARY KEY (`donor_id`, `recipient_id`)
 );
 
-ALTER TABLE `recipients` ADD CONSTRAINT `FK_recipients_user` FOREIGN KEY (`id`) REFERENCES `users` (`id`);
+ALTER TABLE `recipients` ADD CONSTRAINT `FK_recipients_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
-ALTER TABLE `donors` ADD CONSTRAINT `FK_donors_user` FOREIGN KEY (`id`) REFERENCES `users` (`id`);
+ALTER TABLE `donors` ADD CONSTRAINT `FK_donors_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 ALTER TABLE `donations` ADD CONSTRAINT `FK_donations_donor` FOREIGN KEY (`donor_id`) REFERENCES `donors` (`id`);
 
