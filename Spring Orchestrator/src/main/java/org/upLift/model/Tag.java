@@ -1,13 +1,19 @@
 package org.upLift.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.validation.annotation.Validated;
-import org.upLift.configuration.NotUndefined;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import org.springframework.validation.annotation.Validated;
+import org.upLift.configuration.NotUndefined;
+
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Objects;
 
 /**
  * Tag
@@ -16,17 +22,17 @@ import com.fasterxml.jackson.annotation.Nulls;
 @NotUndefined
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
+@Entity
+@Table(name = "tags")
+public class Tag extends AbstractCreatedAt implements Comparable<Tag>, Serializable {
 
-public class Tag {
-
+	@Id
+	@Column(name = "tag_name")
 	@JsonProperty("tag_name")
-
-	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String tagName = null;
 
 	public Tag tagName(String tagName) {
-
 		this.tagName = tagName;
 		return this;
 	}
@@ -36,7 +42,7 @@ public class Tag {
 	 * @return tagName
 	 **/
 
-	@Schema(example = "Potato", description = "")
+	@Schema(example = "Potato", description = "tag linked to one or more recipients")
 
 	public String getTagName() {
 		return tagName;
@@ -44,6 +50,10 @@ public class Tag {
 
 	public void setTagName(String tagName) {
 		this.tagName = tagName;
+	}
+
+	public Tag createdAt(Instant createdAt) {
+		return (Tag) super.createdAt(createdAt);
 	}
 
 	@Override
@@ -65,23 +75,16 @@ public class Tag {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("class Tag {\n");
-
-		sb.append("    tagName: ").append(toIndentedString(tagName)).append("\n");
-		sb.append("}");
-		return sb.toString();
+		// @formatter:off
+		return "class Tag {\n"
+				+ "    tagName: " + toIndentedString(tagName) + "\n"
+				+ "}";
+		// @formatter:on
 	}
 
-	/**
-	 * Convert the given object to string with each line indented by 4 spaces (except the
-	 * first line).
-	 */
-	private String toIndentedString(java.lang.Object o) {
-		if (o == null) {
-			return "null";
-		}
-		return o.toString().replace("\n", "\n    ");
+	@Override
+	public int compareTo(Tag o) {
+		return tagName.compareTo(o.tagName);
 	}
 
 }
