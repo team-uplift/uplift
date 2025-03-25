@@ -32,16 +32,16 @@ public class UpLiftOrchestrator implements CommandLineRunner {
 	// Don't need this, Spring/Jackson have standard support for JDK 8 Date/Time types
 	// and it messes up the automated Jackson config
 	// @foramtter:off
-//	@Configuration
-//	static class CustomDateConfig extends WebMvcConfigurationSupport {
-//
-//		@Override
-//		public void addFormatters(FormatterRegistry registry) {
-//			registry.addConverter(new LocalDateConverter("yyyy-MM-dd"));
-//			registry.addConverter(new LocalDateTimeConverter("yyyy-MM-dd'T'HH:mm:ss.SSS"));
-//		}
-//
-//	}
+	// @Configuration
+	// static class CustomDateConfig extends WebMvcConfigurationSupport {
+	//
+	// @Override
+	// public void addFormatters(FormatterRegistry registry) {
+	// registry.addConverter(new LocalDateConverter("yyyy-MM-dd"));
+	// registry.addConverter(new LocalDateTimeConverter("yyyy-MM-dd'T'HH:mm:ss.SSS"));
+	// }
+	//
+	// }
 	// @formatter:on
 
 	class ExitException extends RuntimeException implements ExitCodeGenerator {

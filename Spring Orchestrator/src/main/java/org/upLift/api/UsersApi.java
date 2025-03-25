@@ -71,8 +71,7 @@ public interface UsersApi {
 					@ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
 
 					@ApiResponse(responseCode = "404", description = "User not found") })
-	@RequestMapping(value = "/users/{userId}", produces = { "application/json" },
-			method = RequestMethod.GET)
+	@RequestMapping(value = "/users/{userId}", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<User> getUserById(
 			@Parameter(in = ParameterIn.PATH, description = "ID of user to return", required = true,
 					schema = @Schema()) @PathVariable("userId") Integer userId,

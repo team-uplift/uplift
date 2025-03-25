@@ -92,8 +92,8 @@ public class UsersApiController implements UsersApi {
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.DEFAULT, description = "Update an existent user in the store",
-					required = true, schema = @Schema()) @Valid @RequestBody User body) {
+			@Parameter(in = ParameterIn.DEFAULT, description = "Update an existent user in the store", required = true,
+					schema = @Schema()) @Valid @RequestBody User body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
 			try {
