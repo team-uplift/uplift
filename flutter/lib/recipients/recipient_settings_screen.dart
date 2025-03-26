@@ -34,45 +34,45 @@ class RecipientSettingsScreen extends StatelessWidget {
                 print("Edit profile chosen");
               }
             ),
-            Divider(),
+            const Divider(),
 
             ListTile(
-              leading: Icon(Icons.email),
-              title: Text("Change Email"),
-              subtitle: Text("Update your associated email address"),
+              leading: const Icon(Icons.email),
+              title: const Text("Change Email"),
+              subtitle: const Text("Update your associated email address"),
               onTap: changeEmail ?? () {
                 // TODO allow user to change email here
                 print("Change Email tapped");
               },
             ),
-            Divider(),
+            const Divider(),
 
             ListTile(
-              leading: Icon(Icons.logout),
-              title: Text("Logout"),
-              subtitle: Text("Log out of your account"),
+              leading: const Icon(Icons.logout),
+              title: const Text("Logout"),
+              subtitle: const Text("Log out of your account"),
               onTap: logout ?? () {
                 // TODO implement logout here. for now route to login page
                 context.goNamed('/login');
                 print("Logout tapped");
               },
             ),
-            Divider(),
+            const Divider(),
 
             // TODO section below GPT generated
             ListTile(
-              leading: Icon(Icons.delete_forever, color: Colors.red),
-              title: Text("Delete Account", style: TextStyle(color: Colors.red)),
-              subtitle: Text("Permanently remove your account"),
+              leading: const Icon(Icons.delete_forever, color: Colors.red),
+              title: const Text("Delete Account", style: TextStyle(color: Colors.red)),
+              subtitle: const Text("Permanently remove your account"),
               onTap: deleteAccount ?? () {
                 // Show a confirmation dialog
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text("Are you sure?"),
-                    content: Text("This will permanently delete your account."),
+                    title: const Text("Are you sure?"),
+                    content: const Text("This will permanently delete your account."),
                     actions: [
-                      TextButton(onPressed: () => Navigator.pop(context), child: Text("Cancel")),
+                      TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
                       ElevatedButton(
                         onPressed: () {
                           // TODO implement account deletion and route to home
@@ -80,8 +80,8 @@ class RecipientSettingsScreen extends StatelessWidget {
                           print("Account deleted");
                           context.goNamed('/login');
                         },
-                        child: Text("Delete"),
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        child: Text("Delete"),
                       ),
                     ],
                   ),

@@ -12,8 +12,8 @@ class AboutMe extends StatefulWidget {
     required this.formData,
     required this.onNext,
     required this.onBack,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _AboutMeState createState() => _AboutMeState();

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:uplift/components/bottom_nav_bar.dart';
 import 'recipient_history_screen.dart';
 import 'recipient_profile_screen.dart';
-import 'recipient_tags_screen.dart';
 import 'recipient_settings_screen.dart';
 import 'package:go_router/go_router.dart';
 
