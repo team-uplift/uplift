@@ -1,15 +1,36 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-uplift-dev-a5d06-authRole",
-      "UnauthRoleArn": "arn:aws:iam::988272540895:role/amplify-uplift-dev-a5d06-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::988272540895:role/amplify-uplift-dev-a5d06-authRole",
-      "Region": "us-west-1",
-      "DeploymentBucketName": "amplify-uplift-dev-a5d06-deployment",
-      "UnauthRoleName": "amplify-uplift-dev-a5d06-unauthRole",
-      "StackName": "amplify-uplift-dev-a5d06",
-      "StackId": "arn:aws:cloudformation:us-west-1:988272540895:stack/amplify-uplift-dev-a5d06/6ed70770-f605-11ef-bccf-0297de6de60b",
-      "AmplifyAppId": "d225t4dn43l1lo"
+      "AuthRoleName": "amplify-uplift-dev-80411-authRole",
+      "UnauthRoleArn": "arn:aws:iam::988272540895:role/amplify-uplift-dev-80411-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::988272540895:role/amplify-uplift-dev-80411-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-uplift-dev-80411-deployment",
+      "UnauthRoleName": "amplify-uplift-dev-80411-unauthRole",
+      "StackName": "amplify-uplift-dev-80411",
+      "StackId": "arn:aws:cloudformation:us-east-1:988272540895:stack/amplify-uplift-dev-80411/a4f80250-fed9-11ef-b782-0e80a8fbbeab",
+      "AmplifyAppId": "d2wakygez8w3ce"
+    }
+  },
+  "develop": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-uplift-develop-81433-authRole",
+      "UnauthRoleArn": "arn:aws:iam::988272540895:role/amplify-uplift-develop-81433-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::988272540895:role/amplify-uplift-develop-81433-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-uplift-develop-81433-deployment",
+      "UnauthRoleName": "amplify-uplift-develop-81433-unauthRole",
+      "StackName": "amplify-uplift-develop-81433",
+      "StackId": "arn:aws:cloudformation:us-east-1:988272540895:stack/amplify-uplift-develop-81433/01ab0dd0-0862-11f0-bc34-0affcc59126b",
+      "AmplifyAppId": "d2wakygez8w3ce"
+    },
+    "categories": {
+      "auth": {
+        "uplift4dc6bb62": {}
+      },
+      "api": {
+        "uplift": {}
+      }
     }
   }
 }
