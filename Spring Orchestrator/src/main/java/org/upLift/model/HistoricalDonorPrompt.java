@@ -1,15 +1,15 @@
 package org.upLift.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
-import org.threeten.bp.OffsetDateTime;
-import org.springframework.validation.annotation.Validated;
-import org.upLift.configuration.NotUndefined;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.validation.annotation.Validated;
+import org.upLift.configuration.NotUndefined;
+
+import java.time.Instant;
+import java.util.Objects;
 
 /**
  * HistoricalDonorPrompt
@@ -19,19 +19,13 @@ import jakarta.validation.Valid;
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
 
-public class HistoricalDonorPrompt {
-
-	@JsonProperty("id")
-
-	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
-	private Integer id = null;
+public class HistoricalDonorPrompt extends AbstractCreatedEntity {
 
 	@JsonProperty("donor_id")
 
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
-	private Integer donorId = null;
+	private Integer donorSessionId = null;
 
 	@JsonProperty("prompt")
 
@@ -39,36 +33,14 @@ public class HistoricalDonorPrompt {
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String prompt = null;
 
-	@JsonProperty("created_at")
-
-	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
-	private OffsetDateTime createdAt = null;
-
 	public HistoricalDonorPrompt id(Integer id) {
-
-		this.id = id;
+		setId(id);
 		return this;
 	}
 
-	/**
-	 * Get id
-	 * @return id
-	 **/
+	public HistoricalDonorPrompt donorSessionId(Integer donorId) {
 
-	@Schema(example = "1", description = "")
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public HistoricalDonorPrompt donorId(Integer donorId) {
-
-		this.donorId = donorId;
+		this.donorSessionId = donorId;
 		return this;
 	}
 
@@ -77,14 +49,14 @@ public class HistoricalDonorPrompt {
 	 * @return donorId
 	 **/
 
-	@Schema(example = "101", description = "")
+	@Schema(example = "101", description = "persistence index ")
 
 	public Integer getDonorId() {
-		return donorId;
+		return donorSessionId;
 	}
 
 	public void setDonorId(Integer donorId) {
-		this.donorId = donorId;
+		this.donorSessionId = donorId;
 	}
 
 	public HistoricalDonorPrompt prompt(String prompt) {
@@ -98,7 +70,7 @@ public class HistoricalDonorPrompt {
 	 * @return prompt
 	 **/
 
-	@Schema(example = "Willing to donate clothes", description = "")
+	@Schema(example = "Pick one of the following", description = "Prompt provided to donor to select tag")
 
 	public String getPrompt() {
 		return prompt;
@@ -108,26 +80,8 @@ public class HistoricalDonorPrompt {
 		this.prompt = prompt;
 	}
 
-	public HistoricalDonorPrompt createdAt(OffsetDateTime createdAt) {
-
-		this.createdAt = createdAt;
-		return this;
-	}
-
-	/**
-	 * Get createdAt
-	 * @return createdAt
-	 **/
-
-	@Schema(example = "2024-03-15T10:00Z", description = "")
-
-	@Valid
-	public OffsetDateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(OffsetDateTime createdAt) {
-		this.createdAt = createdAt;
+	public HistoricalDonorPrompt createdAt(Instant createdAt) {
+		return (HistoricalDonorPrompt) super.createdAt(createdAt);
 	}
 
 	@Override
@@ -139,15 +93,15 @@ public class HistoricalDonorPrompt {
 			return false;
 		}
 		HistoricalDonorPrompt historicalDonorPrompt = (HistoricalDonorPrompt) o;
-		return Objects.equals(this.id, historicalDonorPrompt.id)
-				&& Objects.equals(this.donorId, historicalDonorPrompt.donorId)
+		return Objects.equals(this.getId(), historicalDonorPrompt.getId())
+				&& Objects.equals(this.donorSessionId, historicalDonorPrompt.donorSessionId)
 				&& Objects.equals(this.prompt, historicalDonorPrompt.prompt)
-				&& Objects.equals(this.createdAt, historicalDonorPrompt.createdAt);
+				&& Objects.equals(this.getCreatedAt(), historicalDonorPrompt.getCreatedAt());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, donorId, prompt, createdAt);
+		return Objects.hash(getId(), donorSessionId, prompt, getCreatedAt());
 	}
 
 	@Override
@@ -155,23 +109,12 @@ public class HistoricalDonorPrompt {
 		StringBuilder sb = new StringBuilder();
 		sb.append("class HistoricalDonorPrompt {\n");
 
-		sb.append("    id: ").append(toIndentedString(id)).append("\n");
-		sb.append("    donorId: ").append(toIndentedString(donorId)).append("\n");
+		sb.append("    id: ").append(toIndentedString(getId())).append("\n");
+		sb.append("    donorId: ").append(toIndentedString(donorSessionId)).append("\n");
 		sb.append("    prompt: ").append(toIndentedString(prompt)).append("\n");
-		sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
+		sb.append("    createdAt: ").append(toIndentedString(getCreatedAt())).append("\n");
 		sb.append("}");
 		return sb.toString();
-	}
-
-	/**
-	 * Convert the given object to string with each line indented by 4 spaces (except the
-	 * first line).
-	 */
-	private String toIndentedString(java.lang.Object o) {
-		if (o == null) {
-			return "null";
-		}
-		return o.toString().replace("\n", "\n    ");
 	}
 
 }

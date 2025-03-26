@@ -1,27 +1,36 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>org.upLift</groupId>
     <artifactId>uplift-orchestrator</artifactId>
     <packaging>jar</packaging>
     <name>uplift-orchestrator</name>
     <version>1.0.0</version>
+
     <properties>
         <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <springdoc-version>1.7.0</springdoc-version>
+        <springdoc-version>2.8.5</springdoc-version>
+
     </properties>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.4.2</version>
     </parent>
+
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <compilerArguments> --enable-preview </compilerArguments>
+                    <jvmArguments> --enable-preview</jvmArguments>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -59,14 +68,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <compilerArguments> --enable-preview </compilerArguments>
-                    <jvmArguments> --enable-preview</jvmArguments>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>io.spring.javaformat</groupId>
                 <artifactId>spring-javaformat-maven-plugin</artifactId>
                 <version>0.0.41</version>
@@ -82,10 +83,54 @@
             </plugin>
         </plugins>
     </build>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Use log4j2 for logging, so exclude the standard spring-boot logging which sends log4j to slf4j -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/bom -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>2.31.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.awspring.cloud</groupId>
+                <artifactId>spring-cloud-aws-dependencies</artifactId>
+                <version>3.3.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+
+        <!-- SPRING BOOT/CLOUD AND RELATED DEPENDENCIES -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
         <dependency>
@@ -94,22 +139,74 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+
+        <!-- Independent Spring Cloud AWS project, supports use of AWS Secrets Manager -->
+        <!-- https://mvnrepository.com/artifact/io.awspring.cloud/spring-cloud-aws-secrets-manager -->
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-aws-secrets-manager</artifactId>
+        </dependency>
+
+        <!-- AUTOMATIC OPEN API DOCS GENERATION -->
+
+        <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.8.5</version>
+            <version>${springdoc-version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
-            <version>2.8.5</version>
+            <version>${springdoc-version}</version>
+        </dependency>
+
+        <!-- AWS DEPENDENCIES -->
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>secretsmanager</artifactId>
+        </dependency>
+
+        <!-- Used to facilitate Spring Boot connection to RDS using Secrets Manager for database credential -->
+        <!-- https://mvnrepository.com/artifact/com.amazonaws.secretsmanager/aws-secretsmanager-jdbc -->
+        <dependency>
+            <groupId>com.amazonaws.secretsmanager</groupId>
+            <artifactId>aws-secretsmanager-jdbc</artifactId>
+            <version>2.0.2</version>
         </dependency>
 
         <dependency>
-            <groupId>com.github.joschi.jackson</groupId>
-            <artifactId>jackson-datatype-threetenbp</artifactId>
-            <version>2.6.4</version>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>cognitoidentity</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>cognitoidentityprovider</artifactId>
+        </dependency>
+
+        <!-- Amazon wrapper for JDBC, supports use of either IAM role or Secrets Manager with MariaDB
+             https://github.com/aws/aws-advanced-jdbc-wrapper/tree/main -->
+<!--        <dependency>-->
+<!--            <groupId>software.amazon.jdbc</groupId>-->
+<!--            <artifactId>aws-advanced-jdbc-wrapper</artifactId>-->
+<!--            <version>2.5.5</version>-->
+<!--        </dependency>-->
+
+        <!-- OTHER DEPENDENCIES -->
+
+        <!-- Jackson provides mapping for JDK 8 Date/time data types via jackson-datatype-jsr310 which
+             is included in the spring-boot-starter-json import pulled in by web starter,
+             no need to add it separately -->
+<!--        <dependency>-->
+<!--            <groupId>com.github.joschi.jackson</groupId>-->
+<!--            <artifactId>jackson-datatype-threetenbp</artifactId>-->
+<!--            <version>2.6.4</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.openapitools</groupId>
@@ -117,19 +214,6 @@
             <version>0.2.6</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
@@ -152,14 +236,31 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+
+        <!-- TEST DEPENDENCIES -->
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <scope>runtime</scope>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
         </dependency>
+
+        <!-- For simplicity, use h2 database for test purposes, especially CI/CD testing -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

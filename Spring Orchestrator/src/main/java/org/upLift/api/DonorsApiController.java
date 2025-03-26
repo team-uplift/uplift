@@ -1,23 +1,18 @@
 package org.upLift.api;
 
-import org.upLift.model.Donor;
-import org.upLift.model.Recipient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.upLift.model.Donor;
 
-import jakarta.validation.Valid;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
@@ -37,26 +32,26 @@ public class DonorsApiController implements DonorsApi {
 		this.request = request;
 	}
 
-	public ResponseEntity<Recipient> addDonor(
+	public ResponseEntity<Donor> addDonor(
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Create a new recipient in the store", required = true,
-					schema = @Schema()) @Valid @RequestBody Recipient body) {
+					schema = @Schema()) @Valid @RequestBody Donor body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
 			try {
-				return new ResponseEntity<Recipient>(objectMapper.readValue(
+				return new ResponseEntity<Donor>(objectMapper.readValue(
 						"{\n  \"income_verified\" : true,\n  \"cognito_id\" : \"oijwedf-wrefwefr-saedf3rweg-gv\",\n  \"amount_received\" : 300.15,\n  \"nickname\" : \"PotatoKing\",\n  \"id\" : 10,\n  \"last_profile_text\" : \"I like potatoes.\",\n  \"email\" : \"testUser\",\n  \"username\" : \"testUser\",\n  \"tags\" : [ {\n    \"tag_name\" : \"Potato\"\n  }, {\n    \"tag_name\" : \"Potato\"\n  } ]\n}",
-						Recipient.class), HttpStatus.NOT_IMPLEMENTED);
+						Donor.class), HttpStatus.NOT_IMPLEMENTED);
 			}
 			catch (IOException e) {
 				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<Recipient>(HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<Donor>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 
-		return new ResponseEntity<Recipient>(HttpStatus.NOT_IMPLEMENTED);
+		return new ResponseEntity<Donor>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	public ResponseEntity<Void> deleteDonor(
@@ -93,26 +88,26 @@ public class DonorsApiController implements DonorsApi {
 		return new ResponseEntity<Donor>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
-	public ResponseEntity<Recipient> updateDonor(
+	public ResponseEntity<Donor> updateDonor(
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Update an existent donor in the store", required = true,
-					schema = @Schema()) @Valid @RequestBody Recipient body) {
+					schema = @Schema()) @Valid @RequestBody Donor body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
 			try {
-				return new ResponseEntity<Recipient>(objectMapper.readValue(
+				return new ResponseEntity<Donor>(objectMapper.readValue(
 						"{\n  \"income_verified\" : true,\n  \"cognito_id\" : \"oijwedf-wrefwefr-saedf3rweg-gv\",\n  \"amount_received\" : 300.15,\n  \"nickname\" : \"PotatoKing\",\n  \"id\" : 10,\n  \"last_profile_text\" : \"I like potatoes.\",\n  \"email\" : \"testUser\",\n  \"username\" : \"testUser\",\n  \"tags\" : [ {\n    \"tag_name\" : \"Potato\"\n  }, {\n    \"tag_name\" : \"Potato\"\n  } ]\n}",
-						Recipient.class), HttpStatus.NOT_IMPLEMENTED);
+						Donor.class), HttpStatus.NOT_IMPLEMENTED);
 			}
 			catch (IOException e) {
 				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<Recipient>(HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<Donor>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 
-		return new ResponseEntity<Recipient>(HttpStatus.NOT_IMPLEMENTED);
+		return new ResponseEntity<Donor>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	public ResponseEntity<Void> updateDonorTags(
