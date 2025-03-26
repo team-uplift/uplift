@@ -5,57 +5,49 @@
  */
 package org.upLift.api;
 
-import org.upLift.model.Donor;
-import org.upLift.model.Recipient;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+import org.upLift.model.Donor;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
 @Validated
 public interface DonorsApi {
 
-	@Operation(summary = "Add a new recipient to the store", description = "Add a new recipient to the store",
-			security = {
-					@SecurityRequirement(name = "userstore_auth", scopes = { "write:recipients", "read:recipients" }) },
+	@Operation(summary = "Add a new donor to the app", description = "Add a new donor to the app",
+			security = { @SecurityRequirement(name = "userstore_auth", scopes = { "write:donors", "read:donors" }) },
 			tags = { "Donor" })
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Successful operation",
-					content = @Content(mediaType = "application/json",
-							schema = @Schema(implementation = Recipient.class))),
+	@ApiResponses(
+			value = {
+					@ApiResponse(responseCode = "200", description = "Successful operation",
+							content = @Content(mediaType = "application/json",
+									schema = @Schema(implementation = Donor.class))),
 
-			@ApiResponse(responseCode = "400", description = "Invalid input"),
+					@ApiResponse(responseCode = "400", description = "Invalid input"),
 
-			@ApiResponse(responseCode = "422", description = "Validation exception") })
+					@ApiResponse(responseCode = "422", description = "Validation exception") })
 	@RequestMapping(value = "/donors", produces = { "application/json", "application/xml" },
 			consumes = { "application/json", "application/xml", "application/x-www-form-urlencoded" },
 			method = RequestMethod.POST)
-	ResponseEntity<Recipient> addDonor(
+	ResponseEntity<Donor> addDonor(
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.DEFAULT, description = "Create a new recipient in the store", required = true,
-					schema = @Schema()) @Valid @RequestBody Recipient body);
+			@Parameter(in = ParameterIn.DEFAULT, description = "Create a new donor in the store", required = true,
+					schema = @Schema()) @Valid @RequestBody Donor body);
 
 	@Operation(summary = "Deletes a donor", description = "delete a donor",
-			security = {
-					@SecurityRequirement(name = "userstore_auth", scopes = { "write:recipients", "read:recipients" }) },
+			security = { @SecurityRequirement(name = "userstore_auth", scopes = { "write:donors", "read:donors" }) },
 			tags = { "Donor" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "400", description = "Invalid donor value") })
 	@RequestMapping(value = "/donors/{donorId}", method = RequestMethod.DELETE)
@@ -70,7 +62,7 @@ public interface DonorsApi {
 
 	@Operation(summary = "Find donor by ID", description = "Returns a single donor",
 			security = { @SecurityRequirement(name = "api_key"),
-					@SecurityRequirement(name = "userstore_auth", scopes = { "write:recipients", "read:recipients" }) },
+					@SecurityRequirement(name = "userstore_auth", scopes = { "write:donors", "read:donors" }) },
 			tags = { "Donor" })
 	@ApiResponses(
 			value = {
@@ -90,29 +82,29 @@ public interface DonorsApi {
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
 
-	@Operation(summary = "Update an existing recipient", description = "Update an existing recipient by Id",
-			security = {
-					@SecurityRequirement(name = "userstore_auth", scopes = { "write:recipients", "read:recipients" }) },
+	@Operation(summary = "Update an existing donor", description = "Update an existing donor by Id",
+			security = { @SecurityRequirement(name = "userstore_auth", scopes = { "write:donors", "read:donors" }) },
 			tags = { "Donor" })
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Successful operation",
-					content = @Content(mediaType = "application/json",
-							schema = @Schema(implementation = Recipient.class))),
+	@ApiResponses(
+			value = {
+					@ApiResponse(responseCode = "200", description = "Successful operation",
+							content = @Content(mediaType = "application/json",
+									schema = @Schema(implementation = Donor.class))),
 
-			@ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
+					@ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
 
-			@ApiResponse(responseCode = "404", description = "Recipient not found"),
+					@ApiResponse(responseCode = "404", description = "Donor not found"),
 
-			@ApiResponse(responseCode = "422", description = "Validation exception") })
+					@ApiResponse(responseCode = "422", description = "Validation exception") })
 	@RequestMapping(value = "/donors", produces = { "application/json", "application/xml" },
 			consumes = { "application/json", "application/xml", "application/x-www-form-urlencoded" },
 			method = RequestMethod.PUT)
-	ResponseEntity<Recipient> updateDonor(
+	ResponseEntity<Donor> updateDonor(
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Update an existent donor in the store", required = true,
-					schema = @Schema()) @Valid @RequestBody Recipient body);
+					schema = @Schema()) @Valid @RequestBody Donor body);
 
 	@Operation(summary = "Updates a donors's tags with form data", description = "", tags = { "Donor" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Created"),
@@ -132,8 +124,7 @@ public interface DonorsApi {
 					schema = @Schema()) @Valid @RequestParam(value = "query_text", required = false) String queryText);
 
 	@Operation(summary = "Updates a donor in the store with form data", description = "",
-			security = {
-					@SecurityRequirement(name = "userstore_auth", scopes = { "write:recipients", "read:recipients" }) },
+			security = { @SecurityRequirement(name = "userstore_auth", scopes = { "write:donors", "read:donors" }) },
 			tags = { "Donor" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "400", description = "Invalid input") })
 	@RequestMapping(value = "/donors/{donorId}", method = RequestMethod.POST)

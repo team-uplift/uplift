@@ -1,72 +1,62 @@
 package org.upLift.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.upLift.configuration.NotUndefined;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
 
-import jakarta.validation.constraints.*;
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Objects;
 
 /**
- * Donation
+ * Donation entity class that links donor to recipient, with amount and donation date.
+ * Comparable implementation sorts in reverse order by donation date, with most recent
+ * donation first.
  */
 @Validated
 @NotUndefined
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
+@Entity
+@Table(name = "donations")
+public class Donation extends AbstractCreatedEntity implements Comparable<Donation>, Serializable {
 
-public class Donation {
+	// For some endpoints we want the full Donor object and for others we want the full
+	// Recipient, so
+	// just mark the properties as @JsonIgnore and set up getters/setters as needed
 
-	@JsonProperty("id")
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "donor_id", referencedColumnName = "id", nullable = false)
+	private Donor donor;
 
-	private Integer id = null;
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "recipient_id", referencedColumnName = "id", nullable = false)
+	@JsonBackReference
+	private Recipient recipient;
 
-	@JsonProperty("donor_id")
-
-	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
-	private Integer donorId = null;
-
-	@JsonProperty("recipient_id")
-
-	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
-	private Integer recipientId = null;
-
+	@Column(name = "amount", nullable = false)
 	@JsonProperty("amount")
-
 	private Integer amount = null;
 
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "donation")
+	@JsonProperty("thank_you_message")
+	private Message thankYouMessage;
+
 	public Donation id(Integer id) {
-
-		this.id = id;
-		return this;
+		return (Donation) super.id(id);
 	}
 
-	/**
-	 * Get id
-	 * @return id
-	 **/
-
-	@Schema(example = "1", required = true, description = "")
-
-	@NotNull
-	public Integer getId() {
-		return id;
+	public Donation createdAt(Instant createdAt) {
+		return (Donation) super.createdAt(createdAt);
 	}
 
-	public void setId(Integer id) {
-
-		this.id = id;
-	}
-
-	public Donation donorId(Integer donorId) {
-
-		this.donorId = donorId;
+	public Donation donor(Donor donor) {
+		this.donor = donor;
 		return this;
 	}
 
@@ -75,19 +65,36 @@ public class Donation {
 	 * @return donorId
 	 **/
 
-	@Schema(example = "101", description = "")
+	@Schema(example = "101", requiredMode = Schema.RequiredMode.REQUIRED,
+			description = "persistence index of the donor who gave this donation")
 
+	@JsonView(UpliftJsonViews.DonorId.class)
+	@JsonGetter("donor_id")
 	public Integer getDonorId() {
-		return donorId;
+		return donor.getId();
 	}
 
+	@JsonView(UpliftJsonViews.DonorId.class)
+	@JsonSetter("donor_id")
 	public void setDonorId(Integer donorId) {
-		this.donorId = donorId;
+		this.donor = new Donor().id(donorId);
 	}
 
-	public Donation recipientId(Integer recipientId) {
+	@Schema(implementation = Donor.class, description = "full object for the donor who gave this donation")
 
-		this.recipientId = recipientId;
+	@JsonView(UpliftJsonViews.FullDonor.class)
+	@JsonGetter("donor")
+	public Donor getDonor() {
+		return donor;
+	}
+
+	public void setDonor(Donor donor) {
+		this.donor = donor;
+	}
+
+	public Donation recipient(Recipient recipient) {
+
+		this.recipient = recipient;
 		return this;
 	}
 
@@ -96,14 +103,30 @@ public class Donation {
 	 * @return recipientId
 	 **/
 
-	@Schema(example = "202", description = "")
+	@Schema(example = "202", requiredMode = Schema.RequiredMode.REQUIRED,
+			description = "persistence index of the recipient who received this donation")
 
+	@JsonView(UpliftJsonViews.RecipientId.class)
+	@JsonGetter("recipient_id")
 	public Integer getRecipientId() {
-		return recipientId;
+		return recipient.getId();
 	}
 
+	@JsonSetter("recipient_id")
 	public void setRecipientId(Integer recipientId) {
-		this.recipientId = recipientId;
+		this.recipient = new Recipient().id(recipientId);
+	}
+
+	@Schema(implementation = Recipient.class, description = "full object for the recipient who received this donation")
+
+	@JsonView(UpliftJsonViews.FullRecipient.class)
+	@JsonGetter("recipient")
+	public Recipient getRecipient() {
+		return recipient;
+	}
+
+	public void setRecipient(Recipient recipient) {
+		this.recipient = recipient;
 	}
 
 	public Donation amount(Integer amount) {
@@ -117,7 +140,8 @@ public class Donation {
 	 * @return amount
 	 **/
 
-	@Schema(example = "500", required = true, description = "")
+	@Schema(example = "1000", requiredMode = Schema.RequiredMode.REQUIRED,
+			description = "amount (in cents) of the donation")
 
 	@NotNull
 	public Integer getAmount() {
@@ -130,7 +154,7 @@ public class Donation {
 	}
 
 	@Override
-	public boolean equals(java.lang.Object o) {
+	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
 		}
@@ -138,38 +162,27 @@ public class Donation {
 			return false;
 		}
 		Donation donation = (Donation) o;
-		return Objects.equals(this.id, donation.id) && Objects.equals(this.donorId, donation.donorId)
-				&& Objects.equals(this.recipientId, donation.recipientId)
-				&& Objects.equals(this.amount, donation.amount);
+		return Objects.equals(this.getId(), donation.getId()) && Objects.equals(this.donor, donation.donor)
+				&& Objects.equals(this.recipient, donation.recipient) && Objects.equals(this.amount, donation.amount);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, donorId, recipientId, amount);
+		return Objects.hash(getId(), donor, recipient, amount);
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("class Donation {\n");
 
-		sb.append("    id: ").append(toIndentedString(id)).append("\n");
-		sb.append("    donorId: ").append(toIndentedString(donorId)).append("\n");
-		sb.append("    recipientId: ").append(toIndentedString(recipientId)).append("\n");
-		sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
-		sb.append("}");
-		return sb.toString();
+		String sb = "class Donation {\n" + "    id: " + toIndentedString(getId()) + "\n" + "    donorId: "
+				+ toIndentedString(donor.getId()) + "\n" + "    recipientId: " + toIndentedString(recipient.getId())
+				+ "\n" + "    amount: " + toIndentedString(amount) + "\n" + "}";
+		return sb;
 	}
 
-	/**
-	 * Convert the given object to string with each line indented by 4 spaces (except the
-	 * first line).
-	 */
-	private String toIndentedString(java.lang.Object o) {
-		if (o == null) {
-			return "null";
-		}
-		return o.toString().replace("\n", "\n    ");
+	@Override
+	public int compareTo(Donation o) {
+		return o.getCreatedAt().compareTo(this.getCreatedAt());
 	}
 
 }

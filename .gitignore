@@ -4,3 +4,6 @@
 /.packages
 /.flutter-plugins
 /.flutter-plugins-dependencies
+
+/Spring Orchestrator/target
+**/*.iml

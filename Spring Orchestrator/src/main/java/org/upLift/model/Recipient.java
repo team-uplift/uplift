@@ -1,80 +1,108 @@
 package org.upLift.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.upLift.configuration.NotUndefined;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+
+import java.time.Instant;
+import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Recipient
  */
+@SuppressWarnings("unused")
 @Validated
 @NotUndefined
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
+@Entity
+@Table(name = "recipients")
+public class Recipient extends AbstractCreatedAt {
 
-public class Recipient {
+	@OneToOne
+	@MapsId
+	@JoinColumn(name = "id", referencedColumnName = "id")
+	@JsonIgnore
+	private User user;
 
+	@Id
+	@Column(name = "id")
 	@JsonProperty("id")
+	private Integer id;
 
-	private Long id = null;
-
-	@JsonProperty("cognito_id")
-
+	@Column(name = "first_name")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
-	private String cognitoId = null;
+	@JsonProperty("first_name")
+	private String firstName;
 
-	@JsonProperty("username")
-
+	@Column(name = "last_name")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
-	private String username = null;
+	@JsonProperty("last_name")
+	private String lastName;
 
-	@JsonProperty("email")
-
+	@Column(name = "street_address1")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
-	private String email = null;
+	@JsonProperty("street_address1")
+	private String streetAddress1;
 
-	@JsonProperty("last_profile_text")
-
+	@Column(name = "street_address2")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
-	private String lastProfileText = null;
+	@JsonProperty("street_address2")
+	private String streetAddress2;
 
-	@JsonProperty("amount_received")
-
+	@Column(name = "city")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
-	private Double amountReceived = null;
+	@JsonProperty("city")
+	private String city;
 
-	@JsonProperty("income_verified")
-
+	@Column(name = "state")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
+	@JsonProperty("state")
+	private String state;
+
+	@Column(name = "last_about_me")
+	@JsonProperty("last_about_me")
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
-	private Boolean incomeVerified = null;
+	private String lastAboutMe;
+
+	@Column(name = "last_reason_for_help")
+	@JsonProperty("last_reason_for_help")
+	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
+	private String lastReasonForHelp;
+
+	@Column(name = "identity_last_verified")
+	@JsonProperty("identity_last_verified")
+	private Instant identityLastVerified;
+
+	@Column(name = "income_last_verified")
+	@JsonProperty("income_last_verified")
+	private Instant incomeLastVerified;
 
 	@JsonProperty("nickname")
-
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String nickname = null;
 
-	@JsonProperty("tags")
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "recipient_tags", joinColumns = @JoinColumn(name = "recipient_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "tag_name", referencedColumnName = "tag_name"))
 	@Valid
-	private List<Tag> tags = null;
+	@JsonProperty("tags")
+	private SortedSet<Tag> tags;
 
-	public Recipient id(Long id) {
+	public User getUser() {
+		return user;
+	}
 
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Recipient id(Integer id) {
 		this.id = id;
 		return this;
 	}
@@ -83,85 +111,108 @@ public class Recipient {
 	 * Get id
 	 * @return id
 	 **/
-
-	@Schema(example = "10", required = true, description = "")
-
-	@NotNull
-	public Long getId() {
+	@Schema(example = "1", description = "persistence index of the entity")
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
-
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public Recipient cognitoId(String cognitoId) {
-
-		this.cognitoId = cognitoId;
+	public Recipient firstName(String firstName) {
+		this.firstName = firstName;
 		return this;
 	}
 
-	/**
-	 * Get cognitoId
-	 * @return cognitoId
-	 **/
+	@Schema(example = "Jane", description = "first name of the recipient")
 
-	@Schema(example = "oijwedf-wrefwefr-saedf3rweg-gv", description = "")
-
-	public String getCognitoId() {
-		return cognitoId;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setCognitoId(String cognitoId) {
-		this.cognitoId = cognitoId;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public Recipient username(String username) {
-
-		this.username = username;
+	public Recipient lastName(String lastName) {
+		this.lastName = lastName;
 		return this;
 	}
 
-	/**
-	 * Get username
-	 * @return username
-	 **/
+	@Schema(example = "Doe", description = "Last name of the recipient")
 
-	@Schema(example = "testUser", description = "")
-
-	public String getUsername() {
-		return username;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
-	public Recipient email(String email) {
-
-		this.email = email;
+	public Recipient streetAddress1(String streetAddress1) {
+		this.streetAddress1 = streetAddress1;
 		return this;
 	}
 
-	/**
-	 * Get email
-	 * @return email
-	 **/
+	@Schema(example = "123 Main St", description = "street address line 1 of the recipient")
 
-	@Schema(example = "testUser", description = "")
-
-	public String getEmail() {
-		return email;
+	public String getStreetAddress1() {
+		return streetAddress1;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setStreetAddress1(String streetAddress1) {
+		this.streetAddress1 = streetAddress1;
 	}
 
-	public Recipient lastProfileText(String lastProfileText) {
+	public Recipient streetAddress2(String streetAddress2) {
+		this.streetAddress2 = streetAddress2;
+		return this;
+	}
 
-		this.lastProfileText = lastProfileText;
+	@Schema(example = "Apt. 23", description = "street address line 2 of the recipient")
+
+	public String getStreetAddress2() {
+		return streetAddress2;
+	}
+
+	public void setStreetAddress2(String streetAddress2) {
+		this.streetAddress2 = streetAddress2;
+	}
+
+	public Recipient city(String city) {
+		this.city = city;
+		return this;
+	}
+
+	@Schema(example = "Anytown", description = "city in which the recipient lives")
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public Recipient state(String state) {
+		this.state = state;
+		return this;
+	}
+
+	@Schema(example = "MA", description = "2-letter postal state code for the state in which the recipient lives")
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public Recipient lastAboutMe(String lastAboutMe) {
+
+		this.lastAboutMe = lastAboutMe;
 		return this;
 	}
 
@@ -170,40 +221,50 @@ public class Recipient {
 	 * @return lastProfileText
 	 **/
 
-	@Schema(example = "I like potatoes.", description = "")
+	@Schema(example = "I like potatoes.", description = "text entered by the recipient to describe themselves")
 
-	public String getLastProfileText() {
-		return lastProfileText;
+	public String getLastAboutMe() {
+		return lastAboutMe;
 	}
 
-	public void setLastProfileText(String lastProfileText) {
-		this.lastProfileText = lastProfileText;
+	public void setLastAboutMe(String lastProfileText) {
+		this.lastAboutMe = lastProfileText;
 	}
 
-	public Recipient amountReceived(Double amountReceived) {
-
-		this.amountReceived = amountReceived;
+	public Recipient lastReasonForHelp(String lastReasonForHelp) {
+		this.lastReasonForHelp = lastReasonForHelp;
 		return this;
 	}
 
-	/**
-	 * Get amountReceived
-	 * @return amountReceived
-	 **/
+	@Schema(example = "I'm working while taking classes for my GED.",
+			description = "text entered by the recipient describing why they need help")
 
-	@Schema(example = "300.15", description = "")
-
-	public Double getAmountReceived() {
-		return amountReceived;
+	public String getLastReasonForHelp() {
+		return lastReasonForHelp;
 	}
 
-	public void setAmountReceived(Double amountReceived) {
-		this.amountReceived = amountReceived;
+	public void setLastReasonForHelp(String lastReasonForHelp) {
+		this.lastReasonForHelp = lastReasonForHelp;
 	}
 
-	public Recipient incomeVerified(Boolean incomeVerified) {
+	public Recipient identityLastVerified(String identityLastVerified) {
+		this.identityLastVerified = Instant.parse(identityLastVerified);
+		return this;
+	}
 
-		this.incomeVerified = incomeVerified;
+	@Schema(example = "2025-03-22T18:57:23.571Z", description = "date/time the recipient's identity was last verified")
+
+	public Instant getIdentityLastVerified() {
+		return identityLastVerified;
+	}
+
+	public void setIdentityLastVerified(Instant identityLastVerified) {
+		this.identityLastVerified = identityLastVerified;
+	}
+
+	public Recipient incomeVerified(Instant incomeLastVerified) {
+
+		this.incomeLastVerified = incomeLastVerified;
 		return this;
 	}
 
@@ -212,14 +273,14 @@ public class Recipient {
 	 * @return incomeVerified
 	 **/
 
-	@Schema(example = "true", description = "")
+	@Schema(example = "2025-03-22T18:57:23.571Z", description = "date/time the recipient's income was last verified")
 
-	public Boolean isIncomeVerified() {
-		return incomeVerified;
+	public Instant getIncomeLastVerified() {
+		return incomeLastVerified;
 	}
 
-	public void setIncomeVerified(Boolean incomeVerified) {
-		this.incomeVerified = incomeVerified;
+	public void setIncomeLastVerified(Instant incomeLastVerified) {
+		this.incomeLastVerified = incomeLastVerified;
 	}
 
 	public Recipient nickname(String nickname) {
@@ -233,7 +294,7 @@ public class Recipient {
 	 * @return nickname
 	 **/
 
-	@Schema(example = "PotatoKing", description = "")
+	@Schema(example = "PotatoKing", description = "nickname for the recipient, assigned when profile is created")
 
 	public String getNickname() {
 		return nickname;
@@ -243,7 +304,7 @@ public class Recipient {
 		this.nickname = nickname;
 	}
 
-	public Recipient tags(List<Tag> tags) {
+	public Recipient tags(SortedSet<Tag> tags) {
 
 		this.tags = tags;
 		return this;
@@ -251,7 +312,7 @@ public class Recipient {
 
 	public Recipient addTagsItem(Tag tagsItem) {
 		if (this.tags == null) {
-			this.tags = new ArrayList<Tag>();
+			this.tags = new TreeSet<>();
 		}
 		this.tags.add(tagsItem);
 		return this;
@@ -262,13 +323,14 @@ public class Recipient {
 	 * @return tags
 	 **/
 
-	@Schema(description = "")
+	@Schema(description = "tags linked to the recipient")
+
 	@Valid
-	public List<Tag> getTags() {
+	public SortedSet<Tag> getTags() {
 		return tags;
 	}
 
-	public void setTags(List<Tag> tags) {
+	public void setTags(SortedSet<Tag> tags) {
 		this.tags = tags;
 	}
 
@@ -281,47 +343,35 @@ public class Recipient {
 			return false;
 		}
 		Recipient recipient = (Recipient) o;
-		return Objects.equals(this.id, recipient.id) && Objects.equals(this.cognitoId, recipient.cognitoId)
-				&& Objects.equals(this.username, recipient.username) && Objects.equals(this.email, recipient.email)
-				&& Objects.equals(this.lastProfileText, recipient.lastProfileText)
-				&& Objects.equals(this.amountReceived, recipient.amountReceived)
-				&& Objects.equals(this.incomeVerified, recipient.incomeVerified)
-				&& Objects.equals(this.nickname, recipient.nickname) && Objects.equals(this.tags, recipient.tags);
+		return Objects.equals(this.getId(), recipient.getId()) && Objects.equals(this.user, recipient.user);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, cognitoId, username, email, lastProfileText, amountReceived, incomeVerified, nickname,
-				tags);
+		return Objects.hash(getId(), user);
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("class Recipient {\n");
-
-		sb.append("    id: ").append(toIndentedString(id)).append("\n");
-		sb.append("    cognitoId: ").append(toIndentedString(cognitoId)).append("\n");
-		sb.append("    username: ").append(toIndentedString(username)).append("\n");
-		sb.append("    email: ").append(toIndentedString(email)).append("\n");
-		sb.append("    lastProfileText: ").append(toIndentedString(lastProfileText)).append("\n");
-		sb.append("    amountReceived: ").append(toIndentedString(amountReceived)).append("\n");
-		sb.append("    incomeVerified: ").append(toIndentedString(incomeVerified)).append("\n");
-		sb.append("    nickname: ").append(toIndentedString(nickname)).append("\n");
-		sb.append("    tags: ").append(toIndentedString(tags)).append("\n");
-		sb.append("}");
-		return sb.toString();
-	}
-
-	/**
-	 * Convert the given object to string with each line indented by 4 spaces (except the
-	 * first line).
-	 */
-	private String toIndentedString(java.lang.Object o) {
-		if (o == null) {
-			return "null";
-		}
-		return o.toString().replace("\n", "\n    ");
+		// @formatter:off
+		return "class Recipient {\n" +
+				"    id: " + toIndentedString(getId()) + "\n" +
+				"    user: " + toIndentedString(user.toString()) + "\n" +
+				"    first name: " + toIndentedString(firstName) + "\n" +
+				"    last name: " + toIndentedString(lastName) + "\n" +
+				"    street address 1: " + toIndentedString(streetAddress1) + "\n" +
+				"    street address 2: " + toIndentedString(streetAddress2) + "\n" +
+				"    city: " + toIndentedString(city) + "\n" +
+				"    state: " + toIndentedString(state) + "\n" +
+				"    last about me: " + toIndentedString(lastAboutMe) + "\n" +
+				"    last reason for help: " + toIndentedString(lastReasonForHelp) + "\n" +
+				"    identityVerified: " + toIndentedString(identityLastVerified) + "\n" +
+				"    incomeVerified: " + toIndentedString(incomeLastVerified) + "\n" +
+				"    nickname: " + toIndentedString(nickname) + "\n" +
+				"    created at: " + toIndentedString(getCreatedAt()) + "\n" +
+				"    tags: " + toIndentedString(tags) + "\n" +
+				"}";
+		// @formatter:on
 	}
 
 }
