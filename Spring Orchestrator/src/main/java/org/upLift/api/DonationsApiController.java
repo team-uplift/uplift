@@ -53,25 +53,6 @@ public class DonationsApiController implements DonationsApi {
 		this.donationService = donationService;
 	}
 
-	public ResponseEntity<List<Donation>> donationsGet(@Parameter(in = ParameterIn.HEADER,
-			description = "Tracks the session for the given set of requests.", required = true,
-			schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
-		String accept = request.getHeader("Accept");
-		if (accept != null) {
-			try {
-				return new ResponseEntity<List<Donation>>(objectMapper.readValue(
-						"[ {\n  \"amount\" : 500,\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"recipient_id\" : 202\n}, {\n  \"amount\" : 500,\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"recipient_id\" : 202\n} ]",
-						List.class), HttpStatus.NOT_IMPLEMENTED);
-			}
-			catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<List<Donation>>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
-
-		return new ResponseEntity<List<Donation>>(HttpStatus.NOT_IMPLEMENTED);
-	}
-
 	public ResponseEntity<Donation> donationsIdGet(
 			@Parameter(in = ParameterIn.PATH, description = "", required = true,
 					schema = @Schema()) @PathVariable("id") Integer id,
@@ -93,6 +74,13 @@ public class DonationsApiController implements DonationsApi {
 
 		return new ResponseEntity<Donation>(HttpStatus.NOT_IMPLEMENTED);
 	}
+
+	public ResponseEntity<List<Donation>> donationsGetByDonor(
+			@Parameter(in = ParameterIn.PATH, description = "", required = true,
+					schema = @Schema()) @PathVariable("donorId") Integer id) {
+
+	}
+
 
 	public ResponseEntity<Donation> donationsPost(
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",

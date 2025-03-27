@@ -5,22 +5,18 @@
  */
 package org.upLift.api;
 
-import org.upLift.model.Donation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.upLift.model.Donation;
 
 import jakarta.validation.Valid;
 import org.upLift.model.TremendousOrderResponse;
@@ -31,19 +27,6 @@ import java.util.List;
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
 @Validated
 public interface DonationsApi {
-
-	@Operation(summary = "Get all donations", description = "Retrieves a list of all donation transactions.",
-			tags = { "Donations" })
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "A list of donations",
-					content = @Content(mediaType = "application/json",
-							array = @ArraySchema(schema = @Schema(implementation = Donation.class)))),
-
-			@ApiResponse(responseCode = "500", description = "Server error") })
-	@RequestMapping(value = "/donations", produces = { "application/json" }, method = RequestMethod.GET)
-	ResponseEntity<List<Donation>> donationsGet(@Parameter(in = ParameterIn.HEADER,
-			description = "Tracks the session for the given set of requests.", required = true,
-			schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
 
 	@Operation(summary = "Get a donation by ID", description = "Retrieves a specific donation transaction by its ID.",
 			tags = { "Donations" })
@@ -62,6 +45,25 @@ public interface DonationsApi {
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
+
+
+
+	@Operation(summary = "Get donations by donor", description = "Retrieves all donations made by a specified donor by donor ID.",
+			tags = { "Donations" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Donation details",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = Donation.class))),
+
+			@ApiResponse(responseCode = "404", description = "Donation not found"),
+
+			@ApiResponse(responseCode = "500", description = "Server error") })
+	@RequestMapping(value = "/donations/donor/{donorId}", produces = { "application/json" }, method = RequestMethod.GET)
+	ResponseEntity<List<Donation>> donationsGetByDonor(
+			@Parameter(in = ParameterIn.PATH, description = "", required = true,
+					schema = @Schema()) @PathVariable("donorId") Integer id);
+
+
 
 	@Operation(summary = "Create a new donation", description = "Adds a new donation transaction.",
 			tags = { "Donations" })
