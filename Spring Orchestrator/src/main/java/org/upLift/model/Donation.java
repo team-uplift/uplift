@@ -152,6 +152,17 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 		this.amount = amount;
 	}
 
+	@Schema(implementation = Message.class,
+			description = "holds the thank-you message from the recipient to the donor, if any")
+
+	public Message getThankYouMessage() {
+		return thankYouMessage;
+	}
+
+	public void setThankYouMessage(Message thankYouMessage) {
+		this.thankYouMessage = thankYouMessage;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
