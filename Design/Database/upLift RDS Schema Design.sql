@@ -17,6 +17,7 @@ CREATE TABLE `recipients` (
   `zip_code` varchar(10),
   `last_about_me` text NOT NULL,
   `last_reason_for_help` text NOT NULL,
+  `image_url` varchar(512),
   `identity_last_verified` timestamp(3),
   `income_last_verified` timestamp(3),
   `nickname` nvarchar(64),
@@ -45,6 +46,7 @@ CREATE TABLE `donations` (
 
 CREATE TABLE `tags` (
   `tag_name` varchar(64) PRIMARY KEY,
+  `category` varchar(128),
   `created_at` timestamp(3) NOT NULL
 );
 
@@ -65,6 +67,8 @@ CREATE TABLE `donor_prompts` (
 CREATE TABLE `recipient_tags` (
   `tag_name` varchar(64),
   `recipient_id` integer,
+  `weight` double,
+  `added_on` timestamp(3) NOT NULL,
   PRIMARY KEY (`tag_name`, `recipient_id`)
 );
 

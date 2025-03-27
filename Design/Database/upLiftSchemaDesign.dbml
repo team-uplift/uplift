@@ -29,6 +29,7 @@ Table recipients { // Tracks our known recipients
   zip_code varchar(10)
   last_about_me text [not null] // latest "about me" text that is/will be utilized to generate the tags
   last_reason_for_help text [not null] // latest "why I need help" text that is/will be utilized to generate the tags through a single prompt.
+  image_url varchar(512) // holds URL of image to display for the recipient, if any
   identity_last_verified timestamp(3) // Date/time the recipient's identity was last verified, used to determine if recipient identity needs to be re-verified
   income_last_verified timestamp(3) // Date/time the recipient's income was last verified, used to determine if recipient income needs to be re-verified
   nickname nvarchar(64)
@@ -60,6 +61,7 @@ Table donations { // Tracks all of the donation transactions that have occurred
 
 Table tags { // Tracks all the known tags
   tag_name varchar(64) [primary key]
+  category varchar(128)
   created_at timestamp(3) [not null]
 }
 
@@ -87,6 +89,8 @@ Table donor_prompts { // Tracks historical prompts that donor was given in a spe
 Table recipient_tags {
     tag_name varchar(64) [pk]
     recipient_id integer [pk]
+    weight double
+    added_on timestamp(3) [not null]
 }
 
 // Create table to track which tags were shown to a donor in a specific session
