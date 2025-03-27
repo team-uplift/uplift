@@ -65,6 +65,11 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonProperty("state")
 	private String state;
 
+	@Column(name = "image_url")
+	@JsonInclude(JsonInclude.Include.NON_ABSENT)
+	@JsonProperty("image_url")
+	private String imageUrl;
+
 	@Column(name = "last_about_me")
 	@JsonProperty("last_about_me")
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
@@ -87,12 +92,10 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	private String nickname = null;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "recipient_tags", joinColumns = @JoinColumn(name = "recipient_id", referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(name = "tag_name", referencedColumnName = "tag_name"))
 	@Valid
+	@OneToMany(mappedBy = "recipient")
 	@JsonProperty("tags")
-	private SortedSet<Tag> tags;
+	private SortedSet<RecipientTag> tags;
 
 	public User getUser() {
 		return user;
@@ -210,6 +213,16 @@ public class Recipient extends AbstractCreatedAt {
 		this.state = state;
 	}
 
+	@Schema(example = "https://image.com/image", description = "URL of the image linked to this recipient, if any")
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 	public Recipient lastAboutMe(String lastAboutMe) {
 
 		this.lastAboutMe = lastAboutMe;
@@ -304,13 +317,13 @@ public class Recipient extends AbstractCreatedAt {
 		this.nickname = nickname;
 	}
 
-	public Recipient tags(SortedSet<Tag> tags) {
+	public Recipient tags(SortedSet<RecipientTag> tags) {
 
 		this.tags = tags;
 		return this;
 	}
 
-	public Recipient addTagsItem(Tag tagsItem) {
+	public Recipient addTagsItem(RecipientTag tagsItem) {
 		if (this.tags == null) {
 			this.tags = new TreeSet<>();
 		}
@@ -323,14 +336,14 @@ public class Recipient extends AbstractCreatedAt {
 	 * @return tags
 	 **/
 
-	@Schema(description = "tags linked to the recipient")
+	@Schema(implementation = RecipientTag.class, description = "tags linked to the recipient")
 
 	@Valid
-	public SortedSet<Tag> getTags() {
+	public SortedSet<RecipientTag> getTags() {
 		return tags;
 	}
 
-	public void setTags(SortedSet<Tag> tags) {
+	public void setTags(SortedSet<RecipientTag> tags) {
 		this.tags = tags;
 	}
 

@@ -32,6 +32,10 @@ public class Tag extends AbstractCreatedAt implements Comparable<Tag>, Serializa
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String tagName = null;
 
+	@Column(name = "category")
+	@JsonProperty("category")
+	private String category;
+
 	public Tag tagName(String tagName) {
 		this.tagName = tagName;
 		return this;
@@ -50,6 +54,21 @@ public class Tag extends AbstractCreatedAt implements Comparable<Tag>, Serializa
 
 	public void setTagName(String tagName) {
 		this.tagName = tagName;
+	}
+
+	public Tag category(String category) {
+		this.category = category;
+		return this;
+	}
+
+	@Schema(example = "Hobbies", description = "category to which the tag belongs")
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	public Tag createdAt(Instant createdAt) {
