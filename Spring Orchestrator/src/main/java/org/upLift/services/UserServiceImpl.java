@@ -18,6 +18,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public boolean userExists(Integer id) {
+		return userRepository.existsById(id);
+	}
+
+	@Override
 	public Optional<User> getUserById(Integer id) {
 		var result = userRepository.findById(id);
 		return loadChildData(result);

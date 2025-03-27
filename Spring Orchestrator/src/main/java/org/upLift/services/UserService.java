@@ -8,6 +8,8 @@ import java.util.Optional;
 @Validated
 public interface UserService {
 
+	boolean userExists(Integer id);
+
 	Optional<User> getUserById(Integer id);
 
 	Optional<User> getUserByCognitoId(String cognitoId);
