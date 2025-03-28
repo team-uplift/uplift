@@ -1,0 +1,12 @@
+services:
+  uplift-orchestrator:
+    environment:
+      TREMENDOUS_URI: "https://testflight.tremendous.com"
+      TRE_ORDERS_PATH: "/api/v2/orders"
+      FUNDING_SOURCE_ID: "BALANCE"
+    secrets:
+      - TREMENDOUS_API_KEY
+
+secrets:
+  TREMENDOUS_API_KEY:
+    environment: TREMENDOUS_API_KEY
