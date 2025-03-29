@@ -27,6 +27,9 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	// For some endpoints we want the full Donor object and for others we want the full
 	// Recipient, so
 	// just mark the properties as @JsonIgnore and set up getters/setters as needed
+	public Donation id(Integer id) {
+		return (Donation) super.id(id);
+	}
 
 	@JsonIgnore
 	@ManyToOne
@@ -46,10 +49,6 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "donation")
 	@JsonProperty("thank_you_message")
 	private Message thankYouMessage;
-
-	public Donation id(Integer id) {
-		return (Donation) super.id(id);
-	}
 
 	public Donation createdAt(Instant createdAt) {
 		return (Donation) super.createdAt(createdAt);

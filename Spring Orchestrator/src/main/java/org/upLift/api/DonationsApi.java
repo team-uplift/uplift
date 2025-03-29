@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import jakarta.validation.Valid;
+import org.upLift.model.TremendousOrderResponse;
+
 import java.util.List;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
@@ -73,7 +75,7 @@ public interface DonationsApi {
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@RequestMapping(value = "/donations", produces = { "application/json" }, consumes = { "application/json" },
 			method = RequestMethod.POST)
-	ResponseEntity<Donation> donationsPost(
+	ResponseEntity<TremendousOrderResponse> donationsPost(
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,

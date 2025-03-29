@@ -1,12 +1,25 @@
 services:
   uplift-orchestrator:
+    build: .
     environment:
-      TREMENDOUS_URI: "https://testflight.tremendous.com"
+      TREMENDOUS_URL: "https://testflight.tremendous.com"
       TRE_ORDERS_PATH: "/api/v2/orders"
       FUNDING_SOURCE_ID: "BALANCE"
+      RUNTIME_ENV: "dev"
+      JAVA_TOOL_OPTIONS: "--enable-preview"
+      DB_URL: "jdbc:mariadb://cs599-uplift.c0vvml9jbgf1.us-east-1.rds.amazonaws.com:3306/cs599-uplift"
+    ports:
+      - "80:8080"
+      - "3306:3306"
     secrets:
       - TREMENDOUS_API_KEY
+      - DB_USERNAME
+      - DB_PASSWORD
 
 secrets:
   TREMENDOUS_API_KEY:
     environment: TREMENDOUS_API_KEY
+  DB_USERNAME:
+    environment: DB_USERNAME
+  DB_PASSWORD:
+    environment: DB_PASSWORD

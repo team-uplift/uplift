@@ -1,118 +1,168 @@
 package org.upLift.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /***
- * This class represents the tremendous order body request. See json for example:
- * {
- *     "payment": {
- *         "funding_source_id": "BALANCE"
- *     },
- *     "reward": {
- *         "value": {
- *             "denomination": 50,
- *             "currency_code": "USD"
- *         },
- *         "delivery": {
- *             "method": "EMAIL"
- *         },
- *         "recipient": {
- *             "name": "Jane Doe",
- *             "email": "recipient@example.com"
- *         },
- *         "products": [
- *             "N9QEV7YC3HLK"
- *         ]
- *     }
- * }
+ * This class represents the tremendous order body request. See json for example: {
+ * "payment": { "funding_source_id": "BALANCE" }, "reward": { "value": { "denomination":
+ * 50, "currency_code": "USD" }, "delivery": { "method": "EMAIL" }, "recipient": { "name":
+ * "Jane Doe", "email": "recipient@example.com" }, "products": [ "N9QEV7YC3HLK" ] } }
  */
 public class TremendousOrderRequest {
 
-    public TremendousOrderRequest(User recipient, int donation_amount) {
+	public TremendousOrderRequest(User recipient, int donation_amount) {
         reward = new Reward(STR."\{recipient.getRecipientData().getFirstName()} \{recipient.getRecipientData().getLastName()}",
                 recipient.getEmail(),
                 donation_amount);
 
     }
 
-    private Payment payment = new Payment(); // Payment is set by an env variable but for the POC will always be "BALANCE"
-    private Reward reward;
+	private Payment payment = new Payment(); // Payment is set by an env variable but for
+												// the POC will always be "BALANCE"
 
-    // Getters and Setters
-    public Payment getPayment() { return payment; }
-    public void setPayment(Payment payment) { this.payment = payment; }
+	private Reward reward;
 
-    public Reward getReward() { return reward; }
-    public void setReward(Reward reward) { this.reward = reward; }
+	// Getters and Setters
+	public Payment getPayment() {
+		return payment;
+	}
 
-    // Inner Classes
-    public static class Payment {
-        private String fundingSourceId = System.getenv("FUNDING_SOURCE_ID");
+	public void setPayment(Payment payment) {
+		this.payment = payment;
+	}
 
-        public String getFundingSourceId() { return fundingSourceId; }
-    }
+	public Reward getReward() {
+		return reward;
+	}
 
-    public static class Reward {
+	public void setReward(Reward reward) {
+		this.reward = reward;
+	}
 
-        public Reward(String recipientName, String recipientEmail, int donationAmount) {
-            recipient.setName(recipientName);
-            recipient.setEmail(recipientEmail);
+	// Inner Classes
+	public static class Payment {
 
-            value = new Value();
-            value.setDenomination(donationAmount);
-        }
+		@JsonProperty("funding_source_id")
+		private final String funding_source_id = System.getenv("FUNDING_SOURCE_ID");
 
-        private Value value;
+		@JsonProperty("funding_source_id")
+		public String getFundingSourceId() {
+			return funding_source_id;
+		}
 
-        // Delivery is static and thus pre-initialized
-        private Delivery delivery = new Delivery();
+	}
 
-        private RecipientInner recipient;
+	public static class Reward {
 
-        // This is a final array list of the Instacart product code. We're only supporting this reward in our system thus making it a final attribute.
-        private final List<String> products = new ArrayList<>(List.of("N9QEV7YC3HLK"));
+		public Reward(String recipientName, String recipientEmail, int donationAmount) {
+			recipient = new RecipientInner();
+			recipient.setName(recipientName);
+			recipient.setEmail(recipientEmail);
 
-        public Value getValue() { return value; }
-        public void setValue(Value value) { this.value = value; }
+			value = new Value();
+			value.setDenomination(donationAmount);
+		}
 
-        public Delivery getDelivery() { return delivery; }
-        public void setDelivery(Delivery delivery) { this.delivery = delivery; }
+		private Value value;
 
-        public RecipientInner getRecipient() { return recipient; }
-        public void setRecipient(RecipientInner recipient) { this.recipient = recipient; }
+		// Delivery is static and thus pre-initialized
+		private Delivery delivery = new Delivery();
 
-        public List<String> getProducts() {
-            return products;
-        }
-    }
+		private RecipientInner recipient;
 
-    public static class Value {
-        private int denomination;
-        private final String currencyCode = "USD"; // Final String as we're only supporting USD.
+		// This is a final array list of the Instacart product code. We're only supporting
+		// this reward in our system thus making it a final attribute.
+		private final List<String> products = new ArrayList<>(List.of("N9QEV7YC3HLK"));
 
-        public int getDenomination() { return denomination; }
-        public void setDenomination(int denomination) { this.denomination = denomination; }
+		public Value getValue() {
+			return value;
+		}
 
-        public String getCurrencyCode() { return currencyCode; }
-    }
+		public void setValue(Value value) {
+			this.value = value;
+		}
 
-    public static class Delivery {
-        private final String method = "EMAIL"; // Final String for email as this will be the only currently supported method.
+		public Delivery getDelivery() {
+			return delivery;
+		}
 
-        public String getMethod() { return method; }
-    }
+		public void setDelivery(Delivery delivery) {
+			this.delivery = delivery;
+		}
 
-    public static class RecipientInner {
-        private String name;
-        private String email;
+		public RecipientInner getRecipient() {
+			return recipient;
+		}
 
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
+		public void setRecipient(RecipientInner recipient) {
+			this.recipient = recipient;
+		}
 
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-    }
+		public List<String> getProducts() {
+			return products;
+		}
+
+	}
+
+	public static class Value {
+
+		private int denomination;
+
+		private final String currencyCode = "USD"; // Final String as we're only
+													// supporting USD.
+
+		public int getDenomination() {
+			return denomination;
+		}
+
+		public void setDenomination(int denomination) {
+			this.denomination = denomination;
+		}
+
+		public String getCurrencyCode() {
+			return currencyCode;
+		}
+
+	}
+
+	public static class Delivery {
+
+		private final String method = "EMAIL"; // Final String for email as this will be
+												// the only currently supported method.
+
+		public String getMethod() {
+			return method;
+		}
+
+	}
+
+	public static class RecipientInner {
+
+		private String name;
+
+		private String email;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public void setEmail(String email) {
+			this.email = email;
+		}
+
+	}
+
 }
