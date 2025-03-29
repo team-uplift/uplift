@@ -1,7 +1,7 @@
 package org.upLift.services;
 
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.upLift.model.User;
 import org.upLift.repositories.UserRepository;
 
@@ -20,6 +20,16 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean userExists(Integer id) {
 		return userRepository.existsById(id);
+	}
+
+	@Override
+	public boolean donorExists(Integer id) {
+		return userRepository.existsByIdAndRecipient(id, false);
+	}
+
+	@Override
+	public boolean recipientExists(Integer id) {
+		return userRepository.existsByIdAndRecipient(id, true);
 	}
 
 	@Override

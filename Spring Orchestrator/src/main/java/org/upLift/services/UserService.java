@@ -10,6 +10,10 @@ public interface UserService {
 
 	boolean userExists(Integer id);
 
+	boolean donorExists(Integer id);
+
+	boolean recipientExists(Integer id);
+
 	Optional<User> getUserById(Integer id);
 
 	Optional<User> getUserByCognitoId(String cognitoId);
