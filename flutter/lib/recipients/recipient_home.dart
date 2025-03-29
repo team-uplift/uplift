@@ -5,6 +5,8 @@ import 'recipient_profile_screen.dart';
 import 'recipient_settings_screen.dart';
 import 'package:go_router/go_router.dart';
 
+// TODO link to home in appbar
+
 class RecipientHome extends StatefulWidget {
   const RecipientHome({super.key});
 

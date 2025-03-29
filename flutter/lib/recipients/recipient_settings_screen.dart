@@ -7,6 +7,7 @@ class RecipientSettingsScreen extends StatelessWidget {
   final VoidCallback? logout;
   final VoidCallback? deleteAccount;
   final VoidCallback? changeEmail;
+  final VoidCallback? convertAccount;
 
   const RecipientSettingsScreen({
     super.key,
@@ -14,6 +15,7 @@ class RecipientSettingsScreen extends StatelessWidget {
     this.logout,
     this.deleteAccount,
     this.changeEmail,
+    this.convertAccount,
   });
 
   
@@ -59,6 +61,37 @@ class RecipientSettingsScreen extends StatelessWidget {
             ),
             const Divider(),
 
+                        // TODO section below GPT generated
+            ListTile(
+              leading: const Icon(Icons.redo, color: Colors.orange,),
+              title: const Text("Convert Account", style: TextStyle(color: Colors.orange)),
+              subtitle: const Text("Convert account from recipient to donor"),
+              onTap: convertAccount ?? () {
+                // Show a confirmation dialog
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Are you sure?"),
+                    content: const Text("This will convert your account from recipient to donor. You will no longer have access to your profile information."),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+                      ElevatedButton(
+                        onPressed: () {
+                          // TODO implement account deletion and route to home
+                          Navigator.pop(context);
+                          print("Account converted");
+                          context.goNamed('/login');
+                        },
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        child: Text("Convert Account"),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            ),
+            const Divider(),
+
             // TODO section below GPT generated
             ListTile(
               leading: const Icon(Icons.delete_forever, color: Colors.red),
@@ -94,3 +127,5 @@ class RecipientSettingsScreen extends StatelessWidget {
     );
   }
 }
+
+// TODO add conversion button from donor to recipient
