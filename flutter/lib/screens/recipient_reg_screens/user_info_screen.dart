@@ -7,7 +7,7 @@ class UserInfo extends StatefulWidget {
   final Map<String, dynamic> formData;
   final VoidCallback onNext;
 
-  UserInfo({required this.formData, required this.onNext});
+  const UserInfo({super.key, required this.formData, required this.onNext});
 
   @override
   _UserInfoState createState() => _UserInfoState();
@@ -48,29 +48,29 @@ class _UserInfoState extends State<UserInfo> {
         children: [
           TextFormField(
             controller: _firstName,
-            decoration: InputDecoration(labelText: "First Name"),
+            decoration: const InputDecoration(labelText: "First Name"),
             validator: (value) => value!.isEmpty ? "Required" : null,
           ),
           TextFormField(
             controller: _lastName,
-            decoration: InputDecoration(labelText: "Last Name"),
+            decoration: const InputDecoration(labelText: "Last Name"),
             validator: (value) => value!.isEmpty ? "Required" : null,
           ),
           TextFormField(
             controller: _email,
-            decoration: InputDecoration(labelText: "Email"),
+            decoration: const InputDecoration(labelText: "Email"),
             validator: (value) => value!.isEmpty ? "Required" : null,
           ),
           TextFormField(
             controller: _password,
-            decoration: InputDecoration(labelText: "Password"),
+            decoration: const InputDecoration(labelText: "Password"),
             obscureText: true,
             validator: (value) => value!.length < 6 ? "Min 6 characters" : null,
           ),
-          Spacer(),
+          const Spacer(),
           ElevatedButton(
             onPressed: _saveAndContinue,
-            child: Text("Next"),
+            child: const Text("Next"),
           )
         ],
       ),

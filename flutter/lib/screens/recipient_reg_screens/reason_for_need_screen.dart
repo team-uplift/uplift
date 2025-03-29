@@ -9,8 +9,8 @@ class ReasonForNeed extends StatefulWidget {
     required this.formData,
     required this.onNext,
     required this.onBack,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _ReasonForNeedState createState() => _ReasonForNeedState();
