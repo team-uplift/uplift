@@ -161,8 +161,7 @@ public interface UsersApi {
 					@ApiResponse(responseCode = "400", description = "Invalid input"),
 
 					@ApiResponse(responseCode = "422", description = "Validation exception") })
-	@PutMapping(value = "/users/switch/recipient", produces = { "application/json" },
-			consumes = { "application/json" })
+	@PutMapping(value = "/users/switch/recipient", produces = { "application/json" }, consumes = { "application/json" })
 	ResponseEntity<User> addRecipient(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Provide donor info to switch user to a recipient",
 					required = true, schema = @Schema()) @Valid @RequestBody Recipient body);
