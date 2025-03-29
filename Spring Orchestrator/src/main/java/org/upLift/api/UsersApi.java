@@ -20,9 +20,9 @@ import org.upLift.model.User;
 public interface UsersApi {
 
 	@Operation(summary = "Add a new user to the app",
-			description = "Add a new user to the app.  User may be either donor or user.  "
+			description = "Add a new user to the app.  User may be either donor or recipient.  "
 					+ "If donor, the child donor_Data should be provided.  "
-					+ "If user, the child user_Data should be provided.",
+					+ "If recipient, the child recipient_Data should be provided.",
 			security = { @SecurityRequirement(name = "userstore_auth", scopes = { "write:users", "read:users" }) },
 			tags = { "User" })
 	@ApiResponses(
