@@ -38,11 +38,10 @@ jobs:
             echo "Error: Docker is not installed." >&2
             exit 1
           fi
-      - name: Delete existing container
+      - name: Delete all existing containers & images
         run: |
-          if [ "$(sudo docker ps -aq -f name=uplift-orchestrator)" ]; then
-            sudo docker rm -f uplift-orchestrator
-          fi
+           sudo docker rm -vf $(docker ps -aq)
+           docker rmi -f $(docker images -aq)
       - name: Pull image from docker hub
         run: sudo docker pull als5289/uplift-orchestrator:latest
       - name: Run docker container
