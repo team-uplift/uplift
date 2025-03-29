@@ -29,6 +29,9 @@ Table recipients { // Tracks our known recipients
   zip_code varchar(10)
   last_about_me text [not null] // latest "about me" text that is/will be utilized to generate the tags
   last_reason_for_help text [not null] // latest "why I need help" text that is/will be utilized to generate the tags through a single prompt.
+  form_questions json [not null] // holds a JSON object used to map the questions asked of the recipient plus their responses
+                                 // stored as a JSON object for greater flexibility, since questions will likely change
+                                 // and won't be displayed to the donor - they're only used to generate tags
   image_url varchar(512) // holds URL of image to display for the recipient, if any
   identity_last_verified timestamp(3) // Date/time the recipient's identity was last verified, used to determine if recipient identity needs to be re-verified
   income_last_verified timestamp(3) // Date/time the recipient's income was last verified, used to determine if recipient income needs to be re-verified

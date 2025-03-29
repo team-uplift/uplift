@@ -17,6 +17,7 @@ CREATE TABLE `recipients` (
   `zip_code` varchar(10),
   `last_about_me` text NOT NULL,
   `last_reason_for_help` text NOT NULL,
+  `form_questions` json NOT NULL,
   `image_url` varchar(512),
   `identity_last_verified` timestamp(3),
   `income_last_verified` timestamp(3),
