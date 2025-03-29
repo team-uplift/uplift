@@ -11,10 +11,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.upLift.model.Donor;
+import org.upLift.model.Recipient;
 import org.upLift.model.User;
 
 @Validated
@@ -22,8 +21,8 @@ public interface UsersApi {
 
 	@Operation(summary = "Add a new user to the app",
 			description = "Add a new user to the app.  User may be either donor or user.  "
-					+ "If donor, the child donorData should be provided.  "
-					+ "If user, the child userData should be provided.",
+					+ "If donor, the child donor_Data should be provided.  "
+					+ "If user, the child user_Data should be provided.",
 			security = { @SecurityRequirement(name = "userstore_auth", scopes = { "write:users", "read:users" }) },
 			tags = { "User" })
 	@ApiResponses(
@@ -35,9 +34,7 @@ public interface UsersApi {
 					@ApiResponse(responseCode = "400", description = "Invalid input"),
 
 					@ApiResponse(responseCode = "422", description = "Validation exception") })
-	@RequestMapping(value = "/users", produces = { "application/json" },
-			consumes = { "application/json", "application/xml", "application/x-www-form-urlencoded" },
-			method = RequestMethod.POST)
+	@PostMapping(value = "/users", produces = { "application/json" }, consumes = { "application/json" })
 	ResponseEntity<User> addUser(
 	// @formatter:off
 //			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
@@ -76,7 +73,7 @@ public interface UsersApi {
 					@ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
 
 					@ApiResponse(responseCode = "404", description = "User not found") })
-	@RequestMapping(value = "/users/{userId}", produces = { "application/json" }, method = RequestMethod.GET)
+	@GetMapping(value = "/users/{userId}", produces = { "application/json" })
 	ResponseEntity<User> getUserById(
 	// @formatter:off
 //			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
@@ -99,7 +96,7 @@ public interface UsersApi {
 					@ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
 
 					@ApiResponse(responseCode = "404", description = "User not found") })
-	@RequestMapping(value = "/users/cognito/{cognitoId}", produces = { "application/json" }, method = RequestMethod.GET)
+	@GetMapping(value = "/users/cognito/{cognitoId}", produces = { "application/json" })
 	ResponseEntity<User> getUserByCognitoId(
 	// @formatter:off
 //			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
@@ -123,9 +120,7 @@ public interface UsersApi {
 					@ApiResponse(responseCode = "404", description = "User not found"),
 
 					@ApiResponse(responseCode = "422", description = "Validation exception") })
-	@RequestMapping(value = "/users", produces = { "application/json" },
-			consumes = { "application/json", "application/xml", "application/x-www-form-urlencoded" },
-			method = RequestMethod.PUT)
+	@PutMapping(value = "/users", produces = { "application/json" }, consumes = { "application/json" })
 	ResponseEntity<User> updateUser(
 	// @formatter:off
 //			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
@@ -134,5 +129,42 @@ public interface UsersApi {
 			// @formatter:on
 			@Parameter(in = ParameterIn.DEFAULT, description = "Update an existent user in the store", required = true,
 					schema = @Schema()) @Valid @RequestBody User body);
+
+	@Operation(summary = "Switch user to a donor",
+			description = "Switch user from a recipient to a donor with the provided info",
+			security = { @SecurityRequirement(name = "userstore_auth", scopes = { "write:users", "read:users" }) },
+			tags = { "Donor", "User" })
+	@ApiResponses(
+			value = {
+					@ApiResponse(responseCode = "200", description = "Switched to donor",
+							content = @Content(mediaType = "application/json",
+									schema = @Schema(implementation = User.class))),
+
+					@ApiResponse(responseCode = "400", description = "Invalid input"),
+
+					@ApiResponse(responseCode = "422", description = "Validation exception") })
+	@PostMapping(value = "/users/switch/donor", produces = { "application/json" }, consumes = { "application/json" })
+	ResponseEntity<User> addDonor(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Provide donor info to switch user to a donor",
+					required = true, schema = @Schema()) @Valid @RequestBody Donor body);
+
+	@Operation(summary = "Switch user to a recipient",
+			description = "Switch user from a donor to a recipient with the provided info",
+			security = { @SecurityRequirement(name = "userstore_auth", scopes = { "write:users", "read:users" }) },
+			tags = { "Recipient", "User" })
+	@ApiResponses(
+			value = {
+					@ApiResponse(responseCode = "200", description = "Switched to recipient",
+							content = @Content(mediaType = "application/json",
+									schema = @Schema(implementation = User.class))),
+
+					@ApiResponse(responseCode = "400", description = "Invalid input"),
+
+					@ApiResponse(responseCode = "422", description = "Validation exception") })
+	@PostMapping(value = "/users/switch/recipient", produces = { "application/json" },
+			consumes = { "application/json" })
+	ResponseEntity<User> addRecipient(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Provide donor info to switch user to a recipient",
+					required = true, schema = @Schema()) @Valid @RequestBody Recipient body);
 
 }

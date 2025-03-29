@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.upLift.model.Donor;
+import org.upLift.model.Recipient;
 import org.upLift.model.User;
 import org.upLift.services.UserService;
 
@@ -72,6 +74,50 @@ public class UsersApiController implements UsersApi {
 		else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+	}
+
+	@Override
+	public ResponseEntity<User> addDonor(@Valid @RequestBody Donor body) {
+		// Get existing user with provided id
+		var userResult = userService.getUserById(body.getId());
+		if (userResult.isEmpty()) {
+			LOG.error("User with provided Id not found {}", body.getId());
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+
+		var user = userResult.get();
+		if (!user.isRecipient()) {
+			LOG.error("User {} is already a donor", body.getId());
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		user.setRecipient(false);
+		user.setDonorData(body);
+
+		var savedUser = userService.updateUser(user);
+		return new ResponseEntity<>(savedUser, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<User> addRecipient(@Valid @RequestBody Recipient body) {
+		// Get existing user with provided id
+		var userResult = userService.getUserById(body.getId());
+		if (userResult.isEmpty()) {
+			LOG.error("User with provided Id not found {}", body.getId());
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+
+		var user = userResult.get();
+		if (user.isRecipient()) {
+			LOG.error("User {} is already a recipient", body.getId());
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		user.setRecipient(true);
+		user.setRecipientData(body);
+
+		var savedUser = userService.updateUser(user);
+		return new ResponseEntity<>(savedUser, HttpStatus.OK);
 	}
 
 }
