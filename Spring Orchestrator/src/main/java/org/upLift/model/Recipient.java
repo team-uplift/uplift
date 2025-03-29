@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.upLift.configuration.NotUndefined;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -80,6 +81,12 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String lastReasonForHelp;
 
+	@SuppressWarnings("JpaAttributeTypeInspection")
+	@Column(name = "form_questions")
+	@JsonProperty("form_questions")
+	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
+	private List<FormQuestion> formQuestions;
+
 	@Column(name = "identity_last_verified")
 	@JsonProperty("identity_last_verified")
 	private Instant identityLastVerified;
@@ -93,8 +100,9 @@ public class Recipient extends AbstractCreatedAt {
 	private String nickname = null;
 
 	@Valid
-	@OneToMany(mappedBy = "recipient")
+	@OneToMany(mappedBy = "recipient", fetch = FetchType.EAGER)
 	@JsonProperty("tags")
+	@JsonManagedReference
 	private SortedSet<RecipientTag> tags;
 
 	public User getUser() {
@@ -263,6 +271,18 @@ public class Recipient extends AbstractCreatedAt {
 	public Recipient identityLastVerified(String identityLastVerified) {
 		this.identityLastVerified = Instant.parse(identityLastVerified);
 		return this;
+	}
+
+	@Schema(example = "[{\"question\": \"What was your biggest challenge in the last six months?\", " +
+			"\"answer\": \"Losing my job\"}]",
+			description = "String containing JSON object grouping form questions and recipient answers")
+
+	public List<FormQuestion> getFormQuestions() {
+		return formQuestions;
+	}
+
+	public void setFormQuestions(List<FormQuestion> formQuestions) {
+		this.formQuestions = formQuestions;
 	}
 
 	@Schema(example = "2025-03-22T18:57:23.571Z", description = "date/time the recipient's identity was last verified")
