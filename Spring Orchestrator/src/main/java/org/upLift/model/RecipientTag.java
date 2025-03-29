@@ -1,5 +1,6 @@
 package org.upLift.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
@@ -12,18 +13,12 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "recipient_tags")
-@IdClass(RecipientTag.RecipientTagId.class)
 public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 
-	@Id
-	@Column(name = "recipient_id")
+	// Apparently many-to-many association tables only work correctly with @EmbeddedId, not @IdClass
+	@EmbeddedId
 	@JsonIgnore
-	private Integer recipientId;
-
-	@Id
-	@Column(name = "tag_name")
-	@JsonIgnore
-	private String tagName;
+	private RecipientTagId id;
 
 	@Column(name = "weight")
 	@JsonProperty("weight")
@@ -34,12 +29,18 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 	private Instant addedAt;
 
 	@ManyToOne
-	@PrimaryKeyJoinColumn(name = "recipient_id", referencedColumnName = "id")
-	@JsonIgnore
+	@MapsId("recipientId")
+	// Even though none of the documentation includes this @JoinColumn, it's necessary because
+	// Hibernate/Spring ignore the @Column annotation on the RecipientTagId properties
+	@JoinColumn(name = "recipient_id", referencedColumnName = "id")
+	@JsonBackReference
 	private Recipient recipient;
 
 	@ManyToOne
-	@PrimaryKeyJoinColumn(name = "tag_name", referencedColumnName = "tag_name")
+	@MapsId("tagName")
+	// Even though none of the documentation includes this @JoinColumn, it's necessary because
+	// Hibernate/Spring ignore the @Column annotation on the RecipientTagId properties
+	@JoinColumn(name = "tag_name", referencedColumnName = "tag_name")
 	// Unwrap the tag into this object for easier use on the front end
 	@JsonUnwrapped
 	private Tag tag;
@@ -48,20 +49,20 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 		addedAt = Instant.now();
 	}
 
-	public Integer getRecipientId() {
-		return recipientId;
+	public RecipientTagId getId() {
+		return id;
 	}
 
-	public void setRecipientId(Integer recipientId) {
-		this.recipientId = recipientId;
+	public void setId(RecipientTagId id) {
+		this.id = id;
+	}
+
+	public Integer getRecipientId() {
+		return id.getRecipientId();
 	}
 
 	public String getTagName() {
-		return tagName;
-	}
-
-	public void setTagName(String tagName) {
-		this.tagName = tagName;
+		return id.getTagName();
 	}
 
 	@Schema(example = "0.587", description = "relevance weight of the tag for the recipient, 0-1")
@@ -109,22 +110,29 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == null || getClass() != o.getClass()) return false;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		RecipientTag that = (RecipientTag) o;
-		return Objects.equals(recipientId, that.recipientId) && Objects.equals(tagName, that.tagName);
+		return Objects.equals(id, that.getId());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(recipientId, tagName);
+		return Objects.hash(id);
 	}
 
 	/**
 	 * Class used for the composite primary key.
 	 */
+	@Embeddable
 	public static class RecipientTagId implements Serializable {
+
 		private Integer recipientId;
+
 		private String tagName;
+
+		public RecipientTagId() {
+		}
 
 		public RecipientTagId(Integer recipientId, String tagName) {
 			this.recipientId = recipientId;
@@ -149,7 +157,8 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 
 		@Override
 		public boolean equals(Object o) {
-			if (o == null || getClass() != o.getClass()) return false;
+			if (o == null || getClass() != o.getClass())
+				return false;
 			RecipientTagId that = (RecipientTagId) o;
 			return Objects.equals(recipientId, that.recipientId) && Objects.equals(tagName, that.tagName);
 		}
@@ -158,6 +167,7 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 		public int hashCode() {
 			return Objects.hash(recipientId, tagName);
 		}
+
 	}
 
 }
