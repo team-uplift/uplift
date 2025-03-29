@@ -31,15 +31,14 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 		return (Donation) super.id(id);
 	}
 
-	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "donor_id", referencedColumnName = "id", nullable = false)
+	@JsonIgnore
 	private Donor donor;
 
-	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "recipient_id", referencedColumnName = "id", nullable = false)
-	@JsonBackReference
+	@JsonIgnore
 	private Recipient recipient;
 
 	@Column(name = "amount", nullable = false)
@@ -48,6 +47,7 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "donation")
 	@JsonProperty("thank_you_message")
+	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	private Message thankYouMessage;
 
 	public Donation createdAt(Instant createdAt) {
@@ -67,13 +67,12 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	@Schema(example = "101", requiredMode = Schema.RequiredMode.REQUIRED,
 			description = "persistence index of the donor who gave this donation")
 
-	@JsonView(UpliftJsonViews.DonorId.class)
+	@JsonView(UpliftJsonViews.FullRecipient.class)
 	@JsonGetter("donor_id")
 	public Integer getDonorId() {
 		return donor.getId();
 	}
 
-	@JsonView(UpliftJsonViews.DonorId.class)
 	@JsonSetter("donor_id")
 	public void setDonorId(Integer donorId) {
 		this.donor = new Donor().id(donorId);
@@ -105,7 +104,7 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	@Schema(example = "202", requiredMode = Schema.RequiredMode.REQUIRED,
 			description = "persistence index of the recipient who received this donation")
 
-	@JsonView(UpliftJsonViews.RecipientId.class)
+	@JsonView(UpliftJsonViews.FullDonor.class)
 	@JsonGetter("recipient_id")
 	public Integer getRecipientId() {
 		return recipient.getId();
