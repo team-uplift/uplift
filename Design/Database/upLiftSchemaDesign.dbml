@@ -93,7 +93,7 @@ Table recipient_tags {
     tag_name varchar(64) [pk]
     recipient_id integer [pk]
     weight double
-    added_on timestamp(3) [not null]
+    added_at timestamp(3) [not null]
 }
 
 // Create table to track which tags were shown to a donor in a specific session

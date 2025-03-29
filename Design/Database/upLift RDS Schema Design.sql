@@ -69,7 +69,7 @@ CREATE TABLE `recipient_tags` (
   `tag_name` varchar(64),
   `recipient_id` integer,
   `weight` double,
-  `added_on` timestamp(3) NOT NULL,
+  `added_at` timestamp(3) NOT NULL,
   PRIMARY KEY (`tag_name`, `recipient_id`)
 );
 
