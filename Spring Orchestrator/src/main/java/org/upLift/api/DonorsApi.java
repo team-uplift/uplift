@@ -40,9 +40,11 @@ public interface DonorsApi {
 			consumes = { "application/json", "application/xml", "application/x-www-form-urlencoded" },
 			method = RequestMethod.POST)
 	ResponseEntity<Donor> addDonor(
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
+			// @Parameter(in = ParameterIn.HEADER, description = "Tracks the session for
+			// the given set of requests.",
+			// required = true,
+			// schema = @Schema()) @RequestHeader(value = "session_id", required = true)
+			// String sessionId,
 			@Parameter(in = ParameterIn.DEFAULT, description = "Create a new donor in the store", required = true,
 					schema = @Schema()) @Valid @RequestBody Donor body);
 

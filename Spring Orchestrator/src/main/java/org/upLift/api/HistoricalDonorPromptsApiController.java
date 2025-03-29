@@ -43,7 +43,7 @@ public class HistoricalDonorPromptsApiController implements HistoricalDonorPromp
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<List<HistoricalDonorPrompt>>(objectMapper.readValue(
 						"[ {\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"prompt\" : \"Willing to donate clothes\"\n}, {\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"prompt\" : \"Willing to donate clothes\"\n} ]",
@@ -62,7 +62,7 @@ public class HistoricalDonorPromptsApiController implements HistoricalDonorPromp
 			description = "Tracks the session for the given set of requests.", required = true,
 			schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<List<HistoricalDonorPrompt>>(objectMapper.readValue(
 						"[ {\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"prompt\" : \"Willing to donate clothes\"\n}, {\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"prompt\" : \"Willing to donate clothes\"\n} ]",
@@ -84,7 +84,7 @@ public class HistoricalDonorPromptsApiController implements HistoricalDonorPromp
 			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
 					schema = @Schema()) @Valid @RequestBody HistoricalDonorPrompt body) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<HistoricalDonorPrompt>(objectMapper.readValue(
 						"{\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"prompt\" : \"Willing to donate clothes\"\n}",

@@ -41,7 +41,7 @@ public class MessagesApiController implements MessagesApi {
 			description = "Tracks the session for the given set of requests.", required = true,
 			schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<List<Message>>(objectMapper.readValue(
 						"[ {\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"message\" : \"Hello, how can I help?\",\n  \"recipient_id\" : 202\n}, {\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"message\" : \"Hello, how can I help?\",\n  \"recipient_id\" : 202\n} ]",
@@ -63,7 +63,7 @@ public class MessagesApiController implements MessagesApi {
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<Message>(objectMapper.readValue(
 						"{\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"message\" : \"Hello, how can I help?\",\n  \"recipient_id\" : 202\n}",
@@ -85,7 +85,7 @@ public class MessagesApiController implements MessagesApi {
 			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
 					schema = @Schema()) @Valid @RequestBody Message body) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<Message>(objectMapper.readValue(
 						"{\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"message\" : \"Hello, how can I help?\",\n  \"recipient_id\" : 202\n}",
@@ -107,7 +107,7 @@ public class MessagesApiController implements MessagesApi {
 			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
 					schema = @Schema()) @Valid @RequestBody MessageSearchInput body) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<List<Message>>(objectMapper.readValue(
 						"[ {\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"message\" : \"Hello, how can I help?\",\n  \"recipient_id\" : 202\n}, {\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"message\" : \"Hello, how can I help?\",\n  \"recipient_id\" : 202\n} ]",

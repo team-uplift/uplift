@@ -1,5 +1,6 @@
 package org.upLift.api;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.upLift.model.Donation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,6 +17,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
+import org.upLift.model.TremendousOrderResponse;
+import org.upLift.model.User;
+import org.upLift.services.DonationService;
+import org.upLift.services.TremendousService;
+import org.upLift.services.UserService;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -30,17 +37,27 @@ public class DonationsApiController implements DonationsApi {
 
 	private final HttpServletRequest request;
 
-	@org.springframework.beans.factory.annotation.Autowired
-	public DonationsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+	private final TremendousService tremendousService;
+
+	private final UserService userService;
+
+	private final DonationService donationService;
+
+	@Autowired
+	public DonationsApiController(ObjectMapper objectMapper, HttpServletRequest request,
+			TremendousService tremendousService, UserService userService, DonationService donationService) {
 		this.objectMapper = objectMapper;
 		this.request = request;
+		this.tremendousService = tremendousService;
+		this.userService = userService;
+		this.donationService = donationService;
 	}
 
 	public ResponseEntity<List<Donation>> donationsGet(@Parameter(in = ParameterIn.HEADER,
 			description = "Tracks the session for the given set of requests.", required = true,
 			schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<List<Donation>>(objectMapper.readValue(
 						"[ {\n  \"amount\" : 500,\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"recipient_id\" : 202\n}, {\n  \"amount\" : 500,\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"recipient_id\" : 202\n} ]",
@@ -62,7 +79,7 @@ public class DonationsApiController implements DonationsApi {
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<Donation>(objectMapper.readValue(
 						"{\n  \"amount\" : 500,\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"recipient_id\" : 202\n}",
@@ -84,19 +101,44 @@ public class DonationsApiController implements DonationsApi {
 			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
 					schema = @Schema()) @Valid @RequestBody Donation body) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
-				return new ResponseEntity<Donation>(objectMapper.readValue(
-						"{\n  \"amount\" : 500,\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"recipient_id\" : 202\n}",
-						Donation.class), HttpStatus.NOT_IMPLEMENTED);
+				User recipient;
+				User donor;
+
+				if (userService.getUserById(body.getRecipientId()).isPresent()
+						&& userService.getUserById(body.getDonorId()).isPresent()) {
+					recipient = userService.getUserById(body.getRecipientId()).get();
+					donor = userService.getUserById(body.getDonorId()).get();
+
+					TremendousOrderResponse response = tremendousService.submitDonationOrder(recipient, donor,
+							body.getAmount());
+
+					Donation donation = new Donation();
+					donation.setRecipientId(recipient.getId());
+					donation.setDonorId(donor.getId());
+					donation.setAmount(body.getAmount());
+					donation.setRecipient(recipient.getRecipientData());
+					donation.setDonor(donor.getDonorData());
+
+					Donation newDonation = donationService.saveDonation(donation);
+
+					return new ResponseEntity<>(newDonation, HttpStatus.CREATED);
+				}
+				else {
+					log.error("Couldn't find recipient or donor. Check Ids.");
+					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+				}
+
 			}
-			catch (IOException e) {
+			catch (RuntimeException e) {
 				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<Donation>(HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 
-		return new ResponseEntity<Donation>(HttpStatus.NOT_IMPLEMENTED);
+		log.error("Couldn't accept request check headers");
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 }
