@@ -1,23 +1,22 @@
 package org.upLift.api;
 
-import org.upLift.model.Message;
-import org.upLift.model.MessageSearchInput;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
+import org.upLift.model.Message;
+import org.upLift.services.MessageService;
+import org.upLift.services.UserService;
 
-import jakarta.validation.Valid;
-import jakarta.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
@@ -25,57 +24,28 @@ import java.util.List;
 @RestController
 public class MessagesApiController implements MessagesApi {
 
-	private static final Logger log = LoggerFactory.getLogger(MessagesApiController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MessagesApiController.class);
 
-	private final ObjectMapper objectMapper;
+	private final MessageService messageService;
+	private final UserService userService;
 
-	private final HttpServletRequest request;
-
-	@org.springframework.beans.factory.annotation.Autowired
-	public MessagesApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
+	@Autowired
+	public MessagesApiController(MessageService messageService, UserService userService) {
+		this.messageService = messageService;
+		this.userService = userService;
 	}
 
-	public ResponseEntity<List<Message>> messagesGet(@Parameter(in = ParameterIn.HEADER,
-			description = "Tracks the session for the given set of requests.", required = true,
-			schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
-		String accept = request.getHeader("Accept");
-		if (accept != null) {
-			try {
-				return new ResponseEntity<List<Message>>(objectMapper.readValue(
-						"[ {\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"message\" : \"Hello, how can I help?\",\n  \"recipient_id\" : 202\n}, {\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"message\" : \"Hello, how can I help?\",\n  \"recipient_id\" : 202\n} ]",
-						List.class), HttpStatus.NOT_IMPLEMENTED);
-			}
-			catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<List<Message>>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+	@Override
+	public ResponseEntity<Message> messagesIdGet(@PathVariable("id") Integer id) {
+		LOG.info("Getting message {}", id);
+		var message = messageService.getMessageById(id);
+		if (message.isPresent()) {
+			LOG.debug("Found message with id {}", id);
+			return new ResponseEntity<>(message.get(), HttpStatus.OK);
 		}
-
-		return new ResponseEntity<List<Message>>(HttpStatus.NOT_IMPLEMENTED);
-	}
-
-	public ResponseEntity<Message> messagesIdGet(
-			@Parameter(in = ParameterIn.PATH, description = "", required = true,
-					schema = @Schema()) @PathVariable("id") Integer id,
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
-		String accept = request.getHeader("Accept");
-		if (accept != null) {
-			try {
-				return new ResponseEntity<Message>(objectMapper.readValue(
-						"{\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"message\" : \"Hello, how can I help?\",\n  \"recipient_id\" : 202\n}",
-						Message.class), HttpStatus.NOT_IMPLEMENTED);
-			}
-			catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<Message>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+		else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-
-		return new ResponseEntity<Message>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	public ResponseEntity<Message> messagesPost(
@@ -84,42 +54,27 @@ public class MessagesApiController implements MessagesApi {
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
 					schema = @Schema()) @Valid @RequestBody Message body) {
-		String accept = request.getHeader("Accept");
-		if (accept != null) {
-			try {
-				return new ResponseEntity<Message>(objectMapper.readValue(
-						"{\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"message\" : \"Hello, how can I help?\",\n  \"recipient_id\" : 202\n}",
-						Message.class), HttpStatus.NOT_IMPLEMENTED);
-			}
-			catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<Message>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
-
-		return new ResponseEntity<Message>(HttpStatus.NOT_IMPLEMENTED);
+		LOG.info("Saving message linked to donation {}", body.getDonationId());
+		LOG.debug("Saving message: {}", body.getMessage());
+		var savedMessage = messageService.sendMessage(body);
+		LOG.debug("Saved message: {}", savedMessage);
+		return new ResponseEntity<>(savedMessage, HttpStatus.CREATED);
 	}
 
-	public ResponseEntity<List<Message>> messagesSearchPost(
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
-					schema = @Schema()) @Valid @RequestBody MessageSearchInput body) {
-		String accept = request.getHeader("Accept");
-		if (accept != null) {
-			try {
-				return new ResponseEntity<List<Message>>(objectMapper.readValue(
-						"[ {\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"message\" : \"Hello, how can I help?\",\n  \"recipient_id\" : 202\n}, {\n  \"created_at\" : \"2024-03-15T10:00:00Z\",\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"message\" : \"Hello, how can I help?\",\n  \"recipient_id\" : 202\n} ]",
-						List.class), HttpStatus.NOT_IMPLEMENTED);
-			}
-			catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<List<Message>>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+	public ResponseEntity<List<Message>> messagesGetByDonor(
+			@RequestHeader(value = "session_id", required = true) String sessionId,
+			@PathVariable("donorId") Integer donorId) {
+		LOG.info("Getting messages linked to donor {}", donorId);
+		if (userService.donorExists(donorId)) {
+			LOG.debug("Found donor {}", donorId);
+			var messages = messageService.getMessagesByDonorId(donorId);
+			LOG.debug("Found {} messages", messages.size());
+			return new ResponseEntity<>(messages, HttpStatus.OK);
 		}
-
-		return new ResponseEntity<List<Message>>(HttpStatus.NOT_IMPLEMENTED);
+		else {
+			LOG.info("Donor {} does not exist", donorId);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 }
