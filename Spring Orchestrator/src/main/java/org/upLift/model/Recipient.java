@@ -273,8 +273,8 @@ public class Recipient extends AbstractCreatedAt {
 		return this;
 	}
 
-	@Schema(example = "[{\"question\": \"What was your biggest challenge in the last six months?\", " +
-			"\"answer\": \"Losing my job\"}]",
+	@Schema(example = "[{\"question\": \"What was your biggest challenge in the last six months?\", "
+			+ "\"answer\": \"Losing my job\"}]",
 			description = "String containing JSON object grouping form questions and recipient answers")
 
 	public List<FormQuestion> getFormQuestions() {

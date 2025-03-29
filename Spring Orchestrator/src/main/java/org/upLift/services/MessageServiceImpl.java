@@ -34,4 +34,5 @@ public class MessageServiceImpl implements MessageService {
 		// TODO: Add notification to donor about new message?
 		return savedMessage;
 	}
+
 }

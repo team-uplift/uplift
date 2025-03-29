@@ -15,7 +15,8 @@ import java.util.Objects;
 @Table(name = "recipient_tags")
 public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 
-	// Apparently many-to-many association tables only work correctly with @EmbeddedId, not @IdClass
+	// Apparently many-to-many association tables only work correctly with @EmbeddedId,
+	// not @IdClass
 	@EmbeddedId
 	@JsonIgnore
 	private RecipientTagId id;
@@ -30,7 +31,8 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 
 	@ManyToOne
 	@MapsId("recipientId")
-	// Even though none of the documentation includes this @JoinColumn, it's necessary because
+	// Even though none of the documentation includes this @JoinColumn, it's necessary
+	// because
 	// Hibernate/Spring ignore the @Column annotation on the RecipientTagId properties
 	@JoinColumn(name = "recipient_id", referencedColumnName = "id")
 	@JsonBackReference
@@ -38,7 +40,8 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 
 	@ManyToOne
 	@MapsId("tagName")
-	// Even though none of the documentation includes this @JoinColumn, it's necessary because
+	// Even though none of the documentation includes this @JoinColumn, it's necessary
+	// because
 	// Hibernate/Spring ignore the @Column annotation on the RecipientTagId properties
 	@JoinColumn(name = "tag_name", referencedColumnName = "tag_name")
 	// Unwrap the tag into this object for easier use on the front end

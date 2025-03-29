@@ -30,7 +30,8 @@ public class FormQuestionListConverter implements AttributeConverter<List<FormQu
 	public String convertToDatabaseColumn(List<FormQuestion> attribute) {
 		try {
 			return mapper.writeValueAsString(attribute);
-		} catch (JsonProcessingException e) {
+		}
+		catch (JsonProcessingException e) {
 			LOG.error("Error serializing form question list to String", e);
 			throw new RuntimeException(e);
 		}
@@ -38,12 +39,15 @@ public class FormQuestionListConverter implements AttributeConverter<List<FormQu
 
 	@Override
 	public List<FormQuestion> convertToEntityAttribute(String dbData) {
-		var typeRef = new TypeReference<List<FormQuestion>>() {};
+		var typeRef = new TypeReference<List<FormQuestion>>() {
+		};
 		try {
 			return mapper.readValue(dbData, typeRef);
-		} catch (JsonProcessingException e) {
+		}
+		catch (JsonProcessingException e) {
 			LOG.error("Error converting database column to FormQuestion list", e);
 			throw new RuntimeException(e);
 		}
 	}
+
 }

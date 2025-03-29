@@ -27,6 +27,7 @@ public class MessagesApiController implements MessagesApi {
 	private static final Logger LOG = LoggerFactory.getLogger(MessagesApiController.class);
 
 	private final MessageService messageService;
+
 	private final UserService userService;
 
 	@Autowired

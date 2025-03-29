@@ -39,9 +39,7 @@ public interface MessagesApi {
 	@GetMapping(value = "/messages/{id}", produces = { "application/json" })
 	ResponseEntity<Message> messagesIdGet(
 			@Parameter(in = ParameterIn.PATH, description = "persistence index of the message to retrieve",
-					required = true,
-					schema = @Schema()) @PathVariable("id") Integer id);
-
+					required = true, schema = @Schema()) @PathVariable("id") Integer id);
 
 	@Operation(summary = "Send a message", description = "Allows a donor or recipient to send a message.",
 			tags = { "Messages" })
@@ -61,13 +59,12 @@ public interface MessagesApi {
 			@Parameter(in = ParameterIn.DEFAULT, description = "new message to be saved", required = true,
 					schema = @Schema()) @Valid @RequestBody Message body);
 
-
 	@Operation(summary = "Get messages sent to a specific donor",
 			description = "Retrieves messages sent to a specific donor.", tags = { "Messages" })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
-					description = "List of messages sent to a specific donor, " +
-							"returns an empty array if the donor hasn't received any messages",
+					description = "List of messages sent to a specific donor, "
+							+ "returns an empty array if the donor hasn't received any messages",
 					content = @Content(mediaType = "application/json",
 							array = @ArraySchema(schema = @Schema(implementation = Message.class)))),
 
@@ -82,8 +79,7 @@ public interface MessagesApi {
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			@Parameter(in = ParameterIn.DEFAULT,
-					description = "persistence index of the donor whose messages should be retrieved",
-					required = true,
+					description = "persistence index of the donor whose messages should be retrieved", required = true,
 					schema = @Schema()) @PathVariable("donorId") Integer donorId);
 
 }

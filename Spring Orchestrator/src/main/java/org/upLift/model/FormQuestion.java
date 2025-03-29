@@ -3,7 +3,8 @@ package org.upLift.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * JSON-only model class, used to hold a single form question asked of a recipient with their response.
+ * JSON-only model class, used to hold a single form question asked of a recipient with
+ * their response.
  */
 public class FormQuestion {
 
@@ -28,4 +29,5 @@ public class FormQuestion {
 	public void setAnswer(String answer) {
 		this.answer = answer;
 	}
+
 }

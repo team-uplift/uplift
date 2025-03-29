@@ -8,4 +8,5 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<Message, Integer> {
 
 	List<Message> findAllByDonation_Donor_Id(int donorId);
+
 }

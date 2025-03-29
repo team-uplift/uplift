@@ -12,7 +12,6 @@ public interface DonationRepository extends JpaRepository<Donation, Integer> {
 	/**
 	 * Finds all donations made by the specified donor, eagerly loading the recipients
 	 * associated with each donation.
-	 *
 	 * @param donorId persistence index of the donor who gave the donations to load
 	 * @return List of all donations given by the specified donor, with recipients eagerly
 	 * loaded
@@ -26,7 +25,6 @@ public interface DonationRepository extends JpaRepository<Donation, Integer> {
 	/**
 	 * Finds all donations received by the specified recipient, eagerly loading the donors
 	 * associated with each donation.
-	 *
 	 * @param recipientId persistence index of the recipient whose received donations
 	 * should be loaded
 	 * @return List of all donations received by the specified recipient, with donors

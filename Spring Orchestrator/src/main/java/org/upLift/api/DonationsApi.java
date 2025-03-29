@@ -49,7 +49,6 @@ public interface DonationsApi {
 			@Parameter(in = ParameterIn.PATH, description = "persistence index of the donation to retrieve",
 					required = true, schema = @Schema()) @PathVariable("id") Integer id);
 
-
 	@Operation(summary = "Get donations by donor",
 			description = "Retrieves all donations made a donor specified by donor ID.", tags = { "Donations" })
 	@ApiResponses(value = {
@@ -66,7 +65,6 @@ public interface DonationsApi {
 	ResponseEntity<List<Donation>> donationsGetByDonor(
 			@Parameter(in = ParameterIn.PATH, description = "persistence index of the donor", required = true,
 					schema = @Schema()) @PathVariable("donorId") Integer id);
-
 
 	@Operation(summary = "Get donations by recipient",
 			description = "Retrieves all donations that went to a recipient specified by recipient ID.",
@@ -85,7 +83,6 @@ public interface DonationsApi {
 	ResponseEntity<List<Donation>> donationsGetByRecipient(@Parameter(in = ParameterIn.PATH,
 			description = "persistence index of the recipient", required = true, schema = @Schema(name = "recipientId",
 					description = "persistence index of the recipient")) @PathVariable("recipientId") Integer id);
-
 
 	@Operation(summary = "Create a new donation", description = "Adds a new donation transaction.",
 			tags = { "Donations" })

@@ -11,7 +11,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.upLift.model.User;
 
 @Validated
@@ -36,7 +39,7 @@ public interface UsersApi {
 			consumes = { "application/json", "application/xml", "application/x-www-form-urlencoded" },
 			method = RequestMethod.POST)
 	ResponseEntity<User> addUser(
-			// @formatter:off
+	// @formatter:off
 //			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 //					required = true,
 //					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
@@ -44,14 +47,13 @@ public interface UsersApi {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Create a new user in the app", required = true,
 					schema = @Schema()) @Valid @RequestBody User body);
 
-
 	@Operation(summary = "Deletes a user", description = "delete a user",
 			security = { @SecurityRequirement(name = "userstore_auth", scopes = { "write:users", "read:users" }) },
 			tags = { "User" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "400", description = "Invalid ID supplied") })
 	@RequestMapping(value = "/users/{userId}", method = RequestMethod.DELETE)
 	void deleteUser(
-			// @formatter:off
+	// @formatter:off
 //			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 //					required = true,
 //					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
@@ -60,7 +62,6 @@ public interface UsersApi {
 			// @formatter:on
 			@Parameter(in = ParameterIn.PATH, description = "User id to delete", required = true,
 					schema = @Schema()) @PathVariable("userId") Integer userId);
-
 
 	@Operation(summary = "Find user by ID", description = "Returns a single user, identified by persistence index",
 			security = { @SecurityRequirement(name = "api_key"),
@@ -77,14 +78,13 @@ public interface UsersApi {
 					@ApiResponse(responseCode = "404", description = "User not found") })
 	@RequestMapping(value = "/users/{userId}", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<User> getUserById(
-			// @formatter:off
+	// @formatter:off
 //			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 //					required = true,
 //					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			// @formatter:on
 			@Parameter(in = ParameterIn.PATH, description = "ID of user to return", required = true,
 					schema = @Schema()) @PathVariable("userId") Integer userId);
-
 
 	@Operation(summary = "Find user by Cognito sub", description = "Returns a single user, identified by Cognito sub",
 			security = { @SecurityRequirement(name = "api_key"),
@@ -101,14 +101,13 @@ public interface UsersApi {
 					@ApiResponse(responseCode = "404", description = "User not found") })
 	@RequestMapping(value = "/users/cognito/{cognitoId}", produces = { "application/json" }, method = RequestMethod.GET)
 	ResponseEntity<User> getUserByCognitoId(
-			// @formatter:off
+	// @formatter:off
 //			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 //					required = true,
 //					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			// @formatter:on
 			@Parameter(in = ParameterIn.PATH, description = "Cognito ID of user to return", required = true,
 					schema = @Schema()) @PathVariable("cognitoId") String cognitoId);
-
 
 	@Operation(summary = "Update an existing user", description = "Update an existing user by Id",
 			security = { @SecurityRequirement(name = "userstore_auth", scopes = { "write:users", "read:users" }) },
@@ -128,7 +127,7 @@ public interface UsersApi {
 			consumes = { "application/json", "application/xml", "application/x-www-form-urlencoded" },
 			method = RequestMethod.PUT)
 	ResponseEntity<User> updateUser(
-			// @formatter:off
+	// @formatter:off
 //			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 //					required = true,
 //					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
