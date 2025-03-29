@@ -18,4 +18,5 @@ public interface DonationService {
 	List<Donation> getDonationsByRecipientId(Integer recipientId);
 
 	Donation saveDonation(Donation donation);
+
 }
