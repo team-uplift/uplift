@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
+import org.upLift.services.RecipientService;
+import org.upLift.services.UserService;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -31,10 +34,17 @@ public class RecipientsApiController implements RecipientsApi {
 
 	private final HttpServletRequest request;
 
+	private final RecipientService recipientService;
+
+	private final UserService userService;
+
 	@org.springframework.beans.factory.annotation.Autowired
-	public RecipientsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+	public RecipientsApiController(ObjectMapper objectMapper, HttpServletRequest request,
+			RecipientService recipientService, UserService userService) {
 		this.objectMapper = objectMapper;
 		this.request = request;
+		this.recipientService = recipientService;
+		this.userService = userService;
 	}
 
 	public ResponseEntity<Recipient> addRecipient(
@@ -44,15 +54,30 @@ public class RecipientsApiController implements RecipientsApi {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Create a new recipient in the store", required = true,
 					schema = @Schema()) @Valid @RequestBody Recipient body) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
-				return new ResponseEntity<Recipient>(objectMapper.readValue(
-						"{\n  \"income_verified\" : true,\n  \"cognito_id\" : \"oijwedf-wrefwefr-saedf3rweg-gv\",\n  \"amount_received\" : 300.15,\n  \"nickname\" : \"PotatoKing\",\n  \"id\" : 10,\n  \"last_profile_text\" : \"I like potatoes.\",\n  \"email\" : \"testUser\",\n  \"username\" : \"testUser\",\n  \"tags\" : [ {\n    \"tag_name\" : \"Potato\"\n  }, {\n    \"tag_name\" : \"Potato\"\n  } ]\n}",
-						Recipient.class), HttpStatus.NOT_IMPLEMENTED);
+				// Get existing user with provided id
+				if (userService.getUserById(body.getId()).isEmpty()) {
+					log.error("User with provided Id not found {}", body.getId());
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				}
+
+				// This assumes we have a User already built to create a recipient. This
+				// is required because the user id is
+				// a foreign key and a primary key for the Recipient.
+				body.setUser(userService.getUserById(body.getId()).get());
+
+				// The UI may send us an id or nothing, BUT we need to guarantee the id to
+				// be null
+				// so it can be set by the database from the provided user appropriately.
+				body.setId(null);
+
+				Recipient newRecipient = recipientService.saveRecipient(body);
+				return new ResponseEntity<>(newRecipient, HttpStatus.CREATED);
 			}
-			catch (IOException e) {
+			catch (RuntimeException e) {
 				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<Recipient>(HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 
@@ -78,7 +103,7 @@ public class RecipientsApiController implements RecipientsApi {
 			@Parameter(in = ParameterIn.QUERY, description = "Tags to filter by",
 					schema = @Schema()) @Valid @RequestParam(value = "tags", required = false) List<String> tags) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<List<Recipient>>(objectMapper.readValue(
 						"[ {\n  \"income_verified\" : true,\n  \"cognito_id\" : \"oijwedf-wrefwefr-saedf3rweg-gv\",\n  \"amount_received\" : 300.15,\n  \"nickname\" : \"PotatoKing\",\n  \"id\" : 10,\n  \"last_profile_text\" : \"I like potatoes.\",\n  \"email\" : \"testUser\",\n  \"username\" : \"testUser\",\n  \"tags\" : [ {\n    \"tag_name\" : \"Potato\"\n  }, {\n    \"tag_name\" : \"Potato\"\n  } ]\n}, {\n  \"income_verified\" : true,\n  \"cognito_id\" : \"oijwedf-wrefwefr-saedf3rweg-gv\",\n  \"amount_received\" : 300.15,\n  \"nickname\" : \"PotatoKing\",\n  \"id\" : 10,\n  \"last_profile_text\" : \"I like potatoes.\",\n  \"email\" : \"testUser\",\n  \"username\" : \"testUser\",\n  \"tags\" : [ {\n    \"tag_name\" : \"Potato\"\n  }, {\n    \"tag_name\" : \"Potato\"\n  } ]\n} ]",
@@ -100,7 +125,7 @@ public class RecipientsApiController implements RecipientsApi {
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<Recipient>(objectMapper.readValue(
 						"{\n  \"income_verified\" : true,\n  \"cognito_id\" : \"oijwedf-wrefwefr-saedf3rweg-gv\",\n  \"amount_received\" : 300.15,\n  \"nickname\" : \"PotatoKing\",\n  \"id\" : 10,\n  \"last_profile_text\" : \"I like potatoes.\",\n  \"email\" : \"testUser\",\n  \"username\" : \"testUser\",\n  \"tags\" : [ {\n    \"tag_name\" : \"Potato\"\n  }, {\n    \"tag_name\" : \"Potato\"\n  } ]\n}",
@@ -122,7 +147,7 @@ public class RecipientsApiController implements RecipientsApi {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Update an existent recipient in the store",
 					required = true, schema = @Schema()) @Valid @RequestBody Recipient body) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<Recipient>(objectMapper.readValue(
 						"{\n  \"income_verified\" : true,\n  \"cognito_id\" : \"oijwedf-wrefwefr-saedf3rweg-gv\",\n  \"amount_received\" : 300.15,\n  \"nickname\" : \"PotatoKing\",\n  \"id\" : 10,\n  \"last_profile_text\" : \"I like potatoes.\",\n  \"email\" : \"testUser\",\n  \"username\" : \"testUser\",\n  \"tags\" : [ {\n    \"tag_name\" : \"Potato\"\n  }, {\n    \"tag_name\" : \"Potato\"\n  } ]\n}",

@@ -1,11 +1,13 @@
 package org.upLift.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.upLift.model.Donation;
 import org.upLift.repositories.DonationRepository;
 import java.util.List;
 
 @Service
+@Transactional
 public class DonationServiceImpl implements DonationService {
 
 	private final DonationRepository donationRepository;

@@ -57,7 +57,7 @@ public class DonationsApiController implements DonationsApi {
 			description = "Tracks the session for the given set of requests.", required = true,
 			schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<List<Donation>>(objectMapper.readValue(
 						"[ {\n  \"amount\" : 500,\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"recipient_id\" : 202\n}, {\n  \"amount\" : 500,\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"recipient_id\" : 202\n} ]",
@@ -79,7 +79,7 @@ public class DonationsApiController implements DonationsApi {
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null) {
 			try {
 				return new ResponseEntity<Donation>(objectMapper.readValue(
 						"{\n  \"amount\" : 500,\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"recipient_id\" : 202\n}",
@@ -94,7 +94,7 @@ public class DonationsApiController implements DonationsApi {
 		return new ResponseEntity<Donation>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
-	public ResponseEntity<TremendousOrderResponse> donationsPost(
+	public ResponseEntity<Donation> donationsPost(
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
@@ -121,24 +121,24 @@ public class DonationsApiController implements DonationsApi {
 					donation.setRecipient(recipient.getRecipientData());
 					donation.setDonor(donor.getDonorData());
 
-					donationService.saveDonation(donation);
+					Donation newDonation = donationService.saveDonation(donation);
 
-					return new ResponseEntity<TremendousOrderResponse>(HttpStatus.CREATED);
+					return new ResponseEntity<>(newDonation, HttpStatus.CREATED);
 				}
 				else {
 					log.error("Couldn't find recipient or donor. Check Ids.");
-					return new ResponseEntity<TremendousOrderResponse>(HttpStatus.BAD_REQUEST);
+					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				}
 
 			}
 			catch (RuntimeException e) {
 				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<TremendousOrderResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 
 		log.error("Couldn't accept request check headers");
-		return new ResponseEntity<TremendousOrderResponse>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 }

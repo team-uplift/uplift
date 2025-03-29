@@ -55,10 +55,18 @@ public class UserServiceImpl implements UserService {
 		if (result.isPresent()) {
 			var user = result.get();
 			if (user.isRecipient()) {
-				user.getRecipientData().getCreatedAt();
+				// If the user is created before the recipient this creates a null
+				// exception.
+				if (user.getRecipientData() != null) {
+					user.getRecipientData().getCreatedAt();
+				}
 			}
 			else {
-				user.getDonorData().getCreatedAt();
+				// If the user is created before the recipient this creates a null
+				// exception.
+				if (user.getDonorData() != null) {
+					user.getDonorData().getCreatedAt();
+				}
 			}
 			return Optional.of(user);
 		}

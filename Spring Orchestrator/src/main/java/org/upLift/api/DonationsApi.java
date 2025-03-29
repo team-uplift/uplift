@@ -75,7 +75,7 @@ public interface DonationsApi {
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@RequestMapping(value = "/donations", produces = { "application/json" }, consumes = { "application/json" },
 			method = RequestMethod.POST)
-	ResponseEntity<TremendousOrderResponse> donationsPost(
+	ResponseEntity<Donation> donationsPost(
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,

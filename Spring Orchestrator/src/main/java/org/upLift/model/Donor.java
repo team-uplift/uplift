@@ -104,7 +104,7 @@ public class Donor extends AbstractCreatedAt {
 		// @formatter:off
 		return "class Donor {\n"
 				+ "    id: " + toIndentedString(getId()) + "\n"
-				+ "    user: " + toIndentedString(user.toString()) + "\n"
+//				+ "    user: " + toIndentedString(user.toString()) + "\n"
 				+ "    nickname: " + toIndentedString(nickname) + "\n"
 				+ "    createdAt: " + toIndentedString(getCreatedAt()) + "\n"
 				+ "}";
