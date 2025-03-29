@@ -42,6 +42,8 @@ jobs:
         run: |
           if [ "$(sudo docker ps -aq)" ]; then
             sudo docker rm -vf $(docker ps -aq)
+          fi
+          if [ "$(docker images -aq)" ]; then
             docker rmi -f $(docker images -aq)
           fi
       - name: Pull image from docker hub
