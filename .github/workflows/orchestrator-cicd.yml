@@ -2,7 +2,7 @@ name: Orchestrator CICD
 
 on:
   push:
-    branches: [ main, tremendous-integration ]
+    branches: [ main ]
     paths: [ Spring Orchestrator/** ]
   pull_request:
     branches: [ main ]
