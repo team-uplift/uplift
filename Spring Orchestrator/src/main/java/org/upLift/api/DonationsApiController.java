@@ -1,19 +1,23 @@
 package org.upLift.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.upLift.model.Donation;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
+import org.upLift.model.Donation;
+import org.upLift.model.UpliftJsonViews;
+import org.upLift.services.DonationService;
+import org.upLift.services.UserService;
 
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,35 +57,42 @@ public class DonationsApiController implements DonationsApi {
 		this.donationService = donationService;
 	}
 
-	public ResponseEntity<Donation> donationsIdGet(
-			@Parameter(in = ParameterIn.PATH, description = "", required = true,
-					schema = @Schema()) @PathVariable("id") Integer id,
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId) {
-		String accept = request.getHeader("Accept");
-		if (accept != null) {
-			try {
-				return new ResponseEntity<Donation>(objectMapper.readValue(
-						"{\n  \"amount\" : 500,\n  \"id\" : 1,\n  \"donor_id\" : 101,\n  \"recipient_id\" : 202\n}",
-						Donation.class), HttpStatus.NOT_IMPLEMENTED);
-			}
-			catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<Donation>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+	@Override
+	public ResponseEntity<Donation> donationsIdGet(@PathVariable("id") Integer id) {
+		var donation = donationService.getDonationById(id);
+		if (donation.isPresent()) {
+			return new ResponseEntity<>(donation.get(), HttpStatus.OK);
 		}
-
-		return new ResponseEntity<Donation>(HttpStatus.NOT_IMPLEMENTED);
+		else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
-	public ResponseEntity<List<Donation>> donationsGetByDonor(
-			@Parameter(in = ParameterIn.PATH, description = "", required = true,
-					schema = @Schema()) @PathVariable("donorId") Integer id) {
-
+	@Override
+	@JsonView(UpliftJsonViews.FullRecipient.class)
+	public ResponseEntity<List<Donation>> donationsGetByDonor(@PathVariable("donorId") Integer id) {
+		if (userService.donorExists(id)) {
+			var donations = donationService.getDonationsByDonorId(id);
+			return new ResponseEntity<>(donations, HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
+	@Override
+	@JsonView(UpliftJsonViews.FullDonor.class)
+	public ResponseEntity<List<Donation>> donationsGetByRecipient(@PathVariable("recipientId") Integer id) {
+		if (userService.recipientExists(id)) {
+			var donations = donationService.getDonationsByRecipientId(id);
+			return new ResponseEntity<>(donations, HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
 
+	@Override
 	public ResponseEntity<Donation> donationsPost(
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,

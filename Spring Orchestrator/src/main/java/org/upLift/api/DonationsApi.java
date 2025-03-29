@@ -8,6 +8,7 @@ package org.upLift.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,31 +39,52 @@ public interface DonationsApi {
 			@ApiResponse(responseCode = "404", description = "Donation not found"),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@RequestMapping(value = "/donations/{id}", produces = { "application/json" }, method = RequestMethod.GET)
+	@GetMapping(value = "/donations/{id}", produces = { "application/json" })
 	ResponseEntity<Donation> donationsIdGet(
-			@Parameter(in = ParameterIn.PATH, description = "", required = true,
-					schema = @Schema()) @PathVariable("id") Integer id,
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
+	// @formatter:off
+//			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
+//					required = true,
+//					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
+			// @formatter:on
+			@Parameter(in = ParameterIn.PATH, description = "persistence index of the donation to retrieve",
+					required = true, schema = @Schema()) @PathVariable("id") Integer id);
 
 
-
-	@Operation(summary = "Get donations by donor", description = "Retrieves all donations made by a specified donor by donor ID.",
-			tags = { "Donations" })
+	@Operation(summary = "Get donations by donor",
+			description = "Retrieves all donations made a donor specified by donor ID.", tags = { "Donations" })
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Donation details",
+			@ApiResponse(responseCode = "200",
+					description = "Array of donations sent by the specified donor, "
+							+ "will be an empty array if donor has not made any donations",
 					content = @Content(mediaType = "application/json",
-							schema = @Schema(implementation = Donation.class))),
+							array = @ArraySchema(schema = @Schema(implementation = Donation.class)))),
 
-			@ApiResponse(responseCode = "404", description = "Donation not found"),
+			@ApiResponse(responseCode = "404", description = "No donor exists with the specified id"),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@RequestMapping(value = "/donations/donor/{donorId}", produces = { "application/json" }, method = RequestMethod.GET)
+	@GetMapping(value = "/donations/donor/{donorId}", produces = { "application/json" })
 	ResponseEntity<List<Donation>> donationsGetByDonor(
-			@Parameter(in = ParameterIn.PATH, description = "", required = true,
+			@Parameter(in = ParameterIn.PATH, description = "persistence index of the donor", required = true,
 					schema = @Schema()) @PathVariable("donorId") Integer id);
 
+
+	@Operation(summary = "Get donations by recipient",
+			description = "Retrieves all donations that went to a recipient specified by recipient ID.",
+			tags = { "Donations" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Array of donations received by the specified recipient, "
+							+ "will be an empty array if recipient has not received anything",
+					content = @Content(mediaType = "application/json",
+							array = @ArraySchema(schema = @Schema(implementation = Donation.class)))),
+
+			@ApiResponse(responseCode = "404", description = "No recipient exists with the specified id"),
+
+			@ApiResponse(responseCode = "500", description = "Server error") })
+	@GetMapping(value = "/donations/recipient/{recipientId}", produces = { "application/json" })
+	ResponseEntity<List<Donation>> donationsGetByRecipient(@Parameter(in = ParameterIn.PATH,
+			description = "persistence index of the recipient", required = true, schema = @Schema(name = "recipientId",
+					description = "persistence index of the recipient")) @PathVariable("recipientId") Integer id);
 
 
 	@Operation(summary = "Create a new donation", description = "Adds a new donation transaction.",
@@ -75,13 +97,12 @@ public interface DonationsApi {
 			@ApiResponse(responseCode = "400", description = "Invalid request data"),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@RequestMapping(value = "/donations", produces = { "application/json" }, consumes = { "application/json" },
-			method = RequestMethod.POST)
+	@PostMapping(value = "/donations", produces = { "application/json" }, consumes = { "application/json" })
 	ResponseEntity<Donation> donationsPost(
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
+			@Parameter(in = ParameterIn.DEFAULT, description = "new donation to be saved", required = true,
 					schema = @Schema()) @Valid @RequestBody Donation body);
 
 }
