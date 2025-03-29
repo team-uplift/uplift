@@ -7,3 +7,5 @@
 
 /Spring Orchestrator/target
 **/*.iml
+/logs
+/Spring Orchestrator/logs

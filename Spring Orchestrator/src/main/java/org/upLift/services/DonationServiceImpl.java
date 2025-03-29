@@ -1,10 +1,12 @@
 package org.upLift.services;
 
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.upLift.model.Donation;
 import org.upLift.repositories.DonationRepository;
+
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -17,8 +19,8 @@ public class DonationServiceImpl implements DonationService {
 	}
 
 	@Override
-	public Donation saveDonation(Donation donation) {
-		return donationRepository.save(donation);
+	public Optional<Donation> getDonationById(int id) {
+		return donationRepository.findById(id);
 	}
 
 	@Override
@@ -28,15 +30,17 @@ public class DonationServiceImpl implements DonationService {
 
 	@Override
 	public List<Donation> getDonationsByDonorId(Integer donorId) {
-		return donationRepository.findAll().stream().filter(donation -> donation.getDonorId().equals(donorId)).toList();
+		return donationRepository.findByDonorId(donorId);
 	}
 
 	@Override
 	public List<Donation> getDonationsByRecipientId(Integer recipientId) {
-		return donationRepository.findAll()
-			.stream()
-			.filter(donation -> donation.getRecipientId().equals(recipientId))
-			.toList();
+		return donationRepository.findByRecipientId(recipientId);
+	}
+
+	@Override
+	public Donation saveDonation(Donation donation) {
+		return donationRepository.save(donation);
 	}
 
 }

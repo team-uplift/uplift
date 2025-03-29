@@ -5,44 +5,26 @@
  */
 package org.upLift.api;
 
-import org.upLift.model.Message;
-import org.upLift.model.MessageSearchInput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.upLift.model.Message;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
 @Validated
 public interface MessagesApi {
-
-	@Operation(summary = "Get all messages", description = "Retrieves all messages between donors and recipients.",
-			tags = { "Messages" })
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "List of messages",
-					content = @Content(mediaType = "application/json",
-							array = @ArraySchema(schema = @Schema(implementation = Message.class)))),
-
-			@ApiResponse(responseCode = "500", description = "Server error") })
-	@RequestMapping(value = "/messages", produces = { "application/json" }, method = RequestMethod.GET)
-	ResponseEntity<List<Message>> messagesGet(@Parameter(in = ParameterIn.HEADER,
-			description = "Tracks the session for the given set of requests.", required = true,
-			schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
 
 	@Operation(summary = "Get a message by ID", description = "Retrieves a specific message by its ID.",
 			tags = { "Messages" })
@@ -54,13 +36,10 @@ public interface MessagesApi {
 			@ApiResponse(responseCode = "404", description = "Message not found"),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@RequestMapping(value = "/messages/{id}", produces = { "application/json" }, method = RequestMethod.GET)
+	@GetMapping(value = "/messages/{id}", produces = { "application/json" })
 	ResponseEntity<Message> messagesIdGet(
-			@Parameter(in = ParameterIn.PATH, description = "", required = true,
-					schema = @Schema()) @PathVariable("id") Integer id,
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId);
+			@Parameter(in = ParameterIn.PATH, description = "persistence index of the message to retrieve",
+					required = true, schema = @Schema()) @PathVariable("id") Integer id);
 
 	@Operation(summary = "Send a message", description = "Allows a donor or recipient to send a message.",
 			tags = { "Messages" })
@@ -72,34 +51,35 @@ public interface MessagesApi {
 			@ApiResponse(responseCode = "400", description = "Invalid request data"),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@RequestMapping(value = "/messages", produces = { "application/json" }, consumes = { "application/json" },
-			method = RequestMethod.POST)
+	@PostMapping(value = "/messages", produces = { "application/json" }, consumes = { "application/json" })
 	ResponseEntity<Message> messagesPost(
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
+			@Parameter(in = ParameterIn.DEFAULT, description = "new message to be saved", required = true,
 					schema = @Schema()) @Valid @RequestBody Message body);
 
-	@Operation(summary = "Get messages between a specific donor and recipient",
-			description = "Retrieves messages exchanged between a given donor and recipient.", tags = { "Messages" })
+	@Operation(summary = "Get messages sent to a specific donor",
+			description = "Retrieves messages sent to a specific donor.", tags = { "Messages" })
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "List of messages between donor and recipient",
+			@ApiResponse(responseCode = "200",
+					description = "List of messages sent to a specific donor, "
+							+ "returns an empty array if the donor hasn't received any messages",
 					content = @Content(mediaType = "application/json",
 							array = @ArraySchema(schema = @Schema(implementation = Message.class)))),
 
 			@ApiResponse(responseCode = "400", description = "Invalid request data"),
 
-			@ApiResponse(responseCode = "404", description = "No messages found"),
+			@ApiResponse(responseCode = "404", description = "No such donor exists"),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@RequestMapping(value = "/messages/search", produces = { "application/json" }, consumes = { "application/json" },
-			method = RequestMethod.POST)
-	ResponseEntity<List<Message>> messagesSearchPost(
+	@GetMapping(value = "/messages/donor/{donorId}", produces = { "application/json" })
+	ResponseEntity<List<Message>> messagesGetByDonor(
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
-					schema = @Schema()) @Valid @RequestBody MessageSearchInput body);
+			@Parameter(in = ParameterIn.DEFAULT,
+					description = "persistence index of the donor whose messages should be retrieved", required = true,
+					schema = @Schema()) @PathVariable("donorId") Integer donorId);
 
 }
