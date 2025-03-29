@@ -40,8 +40,10 @@ jobs:
           fi
       - name: Delete all existing containers & images
         run: |
-           sudo docker rm -vf $(docker ps -aq)
-           docker rmi -f $(docker images -aq)
+          if [ "$(sudo docker ps -aq)" ]; then
+            sudo docker rm -vf $(docker ps -aq)
+            docker rmi -f $(docker images -aq)
+          fi
       - name: Pull image from docker hub
         run: sudo docker pull als5289/uplift-orchestrator:latest
       - name: Run docker container
