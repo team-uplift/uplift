@@ -70,18 +70,6 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>pre-integration-test</id>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>post-integration-test</id>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <goals>
                             <goal>repackage</goal>
                         </goals>
@@ -126,19 +114,6 @@
                         <inherited>true</inherited>
                         <goals>
                             <goal>validate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-maven-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>generate</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -213,6 +188,7 @@
         </dependency>
 
         <!-- AUTOMATIC OPEN API DOCS GENERATION -->
+        <!-- These take care of automatically building the swagger-ui endpoint and the open API JSON and YAML files -->
 
         <dependency>
             <groupId>org.springdoc</groupId>
