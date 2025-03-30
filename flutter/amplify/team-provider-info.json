@@ -1,4 +1,17 @@
 {
+  "devfix": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-uplift-devfix-dce39-authRole",
+      "UnauthRoleArn": "arn:aws:iam::988272540895:role/amplify-uplift-devfix-dce39-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::988272540895:role/amplify-uplift-devfix-dce39-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-uplift-devfix-dce39-deployment",
+      "UnauthRoleName": "amplify-uplift-devfix-dce39-unauthRole",
+      "StackName": "amplify-uplift-devfix-dce39",
+      "StackId": "arn:aws:cloudformation:us-east-1:988272540895:stack/amplify-uplift-devfix-dce39/6ac77830-0c36-11f0-92d8-120399f971bd",
+      "AmplifyAppId": "d2wakygez8w3ce"
+    }
+  },
   "dev": {
     "awscloudformation": {
       "AuthRoleName": "amplify-uplift-dev-80411-authRole",
@@ -10,6 +23,12 @@
       "StackName": "amplify-uplift-dev-80411",
       "StackId": "arn:aws:cloudformation:us-east-1:988272540895:stack/amplify-uplift-dev-80411/a4f80250-fed9-11ef-b782-0e80a8fbbeab",
       "AmplifyAppId": "d2wakygez8w3ce"
+    },
+    "categories": {
+      "auth": {
+        "uplift4dc6bb62": {},
+        "uplifteded7894": {}
+      }
     }
   },
   "develop": {

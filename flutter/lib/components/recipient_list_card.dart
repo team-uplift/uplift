@@ -28,7 +28,7 @@ class RecipientListCard extends StatelessWidget {
                 child: Hero(
                   tag: recipient.id,
                   child: Image.network(
-                    recipient.imageUrl,
+                    recipient.imageURL,
                     width: double.infinity,
                     height: 200,
                     fit: BoxFit.cover,
@@ -40,11 +40,11 @@ class RecipientListCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(recipient.name,
+                    Text(recipient.firstName,
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
                     Text(
-                      recipient.description,
+                      recipient.lastAboutMe,
                       maxLines: 2,
                     )
                   ],

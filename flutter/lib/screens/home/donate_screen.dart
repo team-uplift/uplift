@@ -62,7 +62,7 @@ class _DonatePageState extends ConsumerState<DonatePage> {
 
               /// Donation Info
               Text(
-                "You are donating to ${widget.recipient.name}",
+                "You are donating to ${widget.recipient.firstName}",
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -125,7 +125,7 @@ class _DonatePageState extends ConsumerState<DonatePage> {
                     );
 
                     print(
-                        "✅ Adding transaction: ${newTransaction.amount} to ${newTransaction.recipient.name}");
+                        "✅ Adding transaction: ${newTransaction.amount} to ${newTransaction.recipient.firstName}");
 
                     // ✅ Add transaction
                     ref
