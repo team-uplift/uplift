@@ -49,4 +49,4 @@ jobs:
       - name: Pull image from docker hub
         run: sudo docker pull als5289/uplift-orchestrator:latest
       - name: Run docker container
-        run: sudo docker run -d -p 80:8080 -p 3306:3306 --name uplift-orchestrator als5289/uplift-orchestrator -e TREMENDOUS_API_KEY=${{ secrets.TREMENDOUS_API_KEY }}
+        run: sudo docker run -d -p 80:8080 -p 3306:3306 -e TREMENDOUS_API_KEY=${{ secrets.TREMENDOUS_API_KEY }} --name uplift-orchestrator als5289/uplift-orchestrator 
