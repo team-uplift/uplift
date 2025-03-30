@@ -1,6 +1,7 @@
 FROM eclipse-temurin:21-jre
 LABEL authors="UpLift Team"
 
+# Environment Variables
 ENV TREMENDOUS_URL="https://testflight.tremendous.com"
 ENV TRE_ORDERS_PATH="/api/v2/orders"
 ENV FUNDING_SOURCE_ID="BALANCE"
@@ -12,5 +13,3 @@ VOLUME /tmp
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
-
-#empty comment
