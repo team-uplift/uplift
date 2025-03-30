@@ -2,7 +2,7 @@ name: Orchestrator CICD
 
 on:
   push:
-    branches: [ main, fix-tremendous-auth ]
+    branches: [ main ]
     paths: [ Spring Orchestrator/** ]
   pull_request:
     branches: [ main ]
