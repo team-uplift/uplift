@@ -29,7 +29,7 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
                   Hero(
                     tag: widget.recipient.id,
                     child: Image.network(
-                      widget.recipient.imageUrl,
+                      widget.recipient.imageURL,
                       width: double.infinity,
                       height: 250,
                       fit: BoxFit.cover,
@@ -42,7 +42,7 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.recipient.name,
+                          widget.recipient.firstName,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 24,
@@ -50,7 +50,7 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          widget.recipient.description,
+                          widget.recipient.lastAboutMe,
                           style: const TextStyle(fontSize: 16),
                         ),
                       ],

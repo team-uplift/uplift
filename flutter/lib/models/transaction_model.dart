@@ -22,9 +22,20 @@ class Transaction {
       id: DateTime.now().toString(), // Unique ID
       recipient: Recipient(
         id: recipient.id,
-        name: recipient.name,
-        imageUrl: recipient.imageUrl,
-        description: recipient.description
+        firstName: recipient.firstName,
+        lastName: recipient.lastName,
+        imageURL: recipient.imageURL,
+        lastAboutMe: recipient.lastAboutMe,
+        streetAddress1: recipient.streetAddress1,
+        streetAddress2: recipient.streetAddress2,
+        city: recipient.city,
+        state: recipient.state,
+        zipCode: recipient.zipCode,
+        lastReasonForHelp: recipient.lastReasonForHelp,
+        identityLastVerified: recipient.identityLastVerified,
+        incomeLastVerified: recipient.incomeLastVerified,
+        nickname: recipient.nickname,
+        createdAt: recipient.createdAt
 
       ),
       amount: amount,

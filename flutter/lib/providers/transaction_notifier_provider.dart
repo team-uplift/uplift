@@ -7,7 +7,7 @@ class TransactionNotifier extends StateNotifier<List<Transaction>> {
   void addTransaction(Transaction transaction) {
     state = [...state, transaction]; // ✅ Properly updates state
     print(
-        "✅ Added transaction: ${transaction.amount} to ${transaction.recipient.name}");
+        "✅ Added transaction: ${transaction.amount} to ${transaction.recipient.firstName}");
     print("📊 Total transactions in state: ${state.length}");
   }
 }

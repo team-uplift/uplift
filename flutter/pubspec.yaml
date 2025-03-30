@@ -45,6 +45,7 @@ dependencies:
   stretchy_header: ^2.0.0
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
+  http: ^1.3.0
 
 dev_dependencies:
   flutter_test:
