@@ -135,6 +135,32 @@ public class TremendousOrderRequest {
 		private final String method = "EMAIL"; // Final String for email as this will be
 												// the only currently supported method.
 
+		private final Meta meta = new Meta();
+
+		public static class Meta {
+			@JsonProperty("subject_line")
+			private final String subject_line = "A donor has sent you a gift!";
+
+			private final String message = "A very special gift to help you with groceries.";
+
+			@JsonProperty("from_name")
+			private final String from_name = "A humble donor.";
+
+			@JsonProperty("subject_line")
+			public String getSubject_line() {
+				return subject_line;
+			}
+
+			public String getMessage() {
+				return message;
+			}
+
+			@JsonProperty("from_name")
+			public String getFrom_name() {
+				return from_name;
+			}
+		}
+
 		public String getMethod() {
 			return method;
 		}
