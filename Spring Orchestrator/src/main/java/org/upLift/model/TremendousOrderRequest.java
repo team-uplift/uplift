@@ -138,6 +138,7 @@ public class TremendousOrderRequest {
 		private final Meta meta = new Meta();
 
 		public static class Meta {
+
 			@JsonProperty("subject_line")
 			private final String subject_line = "A donor has sent you a gift!";
 
@@ -159,6 +160,7 @@ public class TremendousOrderRequest {
 			public String getFrom_name() {
 				return from_name;
 			}
+
 		}
 
 		public String getMethod() {
