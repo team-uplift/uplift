@@ -167,7 +167,9 @@ public class TremendousOrderRequest {
 			return method;
 		}
 
-		public Meta getMeta() { return meta; }
+		public Meta getMeta() {
+			return meta;
+		}
 
 	}
 
