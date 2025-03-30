@@ -100,7 +100,7 @@ class DashboardPage extends ConsumerWidget {
                             leading: const Icon(Icons.attach_money,
                                 color: Colors.green),
                             title: Text(
-                              'Recipient: ${transaction.recipient.name}',
+                              'Recipient: ${transaction.recipient.firstName}',
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),
