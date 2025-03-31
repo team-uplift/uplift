@@ -155,9 +155,10 @@ public class RecipientServiceImpl implements RecipientService {
 		// Bedrock which can be expensive.
 		boolean canGenerateTags = false;
 
-		if(recipient.getTagsLastGenerated() == null) {
+		if (recipient.getTagsLastGenerated() == null) {
 			canGenerateTags = true;
-		} else {
+		}
+		else {
 			Instant generationCoolDownInstant = Instant.now().minus(Duration.ofDays(1));
 
 			// If the date the tag was added was NOT before the generation cooldown
