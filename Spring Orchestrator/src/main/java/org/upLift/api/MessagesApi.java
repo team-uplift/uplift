@@ -16,7 +16,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.upLift.model.Message;
 
 import java.util.List;
@@ -53,9 +56,6 @@ public interface MessagesApi {
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@PostMapping(value = "/messages", produces = { "application/json" }, consumes = { "application/json" })
 	ResponseEntity<Message> messagesPost(
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			@Parameter(in = ParameterIn.DEFAULT, description = "new message to be saved", required = true,
 					schema = @Schema()) @Valid @RequestBody Message body);
 
@@ -75,10 +75,7 @@ public interface MessagesApi {
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@GetMapping(value = "/messages/donor/{donorId}", produces = { "application/json" })
 	ResponseEntity<List<Message>> messagesGetByDonor(
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.DEFAULT,
+			@Parameter(in = ParameterIn.PATH,
 					description = "persistence index of the donor whose messages should be retrieved", required = true,
 					schema = @Schema()) @PathVariable("donorId") Integer donorId);
 

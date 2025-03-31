@@ -1,8 +1,5 @@
 package org.upLift.api;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.upLift.model.Message;
 import org.upLift.services.MessageService;
@@ -49,12 +45,7 @@ public class MessagesApiController implements MessagesApi {
 		}
 	}
 
-	public ResponseEntity<Message> messagesPost(
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
-					schema = @Schema()) @Valid @RequestBody Message body) {
+	public ResponseEntity<Message> messagesPost(@Valid @RequestBody Message body) {
 		LOG.info("Saving message linked to donation {}", body.getDonationId());
 		LOG.debug("Saving message: {}", body.getMessage());
 		var savedMessage = messageService.sendMessage(body);
@@ -62,9 +53,7 @@ public class MessagesApiController implements MessagesApi {
 		return new ResponseEntity<>(savedMessage, HttpStatus.CREATED);
 	}
 
-	public ResponseEntity<List<Message>> messagesGetByDonor(
-			@RequestHeader(value = "session_id", required = true) String sessionId,
-			@PathVariable("donorId") Integer donorId) {
+	public ResponseEntity<List<Message>> messagesGetByDonor(@PathVariable("donorId") Integer donorId) {
 		LOG.info("Getting messages linked to donor {}", donorId);
 		if (userService.donorExists(donorId)) {
 			LOG.debug("Found donor {}", donorId);
