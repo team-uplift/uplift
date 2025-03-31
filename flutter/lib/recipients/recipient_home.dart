@@ -41,10 +41,10 @@ class _RecipientHomeState extends State<RecipientHome> {
         //     icon: const Icon(Icons.logout),
         //   )
         // ],
-        leading: IconButton(
-          onPressed: () {context.goNamed('/home');}, 
-          icon: const Icon(Icons.home),
-        ),
+        // leading: IconButton(
+        //   onPressed: () {context.goNamed('/home');}, 
+        //   icon: const Icon(Icons.home),
+        // ),
         title: const Text("uplift logo")
       ),
       body: _screens[_selectedItem],

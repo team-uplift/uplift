@@ -81,8 +81,15 @@ class _TagSelectionState extends State<TagSelection> {
     }
   }
 
+  void _sortTagsByWeight() {
+    setState(() {
+      availableTags.sort((a, b) => a.weight.compareTo(b.weight));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    _sortTagsByWeight(); //sorting all tags when page is built
     return Column(
       children: [
         const Text("Select up to 10 interests"),
