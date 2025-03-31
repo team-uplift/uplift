@@ -58,9 +58,7 @@ public class RecipientServiceImpl implements RecipientService {
 		Recipient recipient = recipientRepository.findById(id).orElse(null);
 
 		if (recipient != null) {
-			SortedSet<RecipientTag> currentTags = recipient.getTags();
-
-			if(canGenerateTags(currentTags)) {
+			if(canGenerateTags(recipient)) {
 				AtomicReference<String> recipient_prompt = new AtomicReference<>("");
 
 				if (formQuestions != null && !formQuestions.isEmpty()) {
@@ -100,6 +98,8 @@ public class RecipientServiceImpl implements RecipientService {
 							newRecipientTag.setWeight(weight);
 							newRecipientTag.setAddedAt(now);
 							recipientTagsRepository.save(newRecipientTag);
+
+							recipient.setTagsLastGenerated(Instant.now());
 						}
 						// If a known tag does exist, check to see if it's unassigned to the recipient, if so, assign it.
 						else {
@@ -116,12 +116,14 @@ public class RecipientServiceImpl implements RecipientService {
 									newRecipientTag.setWeight(weight);
 									newRecipientTag.setAddedAt(Instant.now());
 									recipientTagsRepository.save(newRecipientTag);
+
+									recipient.setTagsLastGenerated(Instant.now());
 								}
 							}
 						}
 					}
 				}
-				// TODO - Save
+
 				recipientRepository.save(recipient);
 			}
 			else {
@@ -143,33 +145,25 @@ public class RecipientServiceImpl implements RecipientService {
 	/**
 	 * Private method to check if recipient can regenerate tags. As of now the default is
 	 * once every 24 hours.
-	 * @param currentTags
+	 * @param recipient
 	 * @return
 	 */
-	private Boolean canGenerateTags(SortedSet<RecipientTag> currentTags) {
+	private Boolean canGenerateTags(Recipient recipient) {
 		// Default to false. Do NOT default to true and change the logic (albeit simpler).
 		// This prevents issues in the
 		// intermediary logic from defaulting to true and causing a cascade of requests to
 		// Bedrock which can be expensive.
-		Boolean canGenerateTags = false;
+		boolean canGenerateTags = false;
 
-		int iterations = 0;
-		for (RecipientTag tag : currentTags) {
-			// In the last 24 hours
+		if(recipient.getTagsLastGenerated() == null) {
+			canGenerateTags = true;
+		} else {
 			Instant generationCoolDownInstant = Instant.now().minus(Duration.ofDays(1));
 
 			// If the date the tag was added was NOT before the generation cooldown
-			if (!tag.getAddedAt().isBefore(generationCoolDownInstant)) {
-				break; // Break, as this recipient has generated tags too soon.
+			if (recipient.getTagsLastGenerated().isBefore(generationCoolDownInstant)) {
+				canGenerateTags = true;
 			}
-
-			iterations++;
-		}
-
-		// Only set flag to true if we iterated through the whole list and did NOT find a
-		// recent tag.
-		if (iterations == currentTags.size()) {
-			canGenerateTags = true;
 		}
 
 		return canGenerateTags;
