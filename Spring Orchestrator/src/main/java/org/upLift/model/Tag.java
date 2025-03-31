@@ -28,7 +28,7 @@ public class Tag extends AbstractCreatedAt implements Comparable<Tag>, Serializa
 
 	@Id
 	@Column(name = "tag_name")
-	@JsonProperty("tag_name")
+	@JsonProperty("tagName")
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String tagName = null;
 

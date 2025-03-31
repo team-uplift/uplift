@@ -53,12 +53,12 @@ public class Message extends AbstractCreatedEntity {
 
 	@Schema(example = "101", description = "persistence index of the donation to which this message is linked")
 
-	@JsonGetter("donation_id")
+	@JsonGetter("donationId")
 	public Integer getDonationId() {
 		return donation.getId();
 	}
 
-	@JsonSetter("donation_id")
+	@JsonSetter("donationId")
 	public void setDonationId(Integer donationId) {
 		this.donation = new Donation().id(donationId);
 	}

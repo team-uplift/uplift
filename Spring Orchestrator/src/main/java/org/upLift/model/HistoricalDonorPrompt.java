@@ -21,7 +21,7 @@ import java.util.Objects;
 
 public class HistoricalDonorPrompt extends AbstractCreatedEntity {
 
-	@JsonProperty("donor_id")
+	@JsonProperty("donorId")
 
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null

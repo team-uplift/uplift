@@ -1,6 +1,9 @@
 package org.upLift.model;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
@@ -11,7 +14,7 @@ import java.util.Objects;
 public class User extends AbstractCreatedEntity {
 
 	@Column(name = "cognito_id", nullable = false)
-	@JsonProperty("cognito_id")
+	@JsonProperty("cognitoId")
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String cognitoId = null;
 
@@ -27,12 +30,12 @@ public class User extends AbstractCreatedEntity {
 
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonProperty("recipient_data")
+	@JsonProperty("recipientData")
 	private Recipient recipientData;
 
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonProperty("donor_data")
+	@JsonProperty("donorData")
 	private Donor donorData;
 
 	public User id(Integer id) {
