@@ -36,6 +36,7 @@ Table recipients { // Tracks our known recipients
   identity_last_verified timestamp(3) // Date/time the recipient's identity was last verified, used to determine if recipient identity needs to be re-verified
   income_last_verified timestamp(3) // Date/time the recipient's income was last verified, used to determine if recipient income needs to be re-verified
   nickname nvarchar(64)
+  tags_last_generated_at timestamp(3) // tracks the date/time tags were last generated for the recipient
   created_at timestamp(3) [not null] // keep a separate created_at for recipients and donors since these entries
                                      // may be added after initial user registration if user switches roles
 }
@@ -72,6 +73,7 @@ Table messages { // Tracks "thank-you" message from recipient to donor, linked t
   id integer [primary key, increment]
   donation_id integer [not null] // Will be foreign key to donation table
   message text [not null]
+  donor_read boolean [not null]
   created_at timestamp(3) [not null]
 }
 
@@ -93,6 +95,7 @@ Table recipient_tags {
     tag_name varchar(64) [pk]
     recipient_id integer [pk]
     weight double
+    selected boolean [not null]
     added_at timestamp(3) [not null]
 }
 

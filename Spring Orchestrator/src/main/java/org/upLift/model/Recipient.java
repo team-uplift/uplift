@@ -38,22 +38,22 @@ public class Recipient extends AbstractCreatedAt {
 
 	@Column(name = "first_name")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonProperty("first_name")
+	@JsonProperty("firstName")
 	private String firstName;
 
 	@Column(name = "last_name")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonProperty("last_name")
+	@JsonProperty("lastName")
 	private String lastName;
 
 	@Column(name = "street_address1")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonProperty("street_address1")
+	@JsonProperty("streetAddress1")
 	private String streetAddress1;
 
 	@Column(name = "street_address2")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
-	@JsonProperty("street_address2")
+	@JsonProperty("streetAddress2")
 	private String streetAddress2;
 
 	@Column(name = "city")
@@ -67,37 +67,42 @@ public class Recipient extends AbstractCreatedAt {
 	private String state;
 
 	@Column(name = "image_url")
-	@JsonInclude(JsonInclude.Include.NON_ABSENT)
-	@JsonProperty("image_url")
+	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
+	@JsonProperty("imageUrl")
 	private String imageUrl;
 
 	@Column(name = "last_about_me")
-	@JsonProperty("last_about_me")
+	@JsonProperty("lastAboutMe")
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String lastAboutMe;
 
 	@Column(name = "last_reason_for_help")
-	@JsonProperty("last_reason_for_help")
+	@JsonProperty("lastReasonForHelp")
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String lastReasonForHelp;
 
 	@SuppressWarnings("JpaAttributeTypeInspection")
 	@Column(name = "form_questions")
-	@JsonProperty("form_questions")
+	@JsonProperty("formQuestions")
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private List<FormQuestion> formQuestions;
 
 	@Column(name = "identity_last_verified")
-	@JsonProperty("identity_last_verified")
+	@JsonProperty("identityLastVerified")
 	private Instant identityLastVerified;
 
 	@Column(name = "income_last_verified")
-	@JsonProperty("income_last_verified")
+	@JsonProperty("incomeLastVerified")
 	private Instant incomeLastVerified;
 
 	@JsonProperty("nickname")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	private String nickname = null;
+
+	@Column(name = "tags_last_generated_at")
+	@JsonProperty("tagsLastGenerated")
+	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
+	private Instant tagsLastGenerated;
 
 	@Valid
 	@OneToMany(mappedBy = "recipient", fetch = FetchType.EAGER)
@@ -335,6 +340,21 @@ public class Recipient extends AbstractCreatedAt {
 
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
+	}
+
+	public Recipient tagsLastGenerated(Instant tagsLastGenerated) {
+		this.tagsLastGenerated = tagsLastGenerated;
+		return this;
+	}
+
+	@Schema(example = "2025-03-22T18:57:23.571Z", description = "date/time the recipient's tags were last generated")
+
+	public Instant getTagsLastGenerated() {
+		return tagsLastGenerated;
+	}
+
+	public void setTagsLastGenerated(Instant tagsLastGenerated) {
+		this.tagsLastGenerated = tagsLastGenerated;
 	}
 
 	public Recipient tags(SortedSet<RecipientTag> tags) {

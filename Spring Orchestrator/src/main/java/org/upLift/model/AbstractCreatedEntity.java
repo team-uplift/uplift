@@ -15,7 +15,7 @@ import java.time.Instant;
 public abstract class AbstractCreatedEntity extends AbstractEntity {
 
 	@Column(name = "created_at")
-	@JsonProperty("created_at")
+	@JsonProperty("createdAt")
 	private Instant createdAt;
 
 	public AbstractCreatedEntity() {

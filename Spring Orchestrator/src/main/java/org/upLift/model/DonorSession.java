@@ -45,12 +45,12 @@ public class DonorSession extends AbstractCreatedEntity {
 
 	@Schema(example = "101", description = "persistence index of the donor to whom this session is linked")
 
-	@JsonGetter("donor_id")
+	@JsonGetter("donorId")
 	public Integer getDonorId() {
 		return donor.getId();
 	}
 
-	@JsonSetter(value = "donor_id", nulls = Nulls.FAIL) // FAIL setting if the value is
+	@JsonSetter(value = "donorId", nulls = Nulls.FAIL) // FAIL setting if the value is
 														// null
 	public void setDonorId(Integer donorId) {
 		this.donor = new Donor().id(donorId);

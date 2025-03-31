@@ -30,9 +30,12 @@ public class Message extends AbstractCreatedEntity {
 	@NotNull
 	@Column(name = "message", nullable = false)
 	@JsonProperty("message")
-	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String message;
+
+	@Column(name = "donor_read", nullable = false)
+	@JsonProperty("donorRead")
+	private boolean donorRead;
 
 	public Message id(Integer id) {
 		return (Message) super.id(id);
@@ -50,12 +53,12 @@ public class Message extends AbstractCreatedEntity {
 
 	@Schema(example = "101", description = "persistence index of the donation to which this message is linked")
 
-	@JsonGetter("donation_id")
+	@JsonGetter("donationId")
 	public Integer getDonationId() {
 		return donation.getId();
 	}
 
-	@JsonSetter("donation_id")
+	@JsonSetter("donationId")
 	public void setDonationId(Integer donationId) {
 		this.donation = new Donation().id(donationId);
 	}
@@ -88,6 +91,21 @@ public class Message extends AbstractCreatedEntity {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public Message donorRead(boolean donorRead) {
+		this.donorRead = donorRead;
+		return this;
+	}
+
+	@Schema(example = "true", description = "indicates if the donor has already seen this message or not")
+
+	public boolean isDonorRead() {
+		return donorRead;
+	}
+
+	public void setDonorRead(boolean donorRead) {
+		this.donorRead = donorRead;
 	}
 
 	public Message createdAt(Instant createdAt) {

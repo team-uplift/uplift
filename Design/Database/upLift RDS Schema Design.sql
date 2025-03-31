@@ -22,6 +22,7 @@ CREATE TABLE `recipients` (
   `identity_last_verified` timestamp(3),
   `income_last_verified` timestamp(3),
   `nickname` nvarchar(64),
+  `tags_last_generated_at` timestamp(3),
   `created_at` timestamp(3) NOT NULL
 );
 
@@ -55,6 +56,7 @@ CREATE TABLE `messages` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `donation_id` integer NOT NULL,
   `message` text NOT NULL,
+  `donor_read` boolean NOT NULL,
   `created_at` timestamp(3) NOT NULL
 );
 
@@ -69,6 +71,7 @@ CREATE TABLE `recipient_tags` (
   `tag_name` varchar(64),
   `recipient_id` integer,
   `weight` double,
+  `selected` boolean NOT NULL,
   `added_at` timestamp(3) NOT NULL,
   PRIMARY KEY (`tag_name`, `recipient_id`)
 );
