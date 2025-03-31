@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'donor_notifier_provider.dart';
+part of 'user_notifier_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$donorHash() => r'686aa501be6ed11c1c024d17e1bdaedb4a5d017f';
+String _$userHash() => r'fd4025ea83cfae9dab7fdf1ff694ad6829dcd512';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,30 +29,30 @@ class _SystemHash {
   }
 }
 
-/// See also [donor].
-@ProviderFor(donor)
-const donorProvider = DonorFamily();
+/// See also [user].
+@ProviderFor(user)
+const userProvider = UserFamily();
 
-/// See also [donor].
-class DonorFamily extends Family<AsyncValue<Donor?>> {
-  /// See also [donor].
-  const DonorFamily();
+/// See also [user].
+class UserFamily extends Family<AsyncValue<User?>> {
+  /// See also [user].
+  const UserFamily();
 
-  /// See also [donor].
-  DonorProvider call(
-    String donorId,
+  /// See also [user].
+  UserProvider call(
+    String userId,
   ) {
-    return DonorProvider(
-      donorId,
+    return UserProvider(
+      userId,
     );
   }
 
   @override
-  DonorProvider getProviderOverride(
-    covariant DonorProvider provider,
+  UserProvider getProviderOverride(
+    covariant UserProvider provider,
   ) {
     return call(
-      provider.donorId,
+      provider.userId,
     );
   }
 
@@ -68,74 +68,72 @@ class DonorFamily extends Family<AsyncValue<Donor?>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'donorProvider';
+  String? get name => r'userProvider';
 }
 
-/// See also [donor].
-class DonorProvider extends AutoDisposeFutureProvider<Donor?> {
-  /// See also [donor].
-  DonorProvider(
-    String donorId,
+/// See also [user].
+class UserProvider extends AutoDisposeFutureProvider<User?> {
+  /// See also [user].
+  UserProvider(
+    String userId,
   ) : this._internal(
-          (ref) => donor(
-            ref as DonorRef,
-            donorId,
+          (ref) => user(
+            ref as UserRef,
+            userId,
           ),
-          from: donorProvider,
-          name: r'donorProvider',
+          from: userProvider,
+          name: r'userProvider',
           debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$donorHash,
-          dependencies: DonorFamily._dependencies,
-          allTransitiveDependencies: DonorFamily._allTransitiveDependencies,
-          donorId: donorId,
+              const bool.fromEnvironment('dart.vm.product') ? null : _$userHash,
+          dependencies: UserFamily._dependencies,
+          allTransitiveDependencies: UserFamily._allTransitiveDependencies,
+          userId: userId,
         );
 
-  DonorProvider._internal(
+  UserProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.donorId,
+    required this.userId,
   }) : super.internal();
 
-  final String donorId;
+  final String userId;
 
   @override
   Override overrideWith(
-    FutureOr<Donor?> Function(DonorRef provider) create,
+    FutureOr<User?> Function(UserRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: DonorProvider._internal(
-        (ref) => create(ref as DonorRef),
+      override: UserProvider._internal(
+        (ref) => create(ref as UserRef),
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        donorId: donorId,
+        userId: userId,
       ),
     );
   }
 
   @override
-  AutoDisposeFutureProviderElement<Donor?> createElement() {
-    return _DonorProviderElement(this);
+  AutoDisposeFutureProviderElement<User?> createElement() {
+    return _UserProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is DonorProvider && other.donorId == donorId;
+    return other is UserProvider && other.userId == userId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, donorId.hashCode);
+    hash = _SystemHash.combine(hash, userId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -143,17 +141,17 @@ class DonorProvider extends AutoDisposeFutureProvider<Donor?> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin DonorRef on AutoDisposeFutureProviderRef<Donor?> {
-  /// The parameter `donorId` of this provider.
-  String get donorId;
+mixin UserRef on AutoDisposeFutureProviderRef<User?> {
+  /// The parameter `userId` of this provider.
+  String get userId;
 }
 
-class _DonorProviderElement extends AutoDisposeFutureProviderElement<Donor?>
-    with DonorRef {
-  _DonorProviderElement(super.provider);
+class _UserProviderElement extends AutoDisposeFutureProviderElement<User?>
+    with UserRef {
+  _UserProviderElement(super.provider);
 
   @override
-  String get donorId => (origin as DonorProvider).donorId;
+  String get userId => (origin as UserProvider).userId;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
