@@ -6,6 +6,7 @@ class DynamicQuestionScreen extends StatefulWidget {
   final int questionIndex;
   final VoidCallback onNext;
   final VoidCallback onBack;
+  final VoidCallback onGenerate;
 
   const DynamicQuestionScreen({
     required this.formData,
@@ -13,8 +14,9 @@ class DynamicQuestionScreen extends StatefulWidget {
     required this.questionIndex,
     required this.onNext,
     required this.onBack,
-    Key? key,
-  }) : super(key: key);
+    required this.onGenerate,
+    super.key,
+  });
 
   @override
   _DynamicQuestionScreenState createState() => _DynamicQuestionScreenState();
@@ -151,10 +153,11 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
                   if (question['type'] == 'generateTags')  
                     Center(
                       child: ElevatedButton(
-                        onPressed: widget.onNext, // ✅ Moves to tag selection step
+                        onPressed: widget.onGenerate, // ✅ Moves to tag selection step
                         child: const Text("Generate Tags"),
                       ),
                     ),
+                    
                   if (question['type'] != 'generateTags')  
                     ElevatedButton(
                       onPressed: () {

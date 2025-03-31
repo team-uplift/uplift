@@ -114,9 +114,9 @@ class _TagSelectionState extends State<TagSelection> {
         ),
         const SizedBox(height: 16),
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // OutlinedButton(onPressed: widget.onBack, child: const Text("Back")),
+            OutlinedButton(onPressed: widget.onBack, child: const Text("Back")),
             ElevatedButton(
               // TODO implement submit logic here
               onPressed: selectedTags.isNotEmpty ? _submit : null,

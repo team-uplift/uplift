@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'registration_questions.dart';
 import 'questions_screen.dart';
@@ -6,6 +10,7 @@ import 'tag_selection_screen.dart';
 import 'dart:convert';
 import 'confirmation_screen.dart';
 import 'package:go_router/go_router.dart';
+
 
 
 class RegistrationController extends StatefulWidget {
@@ -19,44 +24,8 @@ class RegistrationController extends StatefulWidget {
 class _RegistrationControllerState extends State<RegistrationController> {
   int _currentIndex = 0;
   final Map<String, dynamic> formData = {};
-  bool isFetchingTags = false;
-  bool tagFetchFailed = false;
   List<String> generatedTags = [];
 
-
-  // TODO edit to work with our API --> this should be fine to return tags for selection
-  Future<void> _fetchTags() async {
-    setState(() {
-      isFetchingTags = true;
-      tagFetchFailed = false;
-    });
-
-    try {
-      final response = await http.post(
-        Uri.parse('https://your-api-url.com/generate-tags'), // Replace with actual API URL
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(formData),
-      );
-
-      if (response.statusCode == 200) {
-        final List<String> tags = List<String>.from(jsonDecode(response.body)['tags']);
-
-        setState(() {
-          generatedTags = tags;
-          isFetchingTags = false;
-          _currentIndex++; // Move to the Tag Selection screen
-        });
-      } else {
-        throw Exception("Failed to generate tags");
-      }
-    } catch (e) {
-      print("Error fetching tags: $e");
-      setState(() {
-        isFetchingTags = false;
-        tagFetchFailed = true;
-      });
-    }
-  }
 
   void _stepForward() {
     setState(() {
@@ -95,6 +64,96 @@ class _RegistrationControllerState extends State<RegistrationController> {
     });
   }
 
+  Future<void> storeUserAndFetchTags() async {
+    // get amplify user info
+    final attributes = await Amplify.Auth.fetchUserAttributes();
+    
+    // map to easier to parse dict
+    final attrMap = {
+      for (final attr in attributes) attr.userAttributeKey.key: attr.value,
+    };
+
+    print('Amplify attributes: $attrMap');
+
+    // reformat formdata for rest api
+    final formQuestions = [
+      for (var question in registrationQuestions)
+        if (question['type'] != 'generateTags' &&
+            question['type'] != 'showTags' &&
+            question['type'] != 'confirmation' &&
+            (formData[question['key']]?.toString().trim().isNotEmpty ?? false))
+          {
+            'question': question['q'],
+            'answer': formData[question['key']]!,
+          }
+    ];
+
+
+    print('Form questions: $formQuestions');
+
+    final payload = {
+        'cognitoId': attrMap['sub'],
+        'email': attrMap['email'],
+        'recipient': true,
+        'recipientData': {
+          // TODO pop these two questions off formdata response
+          'lastAboutMe': "test",
+          'lastReasonForHelp': "test",
+          "formQuestions": formQuestions,        
+        },
+    };
+
+    print('Payload being sent: ${jsonEncode(payload)}');
+
+    http.Response? storeUserResponse;
+    // TODO currently breaks here and i cant figure out why
+    // store user
+    try {
+      storeUserResponse = await http.post(
+        Uri.parse('http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift/users'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          // build this out
+          body: jsonEncode(payload),
+      );
+        print('Got response with code: ${storeUserResponse.statusCode}');
+    } on TimeoutException catch (e) {
+      print('Request timed out: $e');
+    } on SocketException catch (e) {
+      print('Socket exception: $e');
+    } catch (e) {
+      print('Other exception: $e');
+    }
+
+    
+    print('am I getting here?');
+
+    if (storeUserResponse != null) {
+      print('Status code: ${storeUserResponse.statusCode}');
+      print('Body: ${storeUserResponse.body}');
+    } else {
+      print('No stored user');
+    }
+    // // Assume the response is a JSON with an "id" field.
+    // final userData = jsonDecode(storeUserResponse.body);
+    
+    // // this will be id used to call generate tags
+    // final userId = userData['id'];
+
+    // // Second API call: get generated tags using the user id
+    // final getTagsResponse = await http.get(
+    //   Uri.parse('https://example.com/api/getTags?userId=$userId'),
+    // );
+    // // Assume the response is a JSON array of strings.
+    // final tagsData = jsonDecode(getTagsResponse.body);
+    // setState(() {
+    //   // TODO map these to a list of tags as opposed to a list of strings
+    //   // tags = List<String>.from(tagsData);
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -116,37 +175,26 @@ class _RegistrationControllerState extends State<RegistrationController> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Text(
-                isFetchingTags
-                ? "Generating tags..."
-                : "Step ${_currentIndex + 1} of ${registrationQuestions.length}"),
+              child: Text("Step ${_currentIndex + 1} of ${registrationQuestions.length}"),
             ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child: isFetchingTags
-                    ? Center(child: CircularProgressIndicator()) // ✅ Show loading indicator
-                    : tagFetchFailed
-                        ? _errorRetryWidget()
-                        : registrationQuestions[_currentIndex]['type'] == 'confirmation'
+                child:  registrationQuestions[_currentIndex]['type'] == 'confirmation'
                             ? Confirmation(
                                 formData: formData,
                                 onBack: _stepBack,
                                 onSubmit: _submit,
                               )
-                            : registrationQuestions[_currentIndex]['type'] == 'generateTags'
-                                ? TagSelection(
-                                    formData: formData,
-                                    onBack: _stepBack,
-                                    onSubmit: _stepForward,
-                                  )
-                                : DynamicQuestionScreen(
-                                    formData: formData,
-                                    questions: registrationQuestions,
-                                    questionIndex: _currentIndex,
-                                    onNext: _stepForward,
-                                    onBack: _stepBack,
-                                  ),
+                              : DynamicQuestionScreen(
+                                  formData: formData,
+                                  questions: registrationQuestions,
+                                  questionIndex: _currentIndex,
+                                  onNext: _stepForward,
+                                  onBack: _stepBack,
+                                  // TODO implement tag generation here
+                                  onGenerate: storeUserAndFetchTags,
+                                ),
                 )
               ),
             Padding(
@@ -171,14 +219,16 @@ class _RegistrationControllerState extends State<RegistrationController> {
         Text("Failed to generate tags. Please try again."),
         const SizedBox(height: 16),
         ElevatedButton(
-          onPressed: _fetchTags,
+          // onPressed: _fetchTags,
+          // TODO implement tag fetch
+          onPressed: () => print("will implement when tag fetch happens"),
           child: Text("Retry"),
         ),
         TextButton(
           onPressed: () {
             setState(() {
               generatedTags = ["Community Support", "Financial Help", "Job Seeking", "Housing", "Education"];
-              tagFetchFailed = false;
+              // tagFetchFailed = false;
               _currentIndex++; // Proceed with default tags
             });
           },
