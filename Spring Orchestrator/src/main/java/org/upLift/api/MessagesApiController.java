@@ -45,14 +45,7 @@ public class MessagesApiController implements MessagesApi {
 		}
 	}
 
-	public ResponseEntity<Message> messagesPost(@Valid @RequestBody Message body) {
-		LOG.info("Saving message linked to donation {}", body.getDonationId());
-		LOG.debug("Saving message: {}", body.getMessage());
-		var savedMessage = messageService.sendMessage(body);
-		LOG.debug("Saved message: {}", savedMessage);
-		return new ResponseEntity<>(savedMessage, HttpStatus.CREATED);
-	}
-
+	@Override
 	public ResponseEntity<List<Message>> messagesGetByDonor(@PathVariable("donorId") Integer donorId) {
 		LOG.info("Getting messages linked to donor {}", donorId);
 		if (userService.donorExists(donorId)) {
@@ -63,6 +56,32 @@ public class MessagesApiController implements MessagesApi {
 		}
 		else {
 			LOG.info("Donor {} does not exist", donorId);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@Override
+	public ResponseEntity<Message> messagesPost(@Valid @RequestBody Message body) {
+		LOG.info("Saving message linked to donation {}", body.getDonationId());
+		LOG.debug("Saving message: {}", body.getMessage());
+		var savedMessage = messageService.sendMessage(body);
+		LOG.debug("Saved message: {}", savedMessage);
+		return new ResponseEntity<>(savedMessage, HttpStatus.CREATED);
+	}
+
+	@Override
+	public ResponseEntity<Message> messagesMarkRead(@PathVariable("messageId") Integer messageId) {
+		LOG.info("Marking message {} as read", messageId);
+		var messageResult = messageService.getMessageById(messageId);
+		if (messageResult.isPresent()) {
+			LOG.debug("Found message with id {}", messageId);
+			var message = messageResult.get();
+			message.setDonorRead(true);
+			var savedMessage = messageService.sendMessage(message);
+			LOG.debug("Saved message: {}", savedMessage);
+			return new ResponseEntity<>(savedMessage, HttpStatus.OK);
+		}
+		else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}

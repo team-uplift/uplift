@@ -16,10 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.upLift.model.Message;
 
 import java.util.List;
@@ -44,21 +41,6 @@ public interface MessagesApi {
 			@Parameter(in = ParameterIn.PATH, description = "persistence index of the message to retrieve",
 					required = true, schema = @Schema()) @PathVariable("id") Integer id);
 
-	@Operation(summary = "Send a message", description = "Allows a donor or recipient to send a message.",
-			tags = { "Messages" })
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "201", description = "Message sent successfully",
-					content = @Content(mediaType = "application/json",
-							schema = @Schema(implementation = Message.class))),
-
-			@ApiResponse(responseCode = "400", description = "Invalid request data"),
-
-			@ApiResponse(responseCode = "500", description = "Server error") })
-	@PostMapping(value = "/messages", produces = { "application/json" }, consumes = { "application/json" })
-	ResponseEntity<Message> messagesPost(
-			@Parameter(in = ParameterIn.DEFAULT, description = "new message to be saved", required = true,
-					schema = @Schema()) @Valid @RequestBody Message body);
-
 	@Operation(summary = "Get messages sent to a specific donor",
 			description = "Retrieves messages sent to a specific donor.", tags = { "Messages" })
 	@ApiResponses(value = {
@@ -74,9 +56,38 @@ public interface MessagesApi {
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@GetMapping(value = "/messages/donor/{donorId}", produces = { "application/json" })
-	ResponseEntity<List<Message>> messagesGetByDonor(
-			@Parameter(in = ParameterIn.PATH,
-					description = "persistence index of the donor whose messages should be retrieved", required = true,
-					schema = @Schema()) @PathVariable("donorId") Integer donorId);
+	ResponseEntity<List<Message>> messagesGetByDonor(@Parameter(in = ParameterIn.PATH,
+			description = "persistence index of the donor whose messages should be retrieved", required = true,
+			schema = @Schema()) @PathVariable("donorId") Integer donorId);
+
+	@Operation(summary = "Send a message", description = "Allows a donor or recipient to send a message.",
+			tags = { "Messages" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "Message sent successfully",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = Message.class))),
+
+			@ApiResponse(responseCode = "400", description = "Invalid request data"),
+
+			@ApiResponse(responseCode = "500", description = "Server error") })
+	@PostMapping(value = "/messages", produces = { "application/json" }, consumes = { "application/json" })
+	ResponseEntity<Message> messagesPost(@Parameter(in = ParameterIn.DEFAULT, description = "new message to be saved",
+			required = true, schema = @Schema(implementation = Message.class)) @Valid @RequestBody Message body);
+
+	@Operation(summary = "Mark the message as read",
+			description = "Marks the specified message as having been read by the donor to whom it was sent.",
+			tags = { "Messages" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Message read flag updated",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = Message.class))),
+
+			@ApiResponse(responseCode = "404", description = "Message not found"),
+
+			@ApiResponse(responseCode = "500", description = "Server error") })
+	@PutMapping(value = "/messages/read/{messageId}", produces = { "application/json" })
+	ResponseEntity<Message> messagesMarkRead(@Parameter(in = ParameterIn.PATH,
+			description = "persistence index of the message to mark as having been read", required = true,
+			schema = @Schema()) @PathVariable("messageId") Integer messageId);
 
 }
