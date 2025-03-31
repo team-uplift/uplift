@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stretchy_header/stretchy_header.dart';
 import 'package:uplift/components/drawer_widget.dart';
-import 'package:uplift/models/recipient_model.dart';
-import 'package:uplift/models/transaction_model.dart';
+// import 'package:uplift/models/recipient_model.dart';
+// import 'package:uplift/models/transaction_model.dart';
 import 'package:uplift/providers/transaction_notifier_provider.dart';
 
 class DashboardPage extends ConsumerWidget {

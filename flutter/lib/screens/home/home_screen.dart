@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/components/drawer_widget.dart';
 import 'package:uplift/components/standard_button.dart';
-import 'package:uplift/providers/donor_notifier_provider.dart';
+import 'package:uplift/providers/user_notifier_provider.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -23,19 +23,20 @@ final List<Image> items = [
 class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
-    final donorAsync =
-        ref.watch(donorProvider("f4d82478-e011-7085-fe80-ecd3cc145ce4")); // Use your real donorId here
+    // f4d82478-e011-7085-fe80-ecd3cc145ce4
+    final userAsync =
+        ref.watch(userProvider("44284448-20a1-70c0-c877-9a00834002d3")); // Use your real donorId here
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('uplift'),
       ),
       drawer: const DrawerWidget(),
-      body: donorAsync.when(
-        data: (donor) {
+      body: userAsync.when(
+        data: (user) {
           return Column(
             children: [
-              Text("Welcome, ${donor?.nickname ?? 'Donor'}"),
+              Text("Welcome, ${user?.email ?? 'User'}"),
               const SizedBox(height: 20),
               CarouselSlider(
                 items: items,
