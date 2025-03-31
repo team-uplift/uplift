@@ -18,7 +18,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.upLift.model.FormQuestion;
 import org.upLift.model.Recipient;
+import org.upLift.model.RecipientTag;
 
 import java.util.List;
 
@@ -52,16 +54,16 @@ public interface RecipientsApi {
 
 			@ApiResponse(responseCode = "400", description = "Invalid input") })
 	@RequestMapping(value = "/recipients/tagGeneration/{recipientId}", method = RequestMethod.POST)
-	ResponseEntity<Void> updateRecipientTags(
+	ResponseEntity<List<RecipientTag>> updateRecipientTags(
 			@Parameter(in = ParameterIn.PATH, description = "Recipient id to generate tags for", required = true,
-					schema = @Schema()) @PathVariable("recipientId") Long recipientId,
+					schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			@Parameter(in = ParameterIn.HEADER, description = "", schema = @Schema()) @RequestHeader(value = "api_key",
 					required = false) String apiKey,
-			@Parameter(in = ParameterIn.QUERY,
-					description = "A combined set of text or paragraph detailing the description to be used for tag generation",
-					schema = @Schema()) @Valid @RequestParam(value = "query_text", required = false) String queryText);
+			@Parameter(in = ParameterIn.DEFAULT, description = "A new set of form questions if needed. "
+					+ "If not provided, the system will attempt to used the recipient's last stored form questions.",
+					required = false, schema = @Schema()) @Valid @RequestBody List<FormQuestion> formQuestions);
 
 }
