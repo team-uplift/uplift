@@ -64,14 +64,6 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 		this.id = id;
 	}
 
-	public Integer getRecipientId() {
-		return id.getRecipientId();
-	}
-
-	public String getTagName() {
-		return id.getTagName();
-	}
-
 	@Schema(example = "0.587", description = "relevance weight of the tag for the recipient, 0-1")
 
 	public double getWeight() {
