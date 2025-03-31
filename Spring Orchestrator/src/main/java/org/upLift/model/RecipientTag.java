@@ -45,7 +45,7 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 	// Hibernate/Spring ignore the @Column annotation on the RecipientTagId properties
 	@JoinColumn(name = "tag_name", referencedColumnName = "tag_name")
 	// Unwrap the tag into this object for easier use on the front end
-	@JsonUnwrapped
+	@JsonIgnore
 	private Tag tag;
 
 	public RecipientTag() {
