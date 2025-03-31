@@ -20,7 +20,7 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
       - name: Build with Maven
-        run: mvn -f "./Spring Orchestrator" clean install -DskipTests
+        run: mvn -Pprod -f "./Spring Orchestrator" clean install -DskipTests
       - name: Login to docker hub
         run: docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
       - name: Build docker image
@@ -38,13 +38,15 @@ jobs:
             echo "Error: Docker is not installed." >&2
             exit 1
           fi
+      - name: Delete all existing containers & images
+        run: |
+          if [ "$(sudo docker ps -aq)" ]; then
+            sudo docker rm -vf $(sudo docker ps -aq)
+          fi
+          if [ "$(sudo docker images -aq)" ]; then
+            sudo docker rmi -f $(sudo docker images -aq)
+          fi
       - name: Pull image from docker hub
         run: sudo docker pull als5289/uplift-orchestrator:latest
-      - name: Delete existing container
-        run: |
-          if [ "$(sudo docker ps -aq -f name=uplift-orchestrator)" ]; then
-            sudo docker rm -f uplift-orchestrator
-          fi
       - name: Run docker container
-        run: sudo docker run -d -p 80:8080 -p 3306:3306 --name uplift-orchestrator als5289/uplift-orchestrator
-        
+        run: sudo docker run -d -p 80:8080 -p 3306:3306 -e TREMENDOUS_API_KEY=${{ secrets.TREMENDOUS_API_KEY }} --name uplift-orchestrator als5289/uplift-orchestrator 

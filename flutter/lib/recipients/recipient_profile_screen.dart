@@ -3,7 +3,7 @@ import 'package:uplift/models/tag_model.dart';
 import 'package:uplift/components/recipient_profile_display.dart';
 
 
-
+// TODO pull profile info from backend
 class RecipientProfileScreen extends StatelessWidget {
   
   final Map<String, String> profileData = {

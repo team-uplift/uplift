@@ -58,7 +58,7 @@ class _TagSelectionState extends State<TagSelection> {
   ];
 
 
-
+  // TODO dont need list of tags need only list of tag.names for submission
   final List<Tag> selectedTags = [];
 
   void _toggleTag(Tag tag) {
@@ -77,7 +77,7 @@ class _TagSelectionState extends State<TagSelection> {
     if (selectedTags.isNotEmpty) {
       widget.formData["tags"] = selectedTags;
       widget.onSubmit();
-      context.goNamed('/recipient_home');
+      // context.goNamed('/recipient_home');
     }
   }
 
@@ -107,13 +107,13 @@ class _TagSelectionState extends State<TagSelection> {
         ),
         const SizedBox(height: 16),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            OutlinedButton(onPressed: widget.onBack, child: const Text("Back")),
+            // OutlinedButton(onPressed: widget.onBack, child: const Text("Back")),
             ElevatedButton(
               // TODO implement submit logic here
               onPressed: selectedTags.isNotEmpty ? _submit : null,
-              child: const Text("Submit"),
+              child: const Text("Next"),
             ),
           ],
         )

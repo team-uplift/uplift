@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.upLift.configuration.NotUndefined;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -65,6 +66,11 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonProperty("state")
 	private String state;
 
+	@Column(name = "image_url")
+	@JsonInclude(JsonInclude.Include.NON_ABSENT)
+	@JsonProperty("image_url")
+	private String imageUrl;
+
 	@Column(name = "last_about_me")
 	@JsonProperty("last_about_me")
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
@@ -74,6 +80,12 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonProperty("last_reason_for_help")
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String lastReasonForHelp;
+
+	@SuppressWarnings("JpaAttributeTypeInspection")
+	@Column(name = "form_questions")
+	@JsonProperty("form_questions")
+	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
+	private List<FormQuestion> formQuestions;
 
 	@Column(name = "identity_last_verified")
 	@JsonProperty("identity_last_verified")
@@ -87,12 +99,11 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	private String nickname = null;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "recipient_tags", joinColumns = @JoinColumn(name = "recipient_id", referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(name = "tag_name", referencedColumnName = "tag_name"))
 	@Valid
+	@OneToMany(mappedBy = "recipient", fetch = FetchType.EAGER)
 	@JsonProperty("tags")
-	private SortedSet<Tag> tags;
+	@JsonManagedReference
+	private SortedSet<RecipientTag> tags;
 
 	public User getUser() {
 		return user;
@@ -210,6 +221,16 @@ public class Recipient extends AbstractCreatedAt {
 		this.state = state;
 	}
 
+	@Schema(example = "https://image.com/image", description = "URL of the image linked to this recipient, if any")
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 	public Recipient lastAboutMe(String lastAboutMe) {
 
 		this.lastAboutMe = lastAboutMe;
@@ -250,6 +271,18 @@ public class Recipient extends AbstractCreatedAt {
 	public Recipient identityLastVerified(String identityLastVerified) {
 		this.identityLastVerified = Instant.parse(identityLastVerified);
 		return this;
+	}
+
+	@Schema(example = "[{\"question\": \"What was your biggest challenge in the last six months?\", "
+			+ "\"answer\": \"Losing my job\"}]",
+			description = "String containing JSON object grouping form questions and recipient answers")
+
+	public List<FormQuestion> getFormQuestions() {
+		return formQuestions;
+	}
+
+	public void setFormQuestions(List<FormQuestion> formQuestions) {
+		this.formQuestions = formQuestions;
 	}
 
 	@Schema(example = "2025-03-22T18:57:23.571Z", description = "date/time the recipient's identity was last verified")
@@ -304,13 +337,13 @@ public class Recipient extends AbstractCreatedAt {
 		this.nickname = nickname;
 	}
 
-	public Recipient tags(SortedSet<Tag> tags) {
+	public Recipient tags(SortedSet<RecipientTag> tags) {
 
 		this.tags = tags;
 		return this;
 	}
 
-	public Recipient addTagsItem(Tag tagsItem) {
+	public Recipient addTagsItem(RecipientTag tagsItem) {
 		if (this.tags == null) {
 			this.tags = new TreeSet<>();
 		}
@@ -323,14 +356,14 @@ public class Recipient extends AbstractCreatedAt {
 	 * @return tags
 	 **/
 
-	@Schema(description = "tags linked to the recipient")
+	@Schema(implementation = RecipientTag.class, description = "tags linked to the recipient")
 
 	@Valid
-	public SortedSet<Tag> getTags() {
+	public SortedSet<RecipientTag> getTags() {
 		return tags;
 	}
 
-	public void setTags(SortedSet<Tag> tags) {
+	public void setTags(SortedSet<RecipientTag> tags) {
 		this.tags = tags;
 	}
 
