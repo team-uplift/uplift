@@ -153,6 +153,14 @@
                 <scope>import</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>1.0.0-M6</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -231,6 +239,18 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>rds</artifactId>
+        </dependency>
+
+        <!-- Dependency for Bedrock spring AI prompt and chat integration -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-bedrock-converse-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- This is for the aws InvokeAPI for the embedding -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-bedrock-ai-spring-boot-starter</artifactId>
         </dependency>
 
         <!-- Amazon wrapper for JDBC, supports use of either IAM role or Secrets Manager with MariaDB
