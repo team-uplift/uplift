@@ -21,9 +21,9 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    final bool recipient_flag = json['recipient'];
+    final bool recipientFlag = json['recipient'];
 
-    if(recipient_flag) {
+    if(recipientFlag) {
       return User(
         id: json['id'],
         cognitoId: json['cognitoId'],
