@@ -67,7 +67,7 @@ public class Recipient extends AbstractCreatedAt {
 	private String state;
 
 	@Column(name = "image_url")
-	@JsonInclude(JsonInclude.Include.NON_ABSENT)
+	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonProperty("image_url")
 	private String imageUrl;
 
@@ -98,6 +98,11 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonProperty("nickname")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	private String nickname = null;
+
+	@Column(name = "tags_last_generated_at")
+	@JsonProperty("tagsLastGenerated")
+	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
+	private Instant tagsLastGenerated;
 
 	@Valid
 	@OneToMany(mappedBy = "recipient", fetch = FetchType.EAGER)
@@ -335,6 +340,21 @@ public class Recipient extends AbstractCreatedAt {
 
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
+	}
+
+	public Recipient tagsLastGenerated(Instant tagsLastGenerated) {
+		this.tagsLastGenerated = tagsLastGenerated;
+		return this;
+	}
+
+	@Schema(example = "2025-03-22T18:57:23.571Z", description = "date/time the recipient's tags were last generated")
+
+	public Instant getTagsLastGenerated() {
+		return tagsLastGenerated;
+	}
+
+	public void setTagsLastGenerated(Instant tagsLastGenerated) {
+		this.tagsLastGenerated = tagsLastGenerated;
 	}
 
 	public Recipient tags(SortedSet<RecipientTag> tags) {
