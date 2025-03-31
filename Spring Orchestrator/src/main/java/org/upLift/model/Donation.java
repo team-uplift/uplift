@@ -43,7 +43,7 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	private Integer amount = null;
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "donation")
-	@JsonProperty("thank_you_message")
+	@JsonProperty("thankYouMessage")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	private Message thankYouMessage;
 
@@ -69,12 +69,12 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 			description = "persistence index of the donor who gave this donation")
 
 	@JsonView(UpliftJsonViews.FullRecipient.class)
-	@JsonGetter("donor_id")
+	@JsonGetter("donorId")
 	public Integer getDonorId() {
 		return donor.getId();
 	}
 
-	@JsonSetter("donor_id")
+	@JsonSetter("donorId")
 	public void setDonorId(Integer donorId) {
 		this.donor = new Donor().id(donorId);
 	}
@@ -106,12 +106,12 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 			description = "persistence index of the recipient who received this donation")
 
 	@JsonView(UpliftJsonViews.FullDonor.class)
-	@JsonGetter("recipient_id")
+	@JsonGetter("recipientId")
 	public Integer getRecipientId() {
 		return recipient.getId();
 	}
 
-	@JsonSetter("recipient_id")
+	@JsonSetter("recipientId")
 	public void setRecipientId(Integer recipientId) {
 		this.recipient = new Recipient().id(recipientId);
 	}

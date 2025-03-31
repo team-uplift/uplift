@@ -26,8 +26,12 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 	private double weight;
 
 	@Column(name = "added_at", nullable = false)
-	@JsonProperty("added_at")
+	@JsonProperty("addedAt")
 	private Instant addedAt;
+
+	@Column(name = "selected", nullable = false)
+	@JsonProperty("selected")
+	private boolean selected;
 
 	@ManyToOne
 	@MapsId("recipientId")
@@ -60,14 +64,6 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 		this.id = id;
 	}
 
-	public Integer getRecipientId() {
-		return id.getRecipientId();
-	}
-
-	public String getTagName() {
-		return id.getTagName();
-	}
-
 	@Schema(example = "0.587", description = "relevance weight of the tag for the recipient, 0-1")
 
 	public double getWeight() {
@@ -76,6 +72,21 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 
 	public void setWeight(double weight) {
 		this.weight = weight;
+	}
+
+	public RecipientTag selected(boolean selected) {
+		this.selected = selected;
+		return this;
+	}
+
+	@Schema(example = "true", description = "indicates whether recipient has selected this tag for display")
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 
 	@Schema(example = "2025-03-22T18:57:23.571Z", description = "date/time the tag was last linked with the recipient")

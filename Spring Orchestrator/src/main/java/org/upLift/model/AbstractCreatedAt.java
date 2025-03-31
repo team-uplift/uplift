@@ -14,8 +14,8 @@ import java.time.Instant;
 @MappedSuperclass
 public abstract class AbstractCreatedAt {
 
-	@Column(name = "created_at", nullable = false)
-	@JsonProperty("created_at")
+	@Column(name = "created_at")
+	@JsonProperty("createdAt")
 	private Instant createdAt;
 
 	public AbstractCreatedAt() {
