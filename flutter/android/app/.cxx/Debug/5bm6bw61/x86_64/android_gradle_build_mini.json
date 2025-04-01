@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/home/boogie/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/boogie/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/home/boogie/Documents/capstone/uplift/flutter/android/app/.cxx/Debug/5bm6bw61/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/boogie/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/home/boogie/Documents/capstone/uplift/flutter/android/app/.cxx/Debug/5bm6bw61/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

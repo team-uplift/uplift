@@ -133,21 +133,39 @@ class _RegistrationControllerState extends State<RegistrationController> {
     if (storeUserResponse != null) {
       print('Status code: ${storeUserResponse.statusCode}');
       print('Body: ${storeUserResponse.body}');
+      final userData = jsonDecode(storeUserResponse.body);
+      final userId = userData['id'];
+      final qa = userData['recipientData']['formQuestions'];
+      print("fomr questions: $qa");
+      final getTagsResponse = await http.post(
+        Uri.parse('http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift/recipients/tagGeneration/$userId'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'session_id': '123'
+          },
+          // build this out
+          body: jsonEncode(qa),
+      );
+      // Assume the response is a JSON array of strings.
+      final tagsData = jsonDecode(getTagsResponse.body);
+      print('Tags data: $tagsData');
     } else {
       print('No stored user');
     }
-    // // Assume the response is a JSON with an "id" field.
-    // final userData = jsonDecode(storeUserResponse.body);
+    // Assume the response is a JSON with an "id" field.
     
-    // // this will be id used to call generate tags
-    // final userId = userData['id'];
+    
+    // this will be id used to call generate tags
+    
 
-    // // Second API call: get generated tags using the user id
+    // Second API call: get generated tags using the user id
     // final getTagsResponse = await http.get(
     //   Uri.parse('https://example.com/api/getTags?userId=$userId'),
     // );
-    // // Assume the response is a JSON array of strings.
+    // Assume the response is a JSON array of strings.
     // final tagsData = jsonDecode(getTagsResponse.body);
+    // print('Tags data: $tagsData');
     // setState(() {
     //   // TODO map these to a list of tags as opposed to a list of strings
     //   // tags = List<String>.from(tagsData);
