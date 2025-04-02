@@ -1,2 +1,0 @@
-/home/boogiehauser/Documents/capstone/uplift/flutter/android/app/.cxx/Debug/k46392u4/x86_64/CMakeFiles/edit_cache.dir
-/home/boogiehauser/Documents/capstone/uplift/flutter/android/app/.cxx/Debug/k46392u4/x86_64/CMakeFiles/rebuild_cache.dir
