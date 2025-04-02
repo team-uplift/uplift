@@ -1,6 +1,7 @@
 package org.upLift.services;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.upLift.exceptions.ModelException;
 import org.upLift.exceptions.TimingException;
@@ -17,6 +18,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -144,6 +146,21 @@ public class RecipientServiceImpl implements RecipientService {
 	public List<Recipient> getMatchingRecipientsByTags(List<String> tags) {
 		// TODO: Yan to implement this system using RecipientRepository method(s)
 		return List.of();
+	}
+
+	@Override
+	public Recipient updateSelectedTags(Integer recipientId, @Valid Set<String> selectedTags) {
+		Optional<Recipient> recipientResult = recipientRepository.findById(recipientId);
+		if (recipientResult.isPresent()) {
+			var recipient = recipientResult.get();
+			for (var recipientTag : recipient.getTags()) {
+				recipientTag.setSelected(selectedTags.contains(recipientTag.getTagName()));
+			}
+			return recipientRepository.save(recipient);
+		}
+		else {
+			throw new ModelException("Recipient not found.");
+		}
 	}
 
 	/**
