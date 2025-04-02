@@ -106,7 +106,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
     print('Payload being sent: ${jsonEncode(payload)}');
 
     http.Response? storeUserResponse;
-    // TODO currently breaks here and i cant figure out why
+
     // store user
     try {
       storeUserResponse = await http.post(
@@ -127,7 +127,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
       print('Other exception: $e');
     }
 
-    
+
     print('am I getting here?');
 
     if (storeUserResponse != null) {
