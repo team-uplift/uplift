@@ -23,6 +23,7 @@ import org.upLift.model.Recipient;
 import org.upLift.model.RecipientTag;
 
 import java.util.List;
+import java.util.Set;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
@@ -57,5 +58,19 @@ public interface RecipientsApi {
 			@Parameter(in = ParameterIn.DEFAULT, description = "A new set of form questions if needed. "
 					+ "If not provided, the system will attempt to used the recipient's last stored form questions.",
 					required = false, schema = @Schema()) @Valid @RequestBody List<FormQuestion> formQuestions);
+
+	@Operation(summary = "Updates recipient's selected tags to be the following",
+			description = "Updates recipient linked tags to mark only the specified tags as being selected, "
+					+ "clears any other selected flags for linked tags",
+			tags = { "Recipient" })
+	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Selected tags updated"),
+
+			@ApiResponse(responseCode = "400", description = "Invalid input") })
+	@PutMapping(value = "/recipients/tagSelection/{recipientId}")
+	ResponseEntity<Void> updateSelectedRecipientTags(
+			@Parameter(in = ParameterIn.PATH, description = "Recipient id whose selected tags should be updated",
+					required = true, schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
+			@Parameter(in = ParameterIn.DEFAULT, description = "List of tags that the recipient has selected.",
+					required = true, schema = @Schema()) @Valid @RequestBody Set<String> selectedTags);
 
 }

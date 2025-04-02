@@ -19,6 +19,7 @@ import org.upLift.services.RecipientService;
 import org.upLift.services.UserService;
 
 import java.util.List;
+import java.util.Set;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
@@ -54,9 +55,26 @@ public class RecipientsApiController implements RecipientsApi {
 			return new ResponseEntity<>(generatedTags, HttpStatus.CREATED);
 		}
 		catch (TimingException e) {
+			LOG.warn(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.TOO_EARLY);
 		}
 		catch (ModelException e) {
+			LOG.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@Override
+	public ResponseEntity<Void> updateSelectedRecipientTags(@PathVariable("recipientId") Integer recipientId,
+			@Valid @RequestBody Set<String> selectedTags) {
+		LOG.info("Updating selected tags for recipient {}", recipientId);
+		LOG.debug("SelectedTags: {}", selectedTags);
+		try {
+			recipientService.updateSelectedTags(recipientId, selectedTags);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		catch (ModelException e) {
+			LOG.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
