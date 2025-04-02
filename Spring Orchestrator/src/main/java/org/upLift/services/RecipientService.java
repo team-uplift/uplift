@@ -9,10 +9,12 @@ import java.util.List;
 
 public interface RecipientService {
 
-	Recipient saveRecipient(Recipient recipient);
+	Recipient saveRecipient(@Valid Recipient recipient);
 
-	List<RecipientTag> generateRecipientTags(Integer id, List<FormQuestion> formQuestions);
+	List<RecipientTag> generateRecipientTags(Integer id, @Valid List<FormQuestion> formQuestions);
 
 	Recipient getRecipientById(Integer id);
+
+	List<Recipient> getMatchingRecipientsByTags(List<String> tags);
 
 }

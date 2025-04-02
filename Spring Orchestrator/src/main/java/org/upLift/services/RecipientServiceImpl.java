@@ -1,7 +1,6 @@
 package org.upLift.services;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.upLift.exceptions.ModelException;
 import org.upLift.exceptions.TimingException;
@@ -15,11 +14,10 @@ import org.upLift.repositories.TagRepository;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.List;
 
 @Service
 @Transactional
@@ -140,6 +138,12 @@ public class RecipientServiceImpl implements RecipientService {
 	public Recipient getRecipientById(Integer id) {
 		Optional<Recipient> recipient = recipientRepository.findById(id);
 		return recipient.orElse(null);
+	}
+
+	@Override
+	public List<Recipient> getMatchingRecipientsByTags(List<String> tags) {
+		// TODO: Yan to implement this system using RecipientRepository method(s)
+		return List.of();
 	}
 
 	/**
