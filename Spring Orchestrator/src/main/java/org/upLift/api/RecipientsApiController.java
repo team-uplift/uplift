@@ -10,11 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.upLift.exceptions.ModelException;
+import org.upLift.exceptions.TimingException;
+import org.upLift.model.FormQuestion;
 import org.upLift.model.Recipient;
+import org.upLift.model.RecipientTag;
 import org.upLift.services.RecipientService;
 import org.upLift.services.UserService;
 
@@ -69,19 +70,30 @@ public class RecipientsApiController implements RecipientsApi {
 	}
 
 	@Override
-	public ResponseEntity<Void> updateRecipientTags(
+	public ResponseEntity<List<RecipientTag>> updateRecipientTags(
 			@Parameter(in = ParameterIn.PATH, description = "Recipient id to generate tags for", required = true,
-					schema = @Schema()) @PathVariable("recipientId") Long recipientId,
+					schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
 			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
 					required = true,
 					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			@Parameter(in = ParameterIn.HEADER, description = "", schema = @Schema()) @RequestHeader(value = "api_key",
 					required = false) String apiKey,
-			@Parameter(in = ParameterIn.QUERY,
-					description = "A combined set of text or paragraph detailing the description to be used for tag generation",
-					schema = @Schema()) @Valid @RequestParam(value = "query_text", required = false) String queryText) {
+			@Parameter(in = ParameterIn.DEFAULT, description = "A new set of form questions if needed. "
+					+ "If not provided, the system will attempt to used the recipient's last stored form questions.",
+					required = false, schema = @Schema()) @Valid @RequestBody List<FormQuestion> formQuestions) {
+
 		String accept = request.getHeader("Accept");
-		return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+
+		try {
+			List<RecipientTag> generatedTags = recipientService.generateRecipientTags(recipientId, formQuestions);
+			return new ResponseEntity<>(generatedTags, HttpStatus.CREATED);
+		}
+		catch (TimingException e) {
+			return new ResponseEntity<>(HttpStatus.TOO_EARLY);
+		}
+		catch (ModelException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 }
