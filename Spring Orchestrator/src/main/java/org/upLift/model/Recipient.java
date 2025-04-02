@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Recipient
@@ -106,8 +107,9 @@ public class Recipient extends AbstractCreatedAt {
 
 	@Valid
 	@OneToMany(mappedBy = "recipient", fetch = FetchType.EAGER)
-	@JsonProperty("tags")
-	@JsonManagedReference
+	// Only want to send the set of "selected" tags to the front end,
+	// since only the back end cares about tracking the "unselected" tags
+	@JsonIgnore
 	private SortedSet<RecipientTag> tags;
 
 	public User getUser() {
@@ -376,16 +378,30 @@ public class Recipient extends AbstractCreatedAt {
 	 * @return tags
 	 **/
 
-	@Schema(implementation = RecipientTag.class, description = "tags linked to the recipient")
-
 	@Valid
+	@JsonIgnore
 	public SortedSet<RecipientTag> getTags() {
 		return tags;
 	}
 
+	@JsonIgnore
 	public void setTags(SortedSet<RecipientTag> tags) {
 		this.tags = tags;
 	}
+
+	@Schema(implementation = RecipientTag.class, description = "tags linked to the recipient")
+
+	@JsonGetter("tags")
+	public SortedSet<RecipientTag> getSelectedTags() {
+		return tags.stream().filter(RecipientTag::isSelected).collect(Collectors.toCollection(TreeSet::new));
+	}
+
+	// @formatter:off
+	// TODO: handle setting selected tags? No tags will be included on initial POST
+	//  to create recipient, but need to decided how to handle recipient profile updates
+	//  ideally the tags will either be excluded or ignored - this means it then has to
+	//  merge with the database entry
+	// @formatter:on
 
 	@Override
 	public boolean equals(java.lang.Object o) {

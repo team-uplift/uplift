@@ -59,7 +59,7 @@ public interface RecipientsApi {
 					+ "If not provided, the system will attempt to used the recipient's last stored form questions.",
 					required = false, schema = @Schema()) @Valid @RequestBody List<FormQuestion> formQuestions);
 
-	@Operation(summary = "Updates recipient's selected tags to be the following",
+	@Operation(summary = "Updates recipient's selected tags to be the provided tags",
 			description = "Updates recipient linked tags to mark only the specified tags as being selected, "
 					+ "clears any other selected flags for linked tags",
 			tags = { "Recipient" })
