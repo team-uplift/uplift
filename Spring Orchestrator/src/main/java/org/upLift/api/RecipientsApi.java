@@ -43,9 +43,6 @@ public interface RecipientsApi {
 	@RequestMapping(value = "/recipients/findByTags", produces = { "application/json", "application/xml" },
 			method = RequestMethod.GET)
 	ResponseEntity<List<Recipient>> findRecipientsByTags(
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			@Parameter(in = ParameterIn.QUERY, description = "Tags to filter by",
 					schema = @Schema()) @Valid @RequestParam(value = "tags", required = false) List<String> tags);
 
@@ -57,11 +54,6 @@ public interface RecipientsApi {
 	ResponseEntity<List<RecipientTag>> updateRecipientTags(
 			@Parameter(in = ParameterIn.PATH, description = "Recipient id to generate tags for", required = true,
 					schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.HEADER, description = "", schema = @Schema()) @RequestHeader(value = "api_key",
-					required = false) String apiKey,
 			@Parameter(in = ParameterIn.DEFAULT, description = "A new set of form questions if needed. "
 					+ "If not provided, the system will attempt to used the recipient's last stored form questions.",
 					required = false, schema = @Schema()) @Valid @RequestBody List<FormQuestion> formQuestions);
