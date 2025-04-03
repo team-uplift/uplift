@@ -393,7 +393,12 @@ public class Recipient extends AbstractCreatedAt {
 
 	@JsonGetter("tags")
 	public SortedSet<RecipientTag> getSelectedTags() {
-		return tags.stream().filter(RecipientTag::isSelected).collect(Collectors.toCollection(TreeSet::new));
+		if (tags != null) {
+			return tags.stream().filter(RecipientTag::isSelected).collect(Collectors.toCollection(TreeSet::new));
+		}
+		else {
+			return null;
+		}
 	}
 
 	// @formatter:off
