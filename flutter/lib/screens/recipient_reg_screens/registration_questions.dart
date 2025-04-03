@@ -1,9 +1,16 @@
 List<Map<String, dynamic>> registrationQuestions = [
   // ABOUT ME
   {
-    'key': 'aboutMe',
+    'key': 'lastAboutMe',
     'q': 'Tell us about yourself.',
     'type': 'text',
+    'id': 'special', 
+  },
+  {
+    'key': 'lastReasonForHelp',
+    'q': 'What is the biggest reason that you feel like you need help?',
+    'type': 'text',
+    'id': 'special'
   },
 
   // CHALLENGES & NEEDS
@@ -64,6 +71,7 @@ List<Map<String, dynamic>> registrationQuestions = [
     'key': 'emotionalChallenge',
     'q': 'What has been the most emotionally difficult part of your current situation?',
     'type': 'text',
+    'id': 'normal',
   },
   
   // 🏷️ TAG SELECTION
@@ -86,7 +94,8 @@ List<Map<String, dynamic>> registrationQuestions = [
   {
     'key': 'showTags',
     'q': '',
-    'type': 'showTags', // Special type to handle separately
+    'type': 'showTags',
+    'id': 'tags', // Special type to handle separately
   },
 
   // ✅ CONFIRMATION STEP

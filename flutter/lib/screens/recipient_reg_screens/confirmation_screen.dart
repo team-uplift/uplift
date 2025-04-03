@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uplift/components/tag_card.dart';
 import 'registration_questions.dart';
 import 'package:uplift/models/tag_model.dart';
 
@@ -11,8 +12,8 @@ class Confirmation extends StatelessWidget {
     required this.formData,
     required this.onBack,
     required this.onSubmit,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -48,25 +49,28 @@ class Confirmation extends StatelessWidget {
                   ],
                 ),
               );
-            }).toList(),
+            }),
 
-            // 🏷️ Special Section for Selected Tags
             if (formData.containsKey('tags') && (formData['tags'] as List).isNotEmpty) ...[
               const SizedBox(height: 16),
               Text(
                 "🏷️ Selected Tags:",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
+              const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
+                runSpacing: 8,
                 children: (formData['tags'] as List<Tag>).map((tag) {
-                  return Chip(
-                    label: Text(tag.name),
-                    backgroundColor: Colors.blue.shade100,
+                  return TagCard(
+                    tag: tag,
+                    isSelected: false, // confirmation is display-only
+                    // onTap omitted to make it non-interactive
                   );
                 }).toList(),
               ),
             ],
+
 
             const SizedBox(height: 32),
             Row(

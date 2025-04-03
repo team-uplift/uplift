@@ -4,11 +4,11 @@ import 'dart:convert';
 
 // import '../models/donor_model.dart';
 
-class DonorApi {
+class UserApi {
   static const baseUrl =
       'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
 
-  static Future<User?> fetchDonorById(String userId) async {
+  static Future<User?> fetchUserById(String userId) async {
     final url = Uri.parse('$baseUrl/users/cognito/$userId');
 
     try {

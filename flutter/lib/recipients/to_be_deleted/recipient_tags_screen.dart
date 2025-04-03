@@ -13,11 +13,44 @@ class RecipientTagsScreen extends StatefulWidget {
 class _RecipientTagsScreenState extends State<RecipientTagsScreen>{
 
 
-  final List<Tag> tags = [
-    const Tag(name: "basketball", weight: 0.0),
-    const Tag(name: "chess", weight: 1.0),
-    const Tag(name: "tennis", weight: 0.5),
-  ];
+final List<Tag> tags = [
+  Tag(
+    tagName: "basketball",
+    weight: 0.82,
+    createdAt: DateTime.parse("2025-04-01T10:15:00Z"),
+    addedAt: DateTime.parse("2025-04-01T10:15:00Z"),
+    selected: false,
+  ),
+  Tag(
+    tagName: "chess",
+    weight: 0.91,
+    createdAt: DateTime.parse("2025-04-01T11:20:00Z"),
+    addedAt: DateTime.parse("2025-04-01T11:20:00Z"),
+    selected: false,
+  ),
+  Tag(
+    tagName: "tech",
+    weight: 0.95,
+    createdAt: DateTime.parse("2025-04-01T12:30:00Z"),
+    addedAt: DateTime.parse("2025-04-01T12:30:00Z"),
+    selected: false,
+  ),
+  Tag(
+    tagName: "music",
+    weight: 0.76,
+    createdAt: DateTime.parse("2025-04-01T13:45:00Z"),
+    addedAt: DateTime.parse("2025-04-01T13:45:00Z"),
+    selected: false,
+  ),
+  Tag(
+    tagName: "education",
+    weight: 0.88,
+    createdAt: DateTime.parse("2025-04-01T14:50:00Z"),
+    addedAt: DateTime.parse("2025-04-01T14:50:00Z"),
+    selected: false,
+  ),
+];
+
 
   // void _sortTagsByWeight() {
   //   setState(() {

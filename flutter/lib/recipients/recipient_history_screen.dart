@@ -4,7 +4,8 @@ import 'recipient_history_details_screen.dart';
 
 // combo of chatgpt and me
 class RecipientHistoryScreen extends StatefulWidget {
-  const RecipientHistoryScreen({super.key});
+  final Map<String, dynamic> profile;
+  const RecipientHistoryScreen({super.key, required this.profile});
 
   @override
   State<RecipientHistoryScreen> createState() => _RecipientHistoryScreenState();

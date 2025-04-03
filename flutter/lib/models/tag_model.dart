@@ -1,17 +1,29 @@
 class Tag {
-  
-  final String name;
+  final DateTime createdAt;
+  final String tagName;
   final double weight;
+  final DateTime addedAt;
+  bool selected; // remove `final`
 
-  const Tag({required this.name, required this.weight});
+  Tag({
+    required this.createdAt,
+    required this.tagName,
+    required this.weight,
+    required this.addedAt,
+    this.selected = false, // default
+  });
 
   factory Tag.fromJson(Map<String, dynamic> json) {
     return Tag(
-      name: json['name'] as String,
-      weight: json['weight'] as double,
+      createdAt: DateTime.parse(json['createdAt']),
+      tagName: json['tagName'] as String,
+      weight: (json['weight'] as num).toDouble(),
+      addedAt: DateTime.parse(json['addedAt']),
+      selected: json['selected'] as bool? ?? false,
     );
   }
 }
+
 
 // TODO remove comments
 // class Duck {

@@ -8,6 +8,7 @@ class RecipientSettingsScreen extends StatelessWidget {
   final VoidCallback? deleteAccount;
   final VoidCallback? changeEmail;
   final VoidCallback? convertAccount;
+  final Map<String, dynamic> profile;
 
   const RecipientSettingsScreen({
     super.key,
@@ -16,6 +17,7 @@ class RecipientSettingsScreen extends StatelessWidget {
     this.deleteAccount,
     this.changeEmail,
     this.convertAccount,
+    required this.profile,
   });
 
   

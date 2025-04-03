@@ -47,7 +47,7 @@ class TagCard extends StatelessWidget{
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Text(
-                tag.name,
+                tag.tagName,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

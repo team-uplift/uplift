@@ -12,7 +12,7 @@ import 'package:uplift/screens/home/donate_screen.dart';
 import 'package:uplift/screens/home/home_screen.dart';
 import 'package:uplift/screens/home/profile_screen.dart';
 import 'package:uplift/screens/home/quiz_screen.dart';
-import 'package:uplift/recipients/recipient_home.dart';
+import 'package:uplift/recipients/recipient_home_controller.dart';
 import 'package:uplift/screens/home/recipient_detail_screen.dart';
 import 'package:uplift/screens/home/recipient_list_screen.dart';
 import 'package:uplift/screens/recipient_reg_screens/registration_controller.dart';

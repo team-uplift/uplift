@@ -153,7 +153,28 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
                   if (question['type'] == 'generateTags')  
                     Center(
                       child: ElevatedButton(
-                        onPressed: widget.onGenerate, // ✅ Moves to tag selection step
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text("Generate Tags?"),
+                              content: const Text("Are you sure you want to generate tags? You will not be able to go back."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text("Cancel"),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context); // Close dialog
+                                    widget.onGenerate();    // Now trigger tag generation
+                                  },
+                                  child: const Text("Yes, Generate Tags"),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                         child: const Text("Generate Tags"),
                       ),
                     ),
