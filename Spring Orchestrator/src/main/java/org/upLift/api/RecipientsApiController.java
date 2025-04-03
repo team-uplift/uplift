@@ -1,16 +1,15 @@
 package org.upLift.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.upLift.exceptions.ModelException;
 import org.upLift.exceptions.TimingException;
 import org.upLift.model.FormQuestion;
@@ -19,79 +18,63 @@ import org.upLift.model.RecipientTag;
 import org.upLift.services.RecipientService;
 import org.upLift.services.UserService;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
 @RestController
 public class RecipientsApiController implements RecipientsApi {
 
-	private static final Logger log = LoggerFactory.getLogger(RecipientsApiController.class);
-
-	private final ObjectMapper objectMapper;
-
-	private final HttpServletRequest request;
+	private static final Logger LOG = LoggerFactory.getLogger(RecipientsApiController.class);
 
 	private final RecipientService recipientService;
 
 	private final UserService userService;
 
-	@org.springframework.beans.factory.annotation.Autowired
-	public RecipientsApiController(ObjectMapper objectMapper, HttpServletRequest request,
-			RecipientService recipientService, UserService userService) {
-		this.objectMapper = objectMapper;
-		this.request = request;
+	@Autowired
+	public RecipientsApiController(RecipientService recipientService, UserService userService) {
 		this.recipientService = recipientService;
 		this.userService = userService;
 	}
 
 	@Override
 	public ResponseEntity<List<Recipient>> findRecipientsByTags(
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.QUERY, description = "Tags to filter by",
-					schema = @Schema()) @Valid @RequestParam(value = "tags", required = false) List<String> tags) {
-		String accept = request.getHeader("Accept");
-		if (accept != null) {
-			try {
-				return new ResponseEntity<List<Recipient>>(objectMapper.readValue(
-						"[ {\n  \"income_verified\" : true,\n  \"cognito_id\" : \"oijwedf-wrefwefr-saedf3rweg-gv\",\n  \"amount_received\" : 300.15,\n  \"nickname\" : \"PotatoKing\",\n  \"id\" : 10,\n  \"last_profile_text\" : \"I like potatoes.\",\n  \"email\" : \"testUser\",\n  \"username\" : \"testUser\",\n  \"tags\" : [ {\n    \"tag_name\" : \"Potato\"\n  }, {\n    \"tag_name\" : \"Potato\"\n  } ]\n}, {\n  \"income_verified\" : true,\n  \"cognito_id\" : \"oijwedf-wrefwefr-saedf3rweg-gv\",\n  \"amount_received\" : 300.15,\n  \"nickname\" : \"PotatoKing\",\n  \"id\" : 10,\n  \"last_profile_text\" : \"I like potatoes.\",\n  \"email\" : \"testUser\",\n  \"username\" : \"testUser\",\n  \"tags\" : [ {\n    \"tag_name\" : \"Potato\"\n  }, {\n    \"tag_name\" : \"Potato\"\n  } ]\n} ]",
-						List.class), HttpStatus.NOT_IMPLEMENTED);
-			}
-			catch (IOException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<List<Recipient>>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
-
-		return new ResponseEntity<List<Recipient>>(HttpStatus.NOT_IMPLEMENTED);
+			@Valid @RequestParam(value = "tags", required = false) List<String> tags) {
+		LOG.info("Finding recipients that match selected tags");
+		LOG.debug("Tags used to match: {}", tags);
+		return new ResponseEntity<>(recipientService.getMatchingRecipientsByTags(tags), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<List<RecipientTag>> updateRecipientTags(
-			@Parameter(in = ParameterIn.PATH, description = "Recipient id to generate tags for", required = true,
-					schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.HEADER, description = "", schema = @Schema()) @RequestHeader(value = "api_key",
-					required = false) String apiKey,
-			@Parameter(in = ParameterIn.DEFAULT, description = "A new set of form questions if needed. "
-					+ "If not provided, the system will attempt to used the recipient's last stored form questions.",
-					required = false, schema = @Schema()) @Valid @RequestBody List<FormQuestion> formQuestions) {
-
-		String accept = request.getHeader("Accept");
-
+	public ResponseEntity<List<RecipientTag>> updateRecipientTags(@PathVariable("recipientId") Integer recipientId,
+			@Valid @RequestBody List<FormQuestion> formQuestions) {
+		LOG.info("Updating recipient tags for recipient {}", recipientId);
 		try {
 			List<RecipientTag> generatedTags = recipientService.generateRecipientTags(recipientId, formQuestions);
 			return new ResponseEntity<>(generatedTags, HttpStatus.CREATED);
 		}
 		catch (TimingException e) {
+			LOG.warn(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.TOO_EARLY);
 		}
 		catch (ModelException e) {
+			LOG.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@Override
+	public ResponseEntity<Void> updateSelectedRecipientTags(@PathVariable("recipientId") Integer recipientId,
+			@Valid @RequestBody Set<String> selectedTags) {
+		LOG.info("Updating selected tags for recipient {}", recipientId);
+		LOG.debug("SelectedTags: {}", selectedTags);
+		try {
+			recipientService.updateSelectedTags(recipientId, selectedTags);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		catch (ModelException e) {
+			LOG.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}

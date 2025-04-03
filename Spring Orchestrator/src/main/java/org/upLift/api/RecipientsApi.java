@@ -23,6 +23,7 @@ import org.upLift.model.Recipient;
 import org.upLift.model.RecipientTag;
 
 import java.util.List;
+import java.util.Set;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
@@ -43,9 +44,6 @@ public interface RecipientsApi {
 	@RequestMapping(value = "/recipients/findByTags", produces = { "application/json", "application/xml" },
 			method = RequestMethod.GET)
 	ResponseEntity<List<Recipient>> findRecipientsByTags(
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			@Parameter(in = ParameterIn.QUERY, description = "Tags to filter by",
 					schema = @Schema()) @Valid @RequestParam(value = "tags", required = false) List<String> tags);
 
@@ -57,13 +55,22 @@ public interface RecipientsApi {
 	ResponseEntity<List<RecipientTag>> updateRecipientTags(
 			@Parameter(in = ParameterIn.PATH, description = "Recipient id to generate tags for", required = true,
 					schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.HEADER, description = "", schema = @Schema()) @RequestHeader(value = "api_key",
-					required = false) String apiKey,
 			@Parameter(in = ParameterIn.DEFAULT, description = "A new set of form questions if needed. "
 					+ "If not provided, the system will attempt to used the recipient's last stored form questions.",
 					required = false, schema = @Schema()) @Valid @RequestBody List<FormQuestion> formQuestions);
+
+	@Operation(summary = "Updates recipient's selected tags to be the provided tags",
+			description = "Updates recipient linked tags to mark only the specified tags as being selected, "
+					+ "clears any other selected flags for linked tags",
+			tags = { "Recipient" })
+	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Selected tags updated"),
+
+			@ApiResponse(responseCode = "400", description = "Invalid input") })
+	@PutMapping(value = "/recipients/tagSelection/{recipientId}")
+	ResponseEntity<Void> updateSelectedRecipientTags(
+			@Parameter(in = ParameterIn.PATH, description = "Recipient id whose selected tags should be updated",
+					required = true, schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
+			@Parameter(in = ParameterIn.DEFAULT, description = "List of tags that the recipient has selected.",
+					required = true, schema = @Schema()) @Valid @RequestBody Set<String> selectedTags);
 
 }

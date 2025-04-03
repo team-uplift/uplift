@@ -15,11 +15,11 @@ import org.upLift.repositories.TagRepository;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.List;
 
 @Service
 @Transactional
@@ -140,6 +140,27 @@ public class RecipientServiceImpl implements RecipientService {
 	public Recipient getRecipientById(Integer id) {
 		Optional<Recipient> recipient = recipientRepository.findById(id);
 		return recipient.orElse(null);
+	}
+
+	@Override
+	public List<Recipient> getMatchingRecipientsByTags(List<String> tags) {
+		// TODO: Yan to implement this system using RecipientRepository method(s)
+		return List.of();
+	}
+
+	@Override
+	public Recipient updateSelectedTags(Integer recipientId, @Valid Set<String> selectedTags) {
+		Optional<Recipient> recipientResult = recipientRepository.findById(recipientId);
+		if (recipientResult.isPresent()) {
+			var recipient = recipientResult.get();
+			for (var recipientTag : recipient.getTags()) {
+				recipientTag.setSelected(selectedTags.contains(recipientTag.getTagName()));
+			}
+			return recipientRepository.save(recipient);
+		}
+		else {
+			throw new ModelException("Recipient not found.");
+		}
 	}
 
 	/**
