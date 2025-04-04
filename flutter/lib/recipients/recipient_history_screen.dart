@@ -99,12 +99,7 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => HistoryDetailScreen(item: {
-                  "amount": donation.formattedAmount,
-                  "date": donation.formattedDate,
-                  "donor": donation.donorName,
-                  "thankYou": donation.thankYouMessage ?? "No thank you message yet."
-                }),
+                builder: (context) => HistoryDetailScreen(item: donation,),
               ),
             );
           },

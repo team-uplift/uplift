@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:uplift/models/donation_model.dart';
 
 class SendThankYouScreen extends StatelessWidget {
-  final Map<String, String> historyItem;
+  final Donation donation;
 
-  const SendThankYouScreen({super.key, required this.historyItem});
+  const SendThankYouScreen({super.key, required this.donation});
 
   @override
   Widget build(BuildContext context) {
@@ -54,3 +55,6 @@ class SendThankYouScreen extends StatelessWidget {
     );
   }
 }
+
+
+// TODO implement logic for sending the message on the donation object to the api

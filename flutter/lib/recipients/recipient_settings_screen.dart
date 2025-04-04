@@ -299,7 +299,18 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
               title: const Text("Logout"),
               subtitle: const Text("Log out of your account"),
               onTap: () async {
-                await Amplify.Auth.signOut();
+                try {
+                  await Amplify.Auth.signOut(
+                    options: const SignOutOptions(globalSignOut: true),
+                  );
+                  
+                  // Clear GoRouter navigation history and force redirect to Authenticator root
+                  if (context.mounted) {
+                    context.go('/redirect');
+                  }
+                } on AuthException catch (e) {
+                  print("Sign out error: ${e.message}");
+                }
               },
             ),
             const Divider(),

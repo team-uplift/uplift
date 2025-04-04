@@ -24,7 +24,7 @@ class Donation {
   }
 
   // helper to get amount as formatted string
-  String get formattedAmount => "\$${(amount / 100).toStringAsFixed(2)}";
+  String get formattedAmount => "\$${(amount).toStringAsFixed(2)}";
 
   String get formattedDate =>
       "${createdAt.year}-${createdAt.month.toString().padLeft(2, '0')}-${createdAt.day.toString().padLeft(2, '0')}";

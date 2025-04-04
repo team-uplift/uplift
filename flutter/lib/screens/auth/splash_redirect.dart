@@ -38,7 +38,6 @@ class _SplashRedirectorState extends State<SplashRedirector> {
         headers: {'Content-Type': 'application/json'},
       );
 
-      
 
       // Redirect
       if (res.statusCode == 404) {
