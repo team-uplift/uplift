@@ -15,44 +15,43 @@ class RecipientProfileScreen extends StatelessWidget {
   //   // "Verification": "Unverified",
   // };
 
-final List<Tag> tags = [
-  Tag(
-    tagName: "basketball",
-    weight: 0.82,
-    createdAt: DateTime.parse("2025-04-01T10:15:00Z"),
-    addedAt: DateTime.parse("2025-04-01T10:15:00Z"),
-    selected: false,
-  ),
-  Tag(
-    tagName: "chess",
-    weight: 0.91,
-    createdAt: DateTime.parse("2025-04-01T11:20:00Z"),
-    addedAt: DateTime.parse("2025-04-01T11:20:00Z"),
-    selected: false,
-  ),
-  Tag(
-    tagName: "tech",
-    weight: 0.95,
-    createdAt: DateTime.parse("2025-04-01T12:30:00Z"),
-    addedAt: DateTime.parse("2025-04-01T12:30:00Z"),
-    selected: false,
-  ),
-  Tag(
-    tagName: "music",
-    weight: 0.76,
-    createdAt: DateTime.parse("2025-04-01T13:45:00Z"),
-    addedAt: DateTime.parse("2025-04-01T13:45:00Z"),
-    selected: false,
-  ),
-  Tag(
-    tagName: "education",
-    weight: 0.88,
-    createdAt: DateTime.parse("2025-04-01T14:50:00Z"),
-    addedAt: DateTime.parse("2025-04-01T14:50:00Z"),
-    selected: false,
-  ),
-];
-
+// final List<Tag> tags = [
+//   Tag(
+//     tagName: "basketball",
+//     weight: 0.82,
+//     createdAt: DateTime.parse("2025-04-01T10:15:00Z"),
+//     addedAt: DateTime.parse("2025-04-01T10:15:00Z"),
+//     selected: false,
+//   ),
+//   Tag(
+//     tagName: "chess",
+//     weight: 0.91,
+//     createdAt: DateTime.parse("2025-04-01T11:20:00Z"),
+//     addedAt: DateTime.parse("2025-04-01T11:20:00Z"),
+//     selected: false,
+//   ),
+//   Tag(
+//     tagName: "tech",
+//     weight: 0.95,
+//     createdAt: DateTime.parse("2025-04-01T12:30:00Z"),
+//     addedAt: DateTime.parse("2025-04-01T12:30:00Z"),
+//     selected: false,
+//   ),
+//   Tag(
+//     tagName: "music",
+//     weight: 0.76,
+//     createdAt: DateTime.parse("2025-04-01T13:45:00Z"),
+//     addedAt: DateTime.parse("2025-04-01T13:45:00Z"),
+//     selected: false,
+//   ),
+//   Tag(
+//     tagName: "education",
+//     weight: 0.88,
+//     createdAt: DateTime.parse("2025-04-01T14:50:00Z"),
+//     addedAt: DateTime.parse("2025-04-01T14:50:00Z"),
+//     selected: false,
+//   ),
+// ];
 
   RecipientProfileScreen({super.key, required this.profile});
   
@@ -60,22 +59,35 @@ final List<Tag> tags = [
   @override
   Widget build(BuildContext context) {
 
-    final recipientData = profile['recipientData'];
+    print("raw profile: $profile");
+
+    final recipientData = profile['recipientData'] ?? {};
 
     final Map<String, String> profileData = {
       // "Name": profile['nickname'] ?? 'Unknown',
-      "Email": profile['recipientData']['email'] ?? 'Not provided',
-      "About Me": profile['lastAboutMe'] ?? 'Not provided',
-      "Why I Need Help": profile['lastReasonForHelp'] ?? 'Not provided',
+      "Email": profile['email'] ?? 'Not provided',
+      "About Me": recipientData['lastAboutMe'] ?? 'Not provided',
+      "Why I Need Help": recipientData['lastReasonForHelp'] ?? 'Not provided',
     };
 
-    final List<Map<String, dynamic>> formQuestions = 
-      (recipientData['formQuestions'] as List)
-        .map((q) => {
-          'question': q['question'],
-          'answer': q['answer'],
-        })
-      .toList();
+    print("profile data: ${profileData}");
+
+    for (final q in recipientData['formQuestions']) {
+      final question = q['question'] as String;
+      final answer = q['answer'] as String;
+      profileData[question] = answer;
+    }
+
+    print("raw tags: ${recipientData['tags']}");
+    print("TAG RAW: ${recipientData['tags'].runtimeType}");
+    print("TAG VALUE: ${recipientData['tags']}");
+
+    final List<Tag> tags = (recipientData['tags'] as List)
+        .map((tagJson) => Tag.fromJson(Map<String, dynamic>.from(tagJson)))
+        .toList();
+
+
+
 
     tags.sort((a,b) => a.weight.compareTo(b.weight));
 

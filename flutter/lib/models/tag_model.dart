@@ -22,6 +22,14 @@ class Tag {
       selected: json['selected'] as bool? ?? false,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'createdAt': createdAt.toIso8601String(),
+    'tagName': tagName,
+    'weight': weight,
+    'addedAt': addedAt.toIso8601String(),
+    'selected': selected,
+  };
 }
 
 

@@ -61,6 +61,8 @@ class _RegistrationControllerState extends State<RegistrationController> {
     final selectedTags = (formData['tags'] as List<Tag>)
         .map((tag) => tag.tagName)
         .toList();
+      
+    print('selected tags: $selectedTags');
 
     // final tagUpdatePayload = {
     //   'selectedTags': selectedTags,
@@ -72,6 +74,8 @@ class _RegistrationControllerState extends State<RegistrationController> {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(selectedTags),
       );
+
+      print('put_response: ${response.body}');
 
       if (response.statusCode == 204) {
         context.goNamed('/recipient_home');
@@ -129,8 +133,8 @@ class _RegistrationControllerState extends State<RegistrationController> {
         'email': attrMap['email'],
         'recipient': true,
         'recipientData': {
-          'firstName': 'test_first',
-          'lastName': 'test_lastname',
+          'firstName': attrMap['givenName'],
+          'lastName': attrMap['familyName'],
           // TODO pop these two questions off formdata response
           'lastAboutMe': formData['lastAboutMe'],
           'lastReasonForHelp': formData['lastReasonForHelp'],

@@ -6,6 +6,7 @@ import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/screens/auth/donor_or_recipient.dart';
 import 'package:uplift/screens/auth/login_screen.dart';
 import 'package:uplift/screens/auth/donor_registration_screen.dart';
+import 'package:uplift/screens/auth/splash_redirect.dart';
 // import 'package:uplift/screens/auth/recipient_registration_screen.dart';
 import 'package:uplift/screens/home/dashboard_screen.dart';
 import 'package:uplift/screens/home/donate_screen.dart';
@@ -56,7 +57,7 @@ Future<void> _configureAmplify() async {
 
 /// The route configuration.
 final GoRouter _router = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/redirect',
   routes: <RouteBase>[
     GoRoute(
       path: '/login',
@@ -144,6 +145,13 @@ final GoRouter _router = GoRouter(
         return DonatePage(recipient: recipient);
       },
     ),
+    GoRoute(
+      path: '/redirect',
+      name: '/redirect',
+      builder: (BuildContext context, GoRouterState state) {
+        return SplashRedirector();
+      },
+    ),
   ],
 );
 
@@ -154,6 +162,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Authenticator(
+      signUpForm: SignUpForm.custom(
+        fields: [
+          SignUpFormField.givenName(),
+          SignUpFormField.familyName(),
+          SignUpFormField.username(),
+          SignUpFormField.email(required: true),
+          SignUpFormField.password(),
+        ]
+      ),
            child: MaterialApp.router(
              routerConfig: _router,
              debugShowCheckedModeBanner: false,

@@ -23,17 +23,82 @@ class _RecipientHomeState extends State<RecipientHome> {
   bool _isLoading = true;
   late final List<Widget> _screens;
 
+  Map<String, dynamic> testProfile = {
+    "id": 77,
+    "createdAt": "2025-04-04T00:41:08.016Z",
+    "cognitoId": "24e8a418-f021-7014-806a-36448ad7ce62",
+    "email": "rigibi@azuretechtalk.net",
+    "recipient": true,
+    "recipientData": {
+        "createdAt": "2025-04-04T00:41:08.016Z",
+        "id": 77,
+        "firstName": "test_first",
+        "lastName": "test_lastname",
+        "lastAboutMe": "test",
+        "lastReasonForHelp": "test",
+        "formQuestions": [
+            {
+                "question": "What has been the most emotionally difficult part of your current situation?",
+                "answer": "test"
+            }
+        ],
+        "tagsLastGenerated": "2025-04-04T00:41:09.454Z",
+        "tags": [
+            {
+                "createdAt": "2025-04-03T01:53:34.852Z",
+                "tagName": "check",
+                "weight": 0.6,
+                "addedAt": "2025-04-04T00:41:09.310Z",
+                "selected": true
+            },
+            {
+                "createdAt": "2025-04-03T01:24:23.180Z",
+                "tagName": "measurement",
+                "weight": 0.85,
+                "addedAt": "2025-04-04T00:41:09.344Z",
+                "selected": true
+            },
+            {
+                "createdAt": "2025-04-03T01:24:23.204Z",
+                "tagName": "probe",
+                "weight": 0.45,
+                "addedAt": "2025-04-04T00:41:09.372Z",
+                "selected": true
+            },
+            {
+                "createdAt": "2025-04-03T02:09:35.348Z",
+                "tagName": "study",
+                "weight": 0.3,
+                "addedAt": "2025-04-04T00:41:09.283Z",
+                "selected": true
+            },
+            {
+                "createdAt": "2025-04-01T20:19:18.158Z",
+                "tagName": "validation",
+                "weight": 0.75,
+                "addedAt": "2025-04-04T00:41:09.453Z",
+                "selected": true
+            }
+        ]
+    }
+};
+
   @override
-void initState() {
-  super.initState();
-  _loadProfile();
-}
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
 
 void _loadScreens() {
   _screens = [
-    RecipientProfileScreen(profile: recipientProfile!),
-    RecipientHistoryScreen(profile: recipientProfile!),
-    RecipientSettingsScreen(profile: recipientProfile!),
+    // RecipientProfileScreen(profile: recipientProfile!),
+    // RecipientHistoryScreen(profile: recipientProfile!),
+    // RecipientSettingsScreen(profile: recipientProfile!),
+
+    // TODO for testing purposes!!!
+    RecipientProfileScreen(profile: testProfile!),
+    RecipientHistoryScreen(profile: testProfile!),
+    RecipientSettingsScreen(profile: testProfile!),
   ];
 }
 
@@ -54,8 +119,13 @@ Future<void> _loadProfile() async {
       headers: {'Content-Type': 'application/json'},
     );
 
+    print("get user response: ${response.body}");
+
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
+
+      // final data = testProfile;
+
       setState(() {
         recipientProfile = data;
         _isLoading = false;
