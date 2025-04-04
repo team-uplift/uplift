@@ -38,19 +38,31 @@ class _SplashRedirectorState extends State<SplashRedirector> {
         headers: {'Content-Type': 'application/json'},
       );
 
+      
+
       // Redirect
       if (res.statusCode == 404) {
         print("route to registration");
-        context.goNamed('/donor_or_recipient'); // let user pick donor/recipient
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            context.goNamed('/donor_or_recipient');
+        });
       } else if (res.statusCode == 200) {
         final user = jsonDecode(res.body);
 
         if (user['recipient'] == true) {
           print("route to recipient dashboard");
-          context.goNamed('/recipient_home', extra: user);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            context.goNamed('/recipient_home', extra: user);
+          });
+
         } else {
           print("route to donor dashboard");
-          context.goNamed('/dashboard', extra: user);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            context.goNamed('/dashboard', extra: user);
+          });
         }
       } else {
         print("Unexpected status: ${res.statusCode}");

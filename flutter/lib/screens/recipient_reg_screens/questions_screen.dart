@@ -167,6 +167,7 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
                                 ElevatedButton(
                                   onPressed: () {
                                     Navigator.pop(context); // Close dialog
+                                    _saveAnswer();
                                     widget.onGenerate();    // Now trigger tag generation
                                   },
                                   child: const Text("Yes, Generate Tags"),

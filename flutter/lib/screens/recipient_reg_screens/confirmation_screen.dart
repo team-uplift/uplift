@@ -27,7 +27,7 @@ class Confirmation extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Dynamically list all responses from `registrationQuestions`
-            ...registrationQuestions.where((q) => formData.containsKey(q['key']) && q['type'] != 'confirmation').map((q) {
+            ...registrationQuestions.where((q) => formData.containsKey(q['key']) && q['type'] != 'confirmation' && q['type'] != 'generateTags').map((q) {
               dynamic answer = formData[q['key']];
               if (answer is List) {
                 answer = answer.join(", "); // Convert lists (e.g., checkboxes) to readable text

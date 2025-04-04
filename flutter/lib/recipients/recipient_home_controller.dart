@@ -91,14 +91,14 @@ class _RecipientHomeState extends State<RecipientHome> {
 
 void _loadScreens() {
   _screens = [
-    // RecipientProfileScreen(profile: recipientProfile!),
-    // RecipientHistoryScreen(profile: recipientProfile!),
-    // RecipientSettingsScreen(profile: recipientProfile!),
+    RecipientProfileScreen(profile: recipientProfile!),
+    RecipientHistoryScreen(profile: recipientProfile!),
+    RecipientSettingsScreen(profile: recipientProfile!),
 
     // TODO for testing purposes!!!
-    RecipientProfileScreen(profile: testProfile!),
-    RecipientHistoryScreen(profile: testProfile!),
-    RecipientSettingsScreen(profile: testProfile!),
+    // RecipientProfileScreen(profile: testProfile!),
+    // RecipientHistoryScreen(profile: testProfile!),
+    // RecipientSettingsScreen(profile: testProfile!),
   ];
 }
 

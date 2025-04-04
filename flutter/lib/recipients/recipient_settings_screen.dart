@@ -251,7 +251,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
       if (response.statusCode == 400) {
         print("delete unsuccessful");
       } else {
-        await Amplify.Auth.signOut();
+        await Amplify.Auth.deleteUser();
       }
     } catch (e) {
       print('error with delete request: $e');

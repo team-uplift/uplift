@@ -110,18 +110,18 @@ class _RegistrationControllerState extends State<RegistrationController> {
     // reformat formdata for rest api
     final formQuestions = [
       for (var question in registrationQuestions)
-        if (question['id'] == 'normal' &&
-        // if (question['key'] != 'lastAboutMe' &&
-        //     question['key'] != 'lastReasonForHelp' &&
-        //     question['type'] != 'generateTags' &&
-        //     question['type'] != 'showTags' &&
-        //     question['type'] != 'confirmation' &&
+        if (question['type'] != 'generateTags' &&
+            question['type'] != 'showTags' &&
+            question['type'] != 'confirmation' &&
             (formData[question['key']]?.toString().trim().isNotEmpty ?? false))
           {
             'question': question['q'],
-            'answer': formData[question['key']]!,
+            'answer': formData[question['key']] is List
+                ? (formData[question['key']] as List).join(', ')
+                : formData[question['key']],
           }
     ];
+
 
     print('FormData: $formData');
     print(formData['lastAboutMe']);
@@ -133,8 +133,8 @@ class _RegistrationControllerState extends State<RegistrationController> {
         'email': attrMap['email'],
         'recipient': true,
         'recipientData': {
-          'firstName': attrMap['givenName'],
-          'lastName': attrMap['familyName'],
+          'firstName': attrMap['given_name'],
+          'lastName': attrMap['family_name'],
           // TODO pop these two questions off formdata response
           'lastAboutMe': formData['lastAboutMe'],
           'lastReasonForHelp': formData['lastReasonForHelp'],
