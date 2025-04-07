@@ -5,32 +5,89 @@ import 'package:uplift/components/recipient_profile_display.dart';
 
 // TODO pull profile info from backend
 class RecipientProfileScreen extends StatelessWidget {
+  final Map<String, dynamic> profile;
   
-  final Map<String, String> profileData = {
-    "Name": "John Doe",
-    "Email": "johndoe@example.com",
-    "About Me": "I’m a developer who loves open-source projects.",
-    "Why I Need Help": "Raising funds for continuing my education.",
-    "Verification": "Unverified",
-  };
+  // final Map<String, String> profileData = {
+  //   "Name": "John Doe",
+  //   "Email": "johndoe@example.com",
+  //   "About Me": "I’m a developer who loves open-source projects.",
+  //   "Why I Need Help": "Raising funds for continuing my education.",
+  //   // "Verification": "Unverified",
+  // };
 
-  final List<Tag> tags = [
-    const Tag(name: "basketball", weight: 0.0),
-    const Tag(name: "chess", weight: 1.0),
-    const Tag(name: "tennis", weight: 0.5),
-    const Tag(name: "tech", weight: .92),
-    const Tag(name: "gaming", weight: .75),
-    const Tag(name: "education", weight: .63),
-    const Tag(name: "music", weight: .47),
-    const Tag(name: "art", weight: .33),
-    const Tag(name: "mental health", weight: .18),
-    const Tag(name: "food", weight: .05),
-  ];
+// final List<Tag> tags = [
+//   Tag(
+//     tagName: "basketball",
+//     weight: 0.82,
+//     createdAt: DateTime.parse("2025-04-01T10:15:00Z"),
+//     addedAt: DateTime.parse("2025-04-01T10:15:00Z"),
+//     selected: false,
+//   ),
+//   Tag(
+//     tagName: "chess",
+//     weight: 0.91,
+//     createdAt: DateTime.parse("2025-04-01T11:20:00Z"),
+//     addedAt: DateTime.parse("2025-04-01T11:20:00Z"),
+//     selected: false,
+//   ),
+//   Tag(
+//     tagName: "tech",
+//     weight: 0.95,
+//     createdAt: DateTime.parse("2025-04-01T12:30:00Z"),
+//     addedAt: DateTime.parse("2025-04-01T12:30:00Z"),
+//     selected: false,
+//   ),
+//   Tag(
+//     tagName: "music",
+//     weight: 0.76,
+//     createdAt: DateTime.parse("2025-04-01T13:45:00Z"),
+//     addedAt: DateTime.parse("2025-04-01T13:45:00Z"),
+//     selected: false,
+//   ),
+//   Tag(
+//     tagName: "education",
+//     weight: 0.88,
+//     createdAt: DateTime.parse("2025-04-01T14:50:00Z"),
+//     addedAt: DateTime.parse("2025-04-01T14:50:00Z"),
+//     selected: false,
+//   ),
+// ];
 
-  RecipientProfileScreen({super.key});
+  RecipientProfileScreen({super.key, required this.profile});
+  
 
   @override
   Widget build(BuildContext context) {
+
+    print("raw profile: $profile");
+
+    final recipientData = profile['recipientData'] ?? {};
+
+    final Map<String, String> profileData = {
+      // "Name": profile['nickname'] ?? 'Unknown',
+      "Email": profile['email'] ?? 'Not provided',
+      "About Me": recipientData['lastAboutMe'] ?? 'Not provided',
+      "Why I Need Help": recipientData['lastReasonForHelp'] ?? 'Not provided',
+    };
+
+    print("profile data: ${profileData}");
+
+    for (final q in recipientData['formQuestions']) {
+      final question = q['question'] as String;
+      final answer = q['answer'] as String;
+      profileData[question] = answer;
+    }
+
+    print("raw tags: ${recipientData['tags']}");
+    print("TAG RAW: ${recipientData['tags'].runtimeType}");
+    print("TAG VALUE: ${recipientData['tags']}");
+
+    final List<Tag> tags = (recipientData['tags'] as List)
+        .map((tagJson) => Tag.fromJson(Map<String, dynamic>.from(tagJson)))
+        .toList();
+
+
+
 
     tags.sort((a,b) => a.weight.compareTo(b.weight));
 
@@ -40,7 +97,8 @@ class RecipientProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: RecipientProfileDisplay(
           profileFields: profileData, 
-          tags: tags, 
+          tags: tags,
+          // profileFields: profileData, 
           onVerifyPressed: () {
             print("flow for camers");
           }, 

@@ -1,44 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:uplift/models/donation_model.dart';
 import 'recipient_send_thank_you_screen.dart';
 
 
 // combo of chatgpt and me
 class HistoryDetailScreen extends StatelessWidget {
-  final Map<String, String> item; // Receive history item data
-
+  // final Map<String, String> item; // Receive history item data
+  final Donation item;
   const HistoryDetailScreen({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
 
-    bool hasThankYou = item.containsKey("thankYou") && item["thankYou"]!.isNotEmpty;
+    bool hasThankYou = item.thankYouMessage != null && item.thankYouMessage!.isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(item["title"]!), 
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.close, color: Colors.red),
-        //     onPressed: () {
-        //       Navigator.pop(context); // Close the page
-        //     },
-        //   ),
-        // ],
+        title: Text("Donation from: ${item.donorName}"), 
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(item["title"]!, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Text("Date: ${item["date"]}", style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+            Text("Date received: ${item.formattedDate}", style: TextStyle(fontSize: 16, color: Colors.grey[700])),
             const SizedBox(height: 16),
-            Text(item["details"]!, style: const TextStyle(fontSize: 18)),
+            Text("Amount received: ${item.formattedAmount}", style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 24),
 
             if (hasThankYou) 
-              _buildThankYou(item["thankYou"]!)
+              _buildThankYou(item.thankYouMessage!)
             else 
               _buildSendThankYou(context),
           ],
@@ -71,7 +62,7 @@ class HistoryDetailScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SendThankYouScreen(historyItem: item,),
+              builder: (context) => SendThankYouScreen(donation: item),
             )
           );
         }, 

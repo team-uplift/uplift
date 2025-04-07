@@ -5,7 +5,11 @@
 /.flutter-plugins
 /.flutter-plugins-dependencies
 
+
 /Spring Orchestrator/target
 **/*.iml
 /logs
 /Spring Orchestrator/logs
+
+
+/flutter/android/app/.cxx/Debug
