@@ -15,6 +15,7 @@ import org.upLift.exceptions.TimingException;
 import org.upLift.model.FormQuestion;
 import org.upLift.model.Recipient;
 import org.upLift.model.RecipientTag;
+import org.upLift.model.Tag;
 import org.upLift.services.RecipientService;
 import org.upLift.services.UserService;
 
@@ -28,6 +29,8 @@ public class RecipientsApiController implements RecipientsApi {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RecipientsApiController.class);
 
+	private static final int DEFAULT_NUMBER_OF_TAGS = 15;
+
 	private final RecipientService recipientService;
 
 	private final UserService userService;
@@ -38,9 +41,16 @@ public class RecipientsApiController implements RecipientsApi {
 		this.userService = userService;
 	}
 
+	public ResponseEntity<List<Tag>> getRandomSelectedTags(
+			@RequestParam(value = "quantity", required = false) Integer quantity) {
+		LOG.info("Returning {} random selected tags", quantity);
+		int numberOfTags = quantity != null ? quantity : DEFAULT_NUMBER_OF_TAGS;
+		return new ResponseEntity<>(recipientService.getRandomSelectedTags(numberOfTags), HttpStatus.OK);
+	}
+
 	@Override
 	public ResponseEntity<List<Recipient>> findRecipientsByTags(
-			@Valid @RequestParam(value = "tags", required = false) List<String> tags) {
+			@Valid @RequestParam(value = "tag", required = false) List<String> tags) {
 		LOG.info("Finding recipients that match selected tags");
 		LOG.debug("Tags used to match: {}", tags);
 		return new ResponseEntity<>(recipientService.getMatchingRecipientsByTags(tags), HttpStatus.OK);

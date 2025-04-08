@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.upLift.model.FormQuestion;
 import org.upLift.model.Recipient;
 import org.upLift.model.RecipientTag;
+import org.upLift.model.Tag;
 
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,23 @@ import java.util.Set;
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
 @Validated
 public interface RecipientsApi {
+
+	@Operation(summary = "Returns a random selection of tags associated with recipients",
+			description = "Returns the specified number of randomly-chosen tags, all of which are were selected by "
+					+ "one or more recipients.",
+			security = {
+					@SecurityRequirement(name = "userstore_auth", scopes = { "write:recipients", "read:recipients" }) },
+			tags = { "Recipient" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "successful operation",
+					content = @Content(mediaType = "application/json",
+							array = @ArraySchema(schema = @Schema(implementation = Recipient.class)))),
+
+			@ApiResponse(responseCode = "400", description = "Invalid tag value") })
+	@GetMapping(value = "/recipients/tags/random", produces = { "application/json" })
+	ResponseEntity<List<Tag>> getRandomSelectedTags(
+			@Parameter(in = ParameterIn.QUERY, description = "Number of tags to return",
+					schema = @Schema()) @RequestParam(value = "quantity", required = false) Integer quantity);
 
 	@Operation(summary = "Finds Recipients by tags",
 			description = "Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.",
@@ -41,11 +59,10 @@ public interface RecipientsApi {
 							array = @ArraySchema(schema = @Schema(implementation = Recipient.class)))),
 
 			@ApiResponse(responseCode = "400", description = "Invalid tag value") })
-	@RequestMapping(value = "/recipients/findByTags", produces = { "application/json", "application/xml" },
-			method = RequestMethod.GET)
+	@GetMapping(value = "/recipients/findByTags", produces = { "application/json" })
 	ResponseEntity<List<Recipient>> findRecipientsByTags(
 			@Parameter(in = ParameterIn.QUERY, description = "Tags to filter by",
-					schema = @Schema()) @Valid @RequestParam(value = "tags", required = false) List<String> tags);
+					schema = @Schema()) @Valid @RequestParam(value = "tag", required = false) List<String> tags);
 
 	@Operation(summary = "Updates a recipient's tags with form data", description = "", tags = { "Recipient" })
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Created"),
