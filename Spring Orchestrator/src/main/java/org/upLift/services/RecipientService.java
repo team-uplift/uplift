@@ -4,11 +4,23 @@ import jakarta.validation.Valid;
 import org.upLift.model.FormQuestion;
 import org.upLift.model.Recipient;
 import org.upLift.model.RecipientTag;
+import org.upLift.model.Tag;
 
 import java.util.List;
 import java.util.Set;
 
 public interface RecipientService {
+
+	/**
+	 * Retrieves a randomly-selected, randomly-ordered List of tags chosen by at least one
+	 * recipient. If there are at least quantity number of tags, returns the specified
+	 * quantity. If there are fewer tags than the specified quantity, returns all
+	 * recipient-selected tags.
+	 * @param quantity maximum number of tags to return
+	 * @return randomly-selected, randomly-ordered List of at most quantity number of tags
+	 * chosen by at least one recipient
+	 */
+	List<Tag> getRandomSelectedTags(int quantity);
 
 	Recipient saveRecipient(@Valid Recipient recipient);
 

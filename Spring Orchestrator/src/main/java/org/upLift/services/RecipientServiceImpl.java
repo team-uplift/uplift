@@ -15,10 +15,7 @@ import org.upLift.repositories.TagRepository;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -39,6 +36,18 @@ public class RecipientServiceImpl implements RecipientService {
 		this.bedrockService = bedrockService;
 		this.tagRepository = tagRepository;
 		this.recipientTagsRepository = recipientTagsRepository;
+	}
+
+	@Override
+	public List<Tag> getRandomSelectedTags(int quantity) {
+		List<Tag> allSelectedTags = tagRepository.getSelectedTags();
+		Collections.shuffle(allSelectedTags);
+		if (quantity > allSelectedTags.size()) {
+			return allSelectedTags;
+		}
+		else {
+			return allSelectedTags.subList(0, quantity);
+		}
 	}
 
 	@Override
