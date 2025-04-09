@@ -54,7 +54,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   children: [
                     StandardButton(
                       title: 'help someone in need',
-                      onPressed: () => context.pushNamed('/quiz'),
+                      onPressed: () => context.pushNamed('/donor_tag'),
                     ),
                   ],
                 ),

@@ -39,7 +39,6 @@ class _TagSelectionState extends State<TagSelection> {
   }
 
 
-
   void _toggleTag(Tag tag) {
     setState(() {
       tag.selected = !tag.selected;
