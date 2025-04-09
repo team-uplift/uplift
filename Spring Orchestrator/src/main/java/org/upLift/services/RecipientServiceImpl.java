@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 import org.upLift.exceptions.ModelException;
 import org.upLift.exceptions.TimingException;
 import org.upLift.model.FormQuestion;
@@ -152,7 +153,7 @@ public class RecipientServiceImpl implements RecipientService {
 		}
 
 		// Use Pageable to limit the results to the top 5 recipients
-    	Pageable pageable = PageRequest.of(0, 5);
+		Pageable pageable = PageRequest.of(0, 5);
 
 		return recipientRepository.findByTags_Tag_TagName(tags, pageable);
 	}
