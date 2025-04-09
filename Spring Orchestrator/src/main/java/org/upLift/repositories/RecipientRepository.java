@@ -1,7 +1,9 @@
 package org.upLift.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.upLift.model.Recipient;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -22,6 +24,14 @@ public interface RecipientRepository extends JpaRepository<Recipient, Integer> {
 	 * @return List of recipients who are linked to the specified tag or an empty list if
 	 * there are no such recipients
 	 */
-	List<Recipient> findByTags_Tag_TagName(String tag);
+	@Query("""
+			SELECT Recipient FROM Recipient Recipient
+			LEFT JOIN Recipient.tags RecipientTag
+			LEFT JOIN RecipientTag.tag Tag
+			 		WHERE Tag.tagName IN :tags
+			GROUP BY Recipient.id
+			ORDER BY COUNT(Tag.tagName) DESC, Recipient.createdAt ASC
+			""")
+	List<Recipient> findByTags_Tag_TagName(List<String> tags, Pageable pageable);
 
 }
