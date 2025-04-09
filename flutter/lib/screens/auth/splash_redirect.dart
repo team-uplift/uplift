@@ -60,7 +60,7 @@ class _SplashRedirectorState extends State<SplashRedirector> {
           print("route to donor dashboard");
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (!mounted) return;
-            context.goNamed('/dashboard', extra: user);
+            context.goNamed('/home', extra: user);
           });
         }
       } else {

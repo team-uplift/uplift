@@ -1,6 +1,23 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/constants/constants.dart';
+
+void logout(dynamic context) async {
+  try {
+    await Amplify.Auth.signOut(
+      options: const SignOutOptions(globalSignOut: true),
+    );
+
+    // Clear GoRouter navigation history and force redirect to Authenticator root
+    if (context.mounted) {
+      context.go('/redirect');
+    }
+  } on AuthException catch (e) {
+    print("Sign out error: ${e.message}");
+  }
+}
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({
@@ -43,6 +60,7 @@ class DrawerWidget extends StatelessWidget {
               leading: const Icon(Icons.logout),
               title: const Text("Logout"),
               onTap: () {
+                logout(context);
                 context.goNamed('/login');
               },
             )

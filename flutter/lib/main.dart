@@ -10,6 +10,7 @@ import 'package:uplift/screens/auth/splash_redirect.dart';
 // import 'package:uplift/screens/auth/recipient_registration_screen.dart';
 import 'package:uplift/screens/home/dashboard_screen.dart';
 import 'package:uplift/screens/home/donate_screen.dart';
+import 'package:uplift/screens/home/donor_tag_screen.dart';
 import 'package:uplift/screens/home/home_screen.dart';
 import 'package:uplift/screens/home/profile_screen.dart';
 import 'package:uplift/screens/home/quiz_screen.dart';
@@ -150,6 +151,13 @@ final GoRouter _router = GoRouter(
       name: '/redirect',
       builder: (BuildContext context, GoRouterState state) {
         return SplashRedirector();
+      },
+    ),
+    GoRoute(
+      path: '/donor_tag',
+      name: '/donor_tag',
+      builder: (BuildContext context, GoRouterState state) {
+        return DonorTagPage();
       },
     ),
   ],

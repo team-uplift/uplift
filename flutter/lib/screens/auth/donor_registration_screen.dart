@@ -50,7 +50,7 @@ class _DonorRegistrationPageState extends State<DonorRegistrationPage> {
                   const SizedBox(height: 10),
                   const StandardTextField(title: 'Confirm Password'),
                   const SizedBox(height: 40),
-                  const StandardButton(title: 'REGISTER'),
+                  StandardButton(title: 'REGISTER', onPressed: (){},),
                   const SizedBox(height: 20),
                   TextButton(onPressed: ()=> context.go('/login'), child: const Text('Already have an account? Log in.'),),
                 ],
