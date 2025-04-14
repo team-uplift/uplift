@@ -336,3 +336,4 @@ class _RegistrationControllerState extends State<RegistrationController> {
 
 // TODO currently ended with getting to tag selection screen. need to
 // allow user to slkect tags and submit those to backend before rendering profile screen
+// TODO add address to user registration
