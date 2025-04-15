@@ -28,12 +28,19 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
                 children: [
                   Hero(
                     tag: widget.recipient.id,
-                    child: Image.network(
-                      widget.recipient.imageURL,
-                      width: double.infinity,
-                      height: 250,
-                      fit: BoxFit.cover,
-                    ),
+                    child: widget.recipient.imageURL != null
+                        ? Image.network(
+                            widget.recipient.imageURL!,
+                            width: double.infinity,
+                            height: 300,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            width: double.infinity,
+                            height: 300,
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.person, size: 150),
+                          ),
                   ),
                   const SizedBox(height: 8),
                   Padding(
@@ -42,17 +49,40 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.recipient.firstName,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                          ),
+                          widget.recipient.firstName ?? 'Anonymous',
+                          style: Theme.of(context).textTheme.headlineMedium,
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          widget.recipient.lastAboutMe,
-                          style: const TextStyle(fontSize: 16),
+                          widget.recipient.lastAboutMe ??
+                              'No description available',
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
+                        const SizedBox(height: 16),
+                        if (widget.recipient.lastReasonForHelp != null) ...[
+                          Text(
+                            'Why I Need Help',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.recipient.lastReasonForHelp!,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                        const SizedBox(height: 16),
+                        if (widget.recipient.city != null &&
+                            widget.recipient.state != null) ...[
+                          Text(
+                            'Location',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '${widget.recipient.city}, ${widget.recipient.state}',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -78,7 +108,8 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
             ),
             child: StandardButton(
               title: "DONATE",
-              onPressed: ()=> context.pushNamed('/donate', extra: widget.recipient),
+              onPressed: () =>
+                  context.pushNamed('/donate', extra: widget.recipient),
             ),
           ),
         ],
