@@ -27,12 +27,19 @@ class RecipientListCard extends StatelessWidget {
                     const BorderRadius.vertical(top: Radius.circular(20)),
                 child: Hero(
                   tag: recipient.id,
-                  child: Image.network(
-                    recipient.imageURL,
-                    width: double.infinity,
-                    height: 200,
-                    fit: BoxFit.cover,
-                  ),
+                  child: recipient.imageURL != null
+                      ? Image.network(
+                          recipient.imageURL!,
+                          width: double.infinity,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          width: double.infinity,
+                          height: 200,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.person, size: 100),
+                        ),
                 ),
               ),
               Padding(
@@ -40,12 +47,17 @@ class RecipientListCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(recipient.firstName,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
                     Text(
-                      recipient.lastAboutMe,
+                      recipient.firstName ?? 'Anonymous',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      recipient.lastAboutMe ?? 'No description available',
                       maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     )
                   ],
                 ),

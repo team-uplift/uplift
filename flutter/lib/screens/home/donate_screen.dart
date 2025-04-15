@@ -1,6 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
+import 'package:flutter_paypal_native/flutter_paypal_native.dart';
+import 'package:flutter_paypal_native/models/custom/currency_code.dart';
+import 'package:flutter_paypal_native/models/custom/environment.dart';
+import 'package:flutter_paypal_native/models/custom/order_callback.dart';
+import 'package:flutter_paypal_native/models/custom/purchase_unit.dart';
+import 'package:flutter_paypal_native/models/custom/user_action.dart';
+import 'package:flutter_paypal_native/str_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/components/standard_button.dart';
@@ -8,8 +17,10 @@ import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/models/transaction_model.dart';
 import 'package:uplift/providers/transaction_notifier_provider.dart';
 
-final String secretKey = "EKwrpcfi3uHe0lxsC_kwuKr3L5paEFn41Z49fZEwdjVFohu0x-djRhfNGqusnpP_cJ3C6rbErp_HqYc4";
-final String clientID = "ATbWGfUDrWnJ1TI5ys3QWXuiy_y2paBxgF7FBjwSrh1Yu3JEZykq1V8mQQ2dg6r5cYtp67PQk9gqvWQ8";
+final String secretKey =
+    "EKwrpcfi3uHe0lxsC_kwuKr3L5paEFn41Z49fZEwdjVFohu0x-djRhfNGqusnpP_cJ3C6rbErp_HqYc4";
+final String clientID =
+    "ATbWGfUDrWnJ1TI5ys3QWXuiy_y2paBxgF7FBjwSrh1Yu3JEZykq1V8mQQ2dg6r5cYtp67PQk9gqvWQ8";
 
 class DonatePage extends ConsumerStatefulWidget {
   final Recipient recipient;
@@ -22,6 +33,18 @@ class DonatePage extends ConsumerStatefulWidget {
 class _DonatePageState extends ConsumerState<DonatePage> {
   final TextEditingController _amountController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+
+  final _flutterPaypalNativePlugin = FlutterPaypalNative.instance;
+  
+  // log queue
+  List<String> logQueue = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    initPayPal();
+  }
 
   @override
   void dispose() {
@@ -114,6 +137,56 @@ class _DonatePageState extends ConsumerState<DonatePage> {
     } catch (e) {
       debugPrint("❗ PayPal launch error: $e");
     }
+  }
+
+  void initPayPal() async {
+    //set debugMode for error logging
+    FlutterPaypalNative.isDebugMode = true;
+
+    //initiate payPal plugin
+    await _flutterPaypalNativePlugin.init(
+      //your app id !!! No Underscore!!! see readme.md for help
+      returnUrl: "com.piccmaq.flutter.paypal.native.example://paypalpay",
+      //client id from developer dashboard
+      clientID: "AZsCX8....",
+      //sandbox, staging, live etc
+      payPalEnvironment: FPayPalEnvironment.sandbox,
+      //what currency do you plan to use? default is US dollars
+      currencyCode: FPayPalCurrencyCode.usd,
+      //action paynow?
+      action: FPayPalUserAction.payNow,
+    );
+
+    //call backs for payment
+    _flutterPaypalNativePlugin.setPayPalOrderCallback(
+      callback: FPayPalOrderCallback(
+        onCancel: () {
+          //user canceled the payment
+          showResult("cancel");
+        },
+        onSuccess: (data) {
+          //successfully paid
+          //remove all items from queue
+          _flutterPaypalNativePlugin.removeAllPurchaseItems();
+          String visitor = data.cart?.shippingAddress?.firstName ?? 'Visitor';
+          String address =
+              data.cart?.shippingAddress?.line1 ?? 'Unknown Address';
+          showResult(
+            "Order successful ${data.payerId ?? ""} - ${data.orderId ?? ""} - $visitor -$address",
+          );
+        },
+        onError: (data) {
+          //an error occured
+          showResult("error: ${data.reason}");
+        },
+        onShippingChange: (data) {
+          //the user updated the shipping address
+          showResult(
+            "shipping change: ${data.shippingChangeAddress?.adminArea1 ?? ""}",
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -217,12 +290,36 @@ class _DonatePageState extends ConsumerState<DonatePage> {
               const SizedBox(height: 10),
               StandardButton(
                 title: 'DONATE WITH PAYPAL',
-                onPressed: usePaypal,
+                onPressed: usePaypal2,
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void usePaypal2() {
+    if (_flutterPaypalNativePlugin.canAddMorePurchaseUnit) {
+      _flutterPaypalNativePlugin.addPurchaseUnit(
+        FPayPalPurchaseUnit(
+          // random prices
+          amount: Random().nextDouble() * 100,
+
+          ///please use your own algorithm for referenceId. Maybe ProductID?
+          referenceId: FPayPalStrHelper.getRandomString(16),
+        ),
+      );
+    }
+    // initPayPal();
+    _flutterPaypalNativePlugin.makeOrder(
+      action: FPayPalUserAction.payNow,
+    );
+  }
+
+  // all to log queue
+  showResult(String text) {
+    logQueue.add(text);
+    setState(() {});
   }
 }

@@ -127,7 +127,8 @@ final GoRouter _router = GoRouter(
       path: '/recipient_list',
       name: '/recipient_list',
       builder: (BuildContext context, GoRouterState state) {
-        return RecipientList();
+        final recipients = state.extra as List<Recipient>?;
+        return RecipientList(fetchedRecipients: recipients);
       },
     ),
     GoRoute(
