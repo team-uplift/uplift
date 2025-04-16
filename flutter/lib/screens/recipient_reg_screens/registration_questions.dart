@@ -91,26 +91,24 @@ List<Map<String, dynamic>> registrationQuestions = [
   //   'type': 'tagSelection', // Special UI
   // },
   
-  
-  
-  
+    // ✅ CONFIRMATION STEP
   {
-    'key': 'generateTags',
-    'q': 'Click "Generate Tags" to proceed to tag selection.',
-    'type': 'generateTags', // Special type to handle separately
+    'key': 'confirmation',
+    'q': 'Review your answers before submitting.',
+    'type': 'confirmation',
   },
+  
+  
+  // {
+  //   'key': 'generateTags',
+  //   'q': 'Click "Generate Tags" to proceed to tag selection.',
+  //   'type': 'generateTags', // Special type to handle separately
+  // },
 
   {
     'key': 'showTags',
     'q': '',
     'type': 'showTags',
     'id': 'tags', // Special type to handle separately
-  },
-
-  // ✅ CONFIRMATION STEP
-  {
-    'key': 'confirmation',
-    'q': 'Review your answers before submitting.',
-    'type': 'confirmation',
   },
 ];

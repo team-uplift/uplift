@@ -235,10 +235,14 @@ class _RegistrationControllerState extends State<RegistrationController> {
             title: const Text("Recipient Registration"),
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                context.goNamed('/donor_or_recipient');
-              },
+              onPressed: _stepBack,
             ),
+            actions: [
+              TextButton(
+                onPressed: () => context.goNamed('/donor_or_recipient'), 
+                child: const Text("Exit")
+              )
+            ],
           ),
           body: SafeArea(
             child: Column(
@@ -254,7 +258,14 @@ class _RegistrationControllerState extends State<RegistrationController> {
                         ? Confirmation(
                             formData: formData,
                             onBack: _stepBack,
-                            onSubmit: _submit,
+                            onGenerate: storeUserAndFetchTags,
+                            onJumpToQuestion: (questionKey) {
+                              final index = registrationQuestions.indexWhere((q) => q['key'] == questionKey);
+                              if (index != -1) {
+                                setState(() => _currentIndex = index);
+                              }
+                            },
+
                           )
                         : registrationQuestions[_currentIndex]['type'] == 'showTags'
                             ? TagSelection(
@@ -334,6 +345,5 @@ class _RegistrationControllerState extends State<RegistrationController> {
 // TODO make all screens mobile friendly via wrapping everything in scroll view and safe areas
 
 
-// TODO currently ended with getting to tag selection screen. need to
-// allow user to slkect tags and submit those to backend before rendering profile screen
+
 // TODO add address to user registration

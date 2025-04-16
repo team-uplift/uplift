@@ -68,6 +68,23 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
     }
   }
 
+  // validation function from chatgpt
+  bool isAnswerValid(Map<String, dynamic> question, dynamic answer) {
+    if (question['required'] != true) return true;
+
+    switch (question['type']) {
+      case 'text':
+        return answer?.toString().trim().isNotEmpty ?? false;
+      case 'multipleChoice':
+        return answer != null;
+      case 'checkbox':
+        return answer is List && answer.isNotEmpty;
+      default:
+        return true;
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final question = widget.questions[widget.questionIndex];
@@ -139,18 +156,18 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Visibility(
-                    visible: widget.questionIndex > 0,
-                    maintainSize: true,
-                    maintainAnimation: true,
-                    maintainState: true,
-                    child: OutlinedButton(
-                      onPressed: widget.onBack,
-                      child: const Text("Back"),
-                    ),
-                  ),
+                  // Visibility(
+                  //   visible: widget.questionIndex > 0,
+                  //   maintainSize: true,
+                  //   maintainAnimation: true,
+                  //   maintainState: true,
+                  //   child: OutlinedButton(
+                  //     onPressed: widget.onBack,
+                  //     child: const Text("Back"),
+                  //   ),
+                  // ),
                                       
-                  if (question['type'] == 'generateTags')  
+                  if (question['type'] == 'confirmation') 
                     Center(
                       child: ElevatedButton(
                         onPressed: () {

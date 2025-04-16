@@ -6,86 +6,103 @@ import 'package:uplift/models/tag_model.dart';
 class Confirmation extends StatelessWidget {
   final Map<String, dynamic> formData;
   final VoidCallback onBack;
-  final VoidCallback onSubmit;
+  final VoidCallback onGenerate;
+  final void Function(String questionKey) onJumpToQuestion;
 
   const Confirmation({
     required this.formData,
     required this.onBack,
-    required this.onSubmit,
+    required this.onGenerate,
+    required this.onJumpToQuestion,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: Scaffold(
+        body: Column(
           children: [
-            Text("Review Your Details"),
-            const SizedBox(height: 24),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: registrationQuestions
+                    .where((q) =>
+                        q['type'] != 'confirmation' &&
+                        formData.containsKey(q['key']))
+                    .map((q) {
+                  dynamic answer = formData[q['key']];
+                  if (answer is List) {
+                    answer = answer.join(", ");
+                  }
 
-            // Dynamically list all responses from `registrationQuestions`
-            ...registrationQuestions.where((q) => formData.containsKey(q['key']) && q['type'] != 'confirmation' && q['type'] != 'generateTags').map((q) {
-              dynamic answer = formData[q['key']];
-              if (answer is List) {
-                answer = answer.join(", "); // Convert lists (e.g., checkboxes) to readable text
-              }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: () => onJumpToQuestion(q['key']),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      q['q'],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(Icons.edit, size: 18, color: Colors.grey), // 👈 edit icon
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                answer.toString().isNotEmpty ? answer.toString() : "Not provided",
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              const SizedBox(height: 2),
+                              const Text(
+                                "Tap to edit",
+                                style: TextStyle(fontSize: 12, color: Colors.grey),
+                              ), // 👈 subtle hint
+                            ],
+                          ),
+                        ),
+                      ),
 
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      q['q'], // Display question text
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                    Text(
-                      answer.toString().isNotEmpty ? answer.toString() : "Not provided",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-              );
-            }),
-
-            if (formData.containsKey('tags') && (formData['tags'] as List).isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Text(
-                "🏷️ Selected Tags:",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: (formData['tags'] as List<Tag>).map((tag) {
-                  return TagCard(
-                    tag: tag,
-                    isSelected: false, // confirmation is display-only
-                    // onTap omitted to make it non-interactive
+                      const Divider(thickness: 1),
+                    ],
                   );
                 }).toList(),
               ),
-            ],
-
-
-            const SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                OutlinedButton(
-                  onPressed: onBack,
-                  child: const Text("Back"),
-                ),
-                ElevatedButton(
-                  onPressed: onSubmit,
-                  child: const Text("Submit"),
-                ),
-              ],
             ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // OutlinedButton(
+                  //   onPressed: onBack,
+                  //   child: const Text("Back"),
+                  // ),
+                  ElevatedButton(
+                    onPressed: onGenerate,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text("Generate Tags"),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),
