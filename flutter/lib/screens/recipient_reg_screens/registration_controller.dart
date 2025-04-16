@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'confirmation_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/models/tag_model.dart';
+import 'package:uplift/models/recipient_model.dart';
 
 
 
@@ -97,6 +98,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
     setState(() {
       _isLoading = true;
     });
+    
     // get amplify user info
     final attributes = await Amplify.Auth.fetchUserAttributes();
     

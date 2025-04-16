@@ -1,6 +1,14 @@
 List<Map<String, dynamic>> registrationQuestions = [
   // ABOUT ME
   {
+    // TODO q address
+    // --> render address form page
+    'key': 'nameAddress',
+    'q': 'What is your name and address?',
+    'type': 'name_address',
+    'id': 'special', 
+  },
+  {
     'key': 'lastAboutMe',
     'q': 'Tell us about yourself.',
     'type': 'text',
@@ -91,7 +99,7 @@ List<Map<String, dynamic>> registrationQuestions = [
   //   'type': 'tagSelection', // Special UI
   // },
   
-    // ✅ CONFIRMATION STEP
+  // ✅ CONFIRMATION STEP
   {
     'key': 'confirmation',
     'q': 'Review your answers before submitting.',
