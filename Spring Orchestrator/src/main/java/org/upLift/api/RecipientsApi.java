@@ -91,7 +91,6 @@ public interface RecipientsApi {
 			@Parameter(in = ParameterIn.DEFAULT, description = "List of tags that the recipient has selected.",
 					required = true, schema = @Schema()) @Valid @RequestBody Set<String> selectedTags);
 
-
 	@Operation(summary = "Submit recipient's income verification document.",
 			description = "This endpoint accepts a recipient's income verification documents and synchronously responds "
 					+ "with a response to determine if they are allowed to receive funds.",
@@ -103,7 +102,8 @@ public interface RecipientsApi {
 	ResponseEntity<Boolean> verifyRecipientIncome(
 			@Parameter(in = ParameterIn.PATH, description = "Recipient id whose selected tags should be updated",
 					required = true, schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
-			@Parameter(in = ParameterIn.PATH, description = "File representing the recipient's 1040. Should be pdf, jpg, or png",
-					required = true, schema = @Schema()) @RequestParam("incomeVerificationFile") MultipartFile file);
+			@Parameter(in = ParameterIn.PATH,
+					description = "File representing the recipient's 1040. Should be pdf, jpg, or png", required = true,
+					schema = @Schema()) @RequestParam("incomeVerificationFile") MultipartFile file);
 
 }

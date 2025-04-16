@@ -9,82 +9,72 @@ import software.amazon.awssdk.services.textract.model.DetectDocumentTextRequest;
 import software.amazon.awssdk.services.textract.model.DetectDocumentTextResponse;
 import software.amazon.awssdk.services.textract.model.Document;
 import software.amazon.awssdk.services.textract.model.Block;
-import software.amazon.awssdk.services.textract.model.DocumentMetadata;
-import software.amazon.awssdk.services.textract.model.TextractException;
 
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.List;
-//import com.amazonaws.services.textract.AmazonTextract;
-//import com.amazonaws.services.textract.model.DetectDocumentTextRequest;
-//import com.amazonaws.services.textract.model.DetectDocumentTextResult;
-//import com.amazonaws.services.textract.model.Document;
 
 @Service
 public class TextractServiceImpl implements TextractService {
 
-    private final RecipientService recipientService;
+	private final RecipientService recipientService;
 
-    TextractServiceImpl(RecipientService recipientService) {
-        this.recipientService = recipientService;
-    }
+	TextractServiceImpl(RecipientService recipientService) {
+		this.recipientService = recipientService;
+	}
 
-    public Boolean validateRecipientIncome(SdkBytes imageBytes, Integer recipientId) {
-        Region region = Region.US_EAST_1;
-        TextractClient textractClient = TextractClient.builder()
-                .region(region)
-                .build();
+	public Boolean validateRecipientIncome(SdkBytes imageBytes, Integer recipientId) {
+		Region region = Region.US_EAST_1;
+		TextractClient textractClient = TextractClient.builder().region(region).build();
 
-        // Get the input Document object as bytes.
-        Document myDoc = Document.builder()
-                .bytes(imageBytes)
-                .build();
+		// Get the input Document object as bytes.
+		Document myDoc = Document.builder().bytes(imageBytes).build();
 
-        DetectDocumentTextRequest detectDocumentTextRequest = DetectDocumentTextRequest.builder()
-                .document(myDoc)
-                .build();
+		DetectDocumentTextRequest detectDocumentTextRequest = DetectDocumentTextRequest.builder()
+			.document(myDoc)
+			.build();
 
-        // Invoke the Detect operation.
-        DetectDocumentTextResponse textResponse = textractClient.detectDocumentText(detectDocumentTextRequest);
-        List<Block> docInfo = textResponse.blocks();
-        boolean isIncomeFound = false;
-        boolean isBox15Found = false;
-        String income = "";
+		// Invoke the Detect operation.
+		DetectDocumentTextResponse textResponse = textractClient.detectDocumentText(detectDocumentTextRequest);
+		List<Block> docInfo = textResponse.blocks();
+		boolean isIncomeFound = false;
+		boolean isBox15Found = false;
+		String income = "";
 
-        for (Block block : docInfo) {
+		for (Block block : docInfo) {
 
-            if(block.text() != null) {
-                if (isIncomeFound && isBox15Found) {
-                    income = block.text();
-                    break;
-                }
+			if (block.text() != null) {
+				if (isIncomeFound && isBox15Found) {
+					income = block.text();
+					break;
+				}
 
-                if (block.text().equals("income")) {
-                    isIncomeFound = true;
-                    continue;
-                }
+				if (block.text().equals("income")) {
+					isIncomeFound = true;
+					continue;
+				}
 
-                if (block.text().equals("15") && isIncomeFound) {
-                    isBox15Found = true;
-                    continue;
-                } else if (isIncomeFound) {
-                    isIncomeFound = false;
-                }
-            }
-        }
+				if (block.text().equals("15") && isIncomeFound) {
+					isBox15Found = true;
+					continue;
+				}
+				else if (isIncomeFound) {
+					isIncomeFound = false;
+				}
+			}
+		}
 
-        textractClient.close();
+		textractClient.close();
 
-        if(Double.valueOf(income) < 30000.00) {
-            // Update the recipient
-            Recipient recipient = recipientService.getRecipientById(recipientId);
+		if (Double.valueOf(income) < 30000.00) {
+			// Update the recipient
+			Recipient recipient = recipientService.getRecipientById(recipientId);
 
-            recipient.setIncomeLastVerified(Instant.now());
-            recipientService.saveRecipient(recipient);
-            return true;
-        }
+			recipient.setIncomeLastVerified(Instant.now());
+			recipientService.saveRecipient(recipient);
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
+
 }
