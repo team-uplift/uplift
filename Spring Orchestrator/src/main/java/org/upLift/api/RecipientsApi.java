@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.upLift.model.FormQuestion;
 import org.upLift.model.Recipient;
 import org.upLift.model.RecipientTag;
@@ -89,5 +90,20 @@ public interface RecipientsApi {
 					required = true, schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
 			@Parameter(in = ParameterIn.DEFAULT, description = "List of tags that the recipient has selected.",
 					required = true, schema = @Schema()) @Valid @RequestBody Set<String> selectedTags);
+
+
+	@Operation(summary = "Submit recipient's income verification document.",
+			description = "This endpoint accepts a recipient's income verification documents and synchronously responds "
+					+ "with a response to determine if they are allowed to receive funds.",
+			tags = { "Recipient" })
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+
+			@ApiResponse(responseCode = "400", description = "Invalid input") })
+	@PutMapping(value = "/recipients/verification/income/{recipientId}")
+	ResponseEntity<Boolean> verifyRecipientIncome(
+			@Parameter(in = ParameterIn.PATH, description = "Recipient id whose selected tags should be updated",
+					required = true, schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
+			@Parameter(in = ParameterIn.PATH, description = "File representing the recipient's 1040. Should be pdf, jpg, or png",
+					required = true, schema = @Schema()) @RequestParam("incomeVerificationFile") MultipartFile file);
 
 }
