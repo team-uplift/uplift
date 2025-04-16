@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.upLift.exceptions.ModelException;
 import org.upLift.exceptions.TimingException;
 import org.upLift.model.FormQuestion;
@@ -17,8 +18,11 @@ import org.upLift.model.Recipient;
 import org.upLift.model.RecipientTag;
 import org.upLift.model.Tag;
 import org.upLift.services.RecipientService;
+import org.upLift.services.TextractService;
 import org.upLift.services.UserService;
+import software.amazon.awssdk.core.SdkBytes;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -33,11 +37,15 @@ public class RecipientsApiController implements RecipientsApi {
 
 	private final RecipientService recipientService;
 
+	private final TextractService textractService;
+
 	private final UserService userService;
 
 	@Autowired
-	public RecipientsApiController(RecipientService recipientService, UserService userService) {
+	public RecipientsApiController(RecipientService recipientService, TextractService textractService,
+			UserService userService) {
 		this.recipientService = recipientService;
+		this.textractService = textractService;
 		this.userService = userService;
 	}
 
@@ -87,6 +95,22 @@ public class RecipientsApiController implements RecipientsApi {
 			LOG.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+	}
+
+	@Override
+	public ResponseEntity<Boolean> verifyRecipientIncome(Integer recipientId, MultipartFile file) {
+		try {
+			// Get the file's bytes from the uploaded MultipartFile
+			byte[] bytes = file.getBytes();
+
+			Boolean isValidated = textractService.validateRecipientIncome(SdkBytes.fromByteArray(bytes), recipientId);
+
+			return new ResponseEntity<>(isValidated, HttpStatus.OK);
+		}
+		catch (IOException e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 	}
 
 }
