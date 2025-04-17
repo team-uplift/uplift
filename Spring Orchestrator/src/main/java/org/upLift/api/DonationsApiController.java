@@ -2,9 +2,6 @@ package org.upLift.api;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -14,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.upLift.model.Donation;
 import org.upLift.model.TremendousOrderResponse;
@@ -89,12 +85,7 @@ public class DonationsApiController implements DonationsApi {
 	}
 
 	@Override
-	public ResponseEntity<Donation> donationsPost(
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			@Parameter(in = ParameterIn.DEFAULT, description = "", required = true,
-					schema = @Schema()) @Valid @RequestBody Donation body) {
+	public ResponseEntity<Donation> donationsPost(@Valid @RequestBody Donation body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null) {
 			try {
