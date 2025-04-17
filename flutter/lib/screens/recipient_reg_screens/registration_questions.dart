@@ -1,24 +1,23 @@
 List<Map<String, dynamic>> registrationQuestions = [
   // ABOUT ME
   {
-    // TODO q address
-    // --> render address form page
-    'key': 'nameAddress',
-    'q': 'What is your name and address?',
-    'type': 'name_address',
-    'id': 'special', 
+    'key': 'basicAddressInfo',
+    'type': 'compositeAddress',
+    'q': 'Tell us where you’re currently living.',
+    'required': true,
   },
+
   {
     'key': 'lastAboutMe',
     'q': 'Tell us about yourself.',
     'type': 'text',
-    'id': 'special', 
+    'required': true,
   },
   {
     'key': 'lastReasonForHelp',
     'q': 'What is the biggest reason that you feel like you need help?',
     'type': 'text',
-    'id': 'special'
+    'required': true,
   },
 
   // CHALLENGES & NEEDS
@@ -26,78 +25,70 @@ List<Map<String, dynamic>> registrationQuestions = [
     'key': 'mostDifficultThing',
     'q': 'What is the most difficult thing you face day to day?',
     'type': 'text',
-    'id': 'normal',
+    'required': true,
   },
   {
     'key': 'financialHardship',
     'q': 'What has been the hardest thing for you financially this year?',
     'type': 'multipleChoice',
     'options': ['Job loss', 'Medical bills', 'Rent/mortgage', 'Debt', 'Other'],
-    'id': 'normal',
+    'required': true,
   },
   {
     'key': 'jobSeeking',
     'q': 'Are you currently looking for work?',
     'type': 'multipleChoice',
     'options': ['Yes, full-time', 'Yes, part-time', 'No, unable to work', 'No, not needed'],
-    'id': 'normal',
+    'required': true,
   },
   {
     'key': 'workBarriers',
     'q': 'What barriers are preventing you from working or earning more income?',
     'type': 'checkbox',
     'options': ['Childcare', 'Transportation', 'Disability', 'Job training', 'No job openings'],
-    'id': 'normal',
+    'required': true,
   },
   {
     'key': 'housingChallenge',
     'q': 'What is your biggest challenge related to housing?',
     'type': 'multipleChoice',
     'options': ['High rent', 'Unsafe conditions', 'Lack of stability', 'Other'],
-    'id': 'normal',
+    'required': true,
   },
   {
     'key': 'housingRisk',
     'q': 'Are you at risk of losing housing in the next 3 months?',
     'type': 'multipleChoice',
     'options': ['Yes', 'No'],
-    'id': 'normal',
+    'required': true,
   },
   {
     'key': 'supportSystem',
     'q': 'Do you have a support system of friends, family, or community?',
     'type': 'multipleChoice',
     'options': ['Yes', 'No'],
-    'id': 'normal',
+    'required': true,
   },
   {
     'key': 'supportNeeded',
     'q': 'What kind of support do you wish you had more of?',
     'type': 'checkbox',
     'options': ['Emotional', 'Financial', 'Housing', 'Legal'],
-    'id': 'normal',
+    'required': true,
   },
   {
     'key': 'mentalHealthAccess',
     'q': 'Do you have regular access to mental health support or counseling?',
     'type': 'multipleChoice',
     'options': ['Yes', 'No'],
-    'id': 'normal',
+    'required': true,
   },
   {
     'key': 'emotionalChallenge',
     'q': 'What has been the most emotionally difficult part of your current situation?',
     'type': 'text',
-    'id': 'normal',
+    'required': true,
   },
-  
-  // 🏷️ TAG SELECTION
-  // TODO potentailly remove tag selection from here although it would be nice if they were all grouped together like this
-  // {
-  //   'key': 'tags',
-  //   'q': 'Select up to 10 interests or areas that describe you.',
-  //   'type': 'tagSelection', // Special UI
-  // },
   
   // ✅ CONFIRMATION STEP
   {
@@ -105,14 +96,6 @@ List<Map<String, dynamic>> registrationQuestions = [
     'q': 'Review your answers before submitting.',
     'type': 'confirmation',
   },
-  
-  
-  // {
-  //   'key': 'generateTags',
-  //   'q': 'Click "Generate Tags" to proceed to tag selection.',
-  //   'type': 'generateTags', // Special type to handle separately
-  // },
-
   {
     'key': 'showTags',
     'q': '',

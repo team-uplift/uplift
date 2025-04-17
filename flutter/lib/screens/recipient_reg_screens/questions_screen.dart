@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 class DynamicQuestionScreen extends StatefulWidget {
   final Map<String, dynamic> formData;
@@ -23,153 +25,194 @@ class DynamicQuestionScreen extends StatefulWidget {
 }
 
 class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
-  late TextEditingController _textController;
-  dynamic selectedAnswer; // Stores user selection
+  final _formKey = GlobalKey<FormBuilderState>();
 
-  @override
-  void initState() {
-    super.initState();
-    _initializeQuestion();
-  }
+  Map<String, dynamic> get question => widget.questions[widget.questionIndex];
+  String get questionKey => question['key'];
 
-  @override
-  void didUpdateWidget(covariant DynamicQuestionScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
+  final List<String> usStates = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
+  ];
 
-    // ✅ Reset state when switching to a new question
-    if (oldWidget.questionIndex != widget.questionIndex) {
-      _initializeQuestion();
-    }
-  }
 
-  void _initializeQuestion() {
-    final question = widget.questions[widget.questionIndex];
 
-    // ✅ Load saved answer if available, otherwise start empty
-    selectedAnswer = widget.formData.containsKey(question['key']) ? widget.formData[question['key']] : null;
 
-    // ✅ Initialize text field if it's a text input question
-    _textController = TextEditingController(text: selectedAnswer is String ? selectedAnswer : "");
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _initializeQuestion();
+  // }
 
-  @override
-  void dispose() {
-    _textController.dispose(); // ✅ Prevent memory leaks
-    super.dispose();
-  }
+  // @override
+  // void didUpdateWidget(covariant DynamicQuestionScreen oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
 
-  void _saveAnswer() {
-    final question = widget.questions[widget.questionIndex];
+  //   // ✅ Reset state when switching to a new question
+  //   if (oldWidget.questionIndex != widget.questionIndex) {
+  //     _initializeQuestion();
+  //   }
+  // }
 
-    if (question['type'] == 'text') {
-      widget.formData[question['key']] = _textController.text.trim();
-    } else {
-      widget.formData[question['key']] = selectedAnswer;
-    }
-  }
+  // void _initializeQuestion() {
+  //   final question = widget.questions[widget.questionIndex];
 
-  // validation function from chatgpt
-  bool isAnswerValid(Map<String, dynamic> question, dynamic answer) {
-    if (question['required'] != true) return true;
+  //   // ✅ Load saved answer if available, otherwise start empty
+  //   selectedAnswer = widget.formData.containsKey(question['key']) ? widget.formData[question['key']] : null;
 
-    switch (question['type']) {
-      case 'text':
-        return answer?.toString().trim().isNotEmpty ?? false;
-      case 'multipleChoice':
-        return answer != null;
-      case 'checkbox':
-        return answer is List && answer.isNotEmpty;
-      default:
-        return true;
-    }
-  }
+  //   // ✅ Initialize text field if it's a text input question
+  //   _textController = TextEditingController(text: selectedAnswer is String ? selectedAnswer : "");
+  // }
+
+  // @override
+  // void dispose() {
+  //   _textController.dispose(); // ✅ Prevent memory leaks
+  //   super.dispose();
+  // }
+
+  // void _saveAnswer() {
+  //   final question = widget.questions[widget.questionIndex];
+
+  //   if (question['type'] == 'text') {
+  //     widget.formData[question['key']] = _textController.text.trim();
+  //   } else {
+  //     widget.formData[question['key']] = selectedAnswer;
+  //   }
+  // }
+
+  // // validation function from chatgpt
+  // bool isAnswerValid(Map<String, dynamic> question, dynamic answer) {
+  //   if (question['required'] != true) return true;
+
+  //   switch (question['type']) {
+  //     case 'text':
+  //       return answer?.toString().trim().isNotEmpty ?? false;
+  //     case 'multipleChoice':
+  //       return answer != null;
+  //     case 'checkbox':
+  //       return answer is List && answer.isNotEmpty;
+  //     default:
+  //       return true;
+  //   }
+  // }
 
 
   @override
   Widget build(BuildContext context) {
-    final question = widget.questions[widget.questionIndex];
-
     return SafeArea(
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(question['q']),
+          child: FormBuilder(
+            key: _formKey,
+            initialValue: {
+              questionKey: widget.formData[questionKey],
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(question['q']),
+                const SizedBox(height: 16),
+                // ✅ TEXT INPUT (Ensures fresh controller per question)
+                if (question['type'] == 'text')
+                  FormBuilderTextField(
+                    name: questionKey,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Enter your response...",
+                    ),
+                  validator: question['required'] == true
+                    ? FormBuilderValidators.required()
+                    : null,
 
-              const SizedBox(height: 16),
-
-              // ✅ TEXT INPUT (Ensures fresh controller per question)
-              if (question['type'] == 'text')
-                TextField(
-                  controller: _textController,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Enter your response...",
                   ),
-                ),
 
-              // ✅ MULTIPLE CHOICE (Radio Buttons - Ensure state is saved)
-              if (question['type'] == 'multipleChoice')
-                Column(
-                  children: (question['options'] as List<String>).map((option) {
-                    return RadioListTile(
-                      title: Text(option),
-                      value: option,
-                      groupValue: selectedAnswer, // ✅ Keeps the selected value
-                      onChanged: (val) {
-                        setState(() => selectedAnswer = val);
-                      },
-                    );
-                  }).toList(),
-                ),
+                // ✅ MULTIPLE CHOICE (Radio Buttons - Ensure state is saved)
+                if (question['type'] == 'multipleChoice')
+                  FormBuilderRadioGroup<String>(
+                    name: questionKey, 
+                    decoration: const InputDecoration(border: InputBorder.none),
+                    options: (question['options'] as List<String>)
+                      .map((opt) => FormBuilderFieldOption(value: opt, child: Text(opt)))
+                      .toList(),
+                    validator: question['required'] == true
+                        ? FormBuilderValidators.required()
+                        : null,
+                    ),
 
-              // ✅ CHECKBOX MULTI-SELECT (Ensures state is saved)
-              if (question['type'] == 'checkbox')
-                Column(
-                  children: (question['options'] as List<String>).map((option) {
-                    final isSelected = (selectedAnswer ?? []).contains(option);
+                // CHECKBOX GROUP
+                if (question['type'] == 'checkbox')
+                  FormBuilderCheckboxGroup<String>(
+                    name: questionKey,
+                    decoration: const InputDecoration(border: InputBorder.none),
+                    options: (question['options'] as List<String>)
+                        .map((opt) => FormBuilderFieldOption(value: opt, child: Text(opt)))
+                        .toList(),
+                    validator: question['required'] == true
+                        ? FormBuilderValidators.minLength(1, errorText: "Please select at least one.")
+                        : null,
+                  ),
+                
+                // Composite Address Fields
+                if (question['type'] == 'compositeAddress')
+                  Column(
+                    children: [
+                      FormBuilderTextField(
+                        name: 'firstName',
+                        decoration: const InputDecoration(labelText: 'First Name'),
+                        validator: FormBuilderValidators.required(),
+                      ),
+                      const SizedBox(height: 8),
+                      FormBuilderTextField(
+                        name: 'lastName',
+                        decoration: const InputDecoration(labelText: 'Last Name'),
+                        validator: FormBuilderValidators.required(),
+                      ),
+                      const SizedBox(height: 8),
+                      FormBuilderTextField(
+                        name: 'streetAddress1',
+                        decoration: const InputDecoration(labelText: 'Street Address 1'),
+                        validator: FormBuilderValidators.required(),
+                      ),
+                      const SizedBox(height: 8),
+                      FormBuilderTextField(
+                        name: 'streetAddress2',
+                        decoration: const InputDecoration(labelText: 'Street Address 2 (optional)'),
+                      ),
+                      const SizedBox(height: 8),
+                      FormBuilderTextField(
+                        name: 'city',
+                        decoration: const InputDecoration(labelText: 'City'),
+                        validator: FormBuilderValidators.required(),
+                      ),
+                      const SizedBox(height: 8),
+                      FormBuilderDropdown<String>(
+                        name: 'state',
+                        decoration: InputDecoration(labelText: 'State'),
+                        items: usStates
+                            .map((state) => DropdownMenuItem(
+                                  value: state,
+                                  child: Text(state),
+                                ))
+                            .toList(),
+                        validator: FormBuilderValidators.required(),
+                      )
+                    ],
+                  ),
 
-                    return CheckboxListTile(
-                      title: Text(option),
-                      value: isSelected,
-                      onChanged: (selected) {
-                        setState(() {
-                          if (selectedAnswer == null || selectedAnswer is! List) {
-                            selectedAnswer = []; // ✅ Ensure it's a list
-                          }
 
-                          if (selected == true) {
-                            selectedAnswer.add(option);
-                          } else {
-                            selectedAnswer.remove(option);
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
 
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Visibility(
-                  //   visible: widget.questionIndex > 0,
-                  //   maintainSize: true,
-                  //   maintainAnimation: true,
-                  //   maintainState: true,
-                  //   child: OutlinedButton(
-                  //     onPressed: widget.onBack,
-                  //     child: const Text("Back"),
-                  //   ),
-                  // ),
-                                      
-                  if (question['type'] == 'confirmation') 
-                    Center(
-                      child: ElevatedButton(
+                    // this is for generating tags
+                    if (question['type'] == 'confirmation') 
+                      ElevatedButton(
                         onPressed: () {
                           showDialog(
                             context: context,
@@ -184,33 +227,35 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
                                 ElevatedButton(
                                   onPressed: () {
                                     Navigator.pop(context); // Close dialog
-                                    _saveAnswer();
                                     widget.onGenerate();    // Now trigger tag generation
                                   },
-                                  child: const Text("Yes, Generate Tags"),
+                                    child: const Text("Yes, Generate Tags"),
                                 ),
                               ],
                             ),
                           );
                         },
-                        child: const Text("Generate Tags"),
+                      child: const Text("Generate Tags"),
                       ),
-                    ),
-                    
-                  if (question['type'] != 'generateTags')  
-                    ElevatedButton(
-                      onPressed: () {
-                        _saveAnswer(); // ✅ Saves input before moving forward
-                        widget.onNext();
-                      },
-                      child: const Text("Next"),
-                    ),
-                ],
-              ),
-            ],
+                      
+                    if (question['type'] != 'generateTags')  
+                      ElevatedButton(
+                        onPressed: () {
+                          final isValid = _formKey.currentState?.saveAndValidate() ?? false;
+                          if (isValid) {
+                            widget.formData.addAll(_formKey.currentState!.value);
+                            widget.onNext();
+                          }
+                        },
+                        child: const Text("Next"),
+                      ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-      ),
+      )
     );
   }
 }
@@ -220,6 +265,4 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
 
 
 // TODO design logo
-// TODO add navbar for donors
-// TODO im sure theres more and more
 // TODO comment code

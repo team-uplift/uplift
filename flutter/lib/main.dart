@@ -173,8 +173,8 @@ class MyApp extends StatelessWidget {
     return Authenticator(
       signUpForm: SignUpForm.custom(
         fields: [
-          SignUpFormField.givenName(),
-          SignUpFormField.familyName(),
+          // SignUpFormField.givenName(),
+          // SignUpFormField.familyName(),
           SignUpFormField.username(),
           SignUpFormField.email(required: true),
           SignUpFormField.password(),
