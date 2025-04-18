@@ -8,8 +8,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
+@EnableJpaAuditing
 @ComponentScan(basePackages = { "org.upLift", "org.upLift.api", "org.upLift.configuration", "org.upLift.services" })
 public class UpLiftOrchestrator implements CommandLineRunner {
 
