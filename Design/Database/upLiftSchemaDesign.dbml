@@ -39,6 +39,7 @@ Table recipients { // Tracks our known recipients
   tags_last_generated_at timestamp(3) // tracks the date/time tags were last generated for the recipient
   created_at timestamp(3) [not null] // keep a separate created_at for recipients and donors since these entries
                                      // may be added after initial user registration if user switches roles
+  last_donation_timestamp timestamp(3) // tracks the date/time the recipient last received a donation
 }
 
 Table donors { // Tracks our known donors
