@@ -30,6 +30,8 @@ public interface RecipientService {
 
 	List<Recipient> getMatchingRecipientsByTags(List<String> tags);
 
+	List<Recipient> getMatchingRecipientsByDonorPrompt(List<FormQuestion> donorQA);
+
 	/**
 	 * Marks the specified tags as selected for the specified recipient, removing the
 	 * selected flag from any linked tags that aren't specified. Ignores any tags that

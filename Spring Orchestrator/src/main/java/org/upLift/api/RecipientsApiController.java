@@ -113,4 +113,9 @@ public class RecipientsApiController implements RecipientsApi {
 
 	}
 
+	@Override
+	public ResponseEntity<List<Recipient>> getMatchedRecipient(List<FormQuestion> formQuestions) {
+		return new ResponseEntity<>(recipientService.getMatchingRecipientsByDonorPrompt(formQuestions), HttpStatus.OK);
+	}
+
 }

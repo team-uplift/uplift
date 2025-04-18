@@ -22,4 +22,10 @@ public interface RecipientTagsRepository extends JpaRepository<RecipientTag, Int
 			""")
 	List<RecipientTag> getRecipientTagByRecipientId(Integer recipientId);
 
+	@Query("""
+			SELECT recipientTag FROM RecipientTag recipientTag
+							WHERE recipientTag.tag.tagName = :tagName ORDER BY recipientTag.weight DESC
+		""")
+	List<RecipientTag> getRecipientTagsByTagOrderedByWeight(String tagName);
+
 }
