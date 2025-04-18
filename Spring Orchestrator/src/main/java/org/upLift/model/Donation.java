@@ -141,8 +141,8 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	 * @return amount
 	 **/
 
-	@Schema(example = "1000", requiredMode = Schema.RequiredMode.REQUIRED,
-			description = "amount (in cents) of the donation")
+	@Schema(example = "5", requiredMode = Schema.RequiredMode.REQUIRED,
+			description = "amount (in US dollars) of the donation")
 
 	@NotNull
 	public Integer getAmount() {
