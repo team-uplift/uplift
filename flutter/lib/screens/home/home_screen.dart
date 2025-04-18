@@ -164,9 +164,24 @@ class _HomePageState extends ConsumerState<HomePage> {
                           const SizedBox(height: 24),
                           SizedBox(
                             width: double.infinity,
-                            child: StandardButton(
-                              title: 'Help Someone in Need',
-                              onPressed: () => context.pushNamed('/donor_tag'),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                context.pushNamed('/donor_questionnaire');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 32, vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: const Text(
+                                'Start Helping',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ],
