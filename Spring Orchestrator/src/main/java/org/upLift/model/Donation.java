@@ -87,6 +87,7 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 		return donor;
 	}
 
+	@JsonIgnore
 	public void setDonor(Donor donor) {
 		this.donor = donor;
 	}
@@ -124,6 +125,7 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 		return recipient;
 	}
 
+	@JsonIgnore
 	public void setRecipient(Recipient recipient) {
 		this.recipient = recipient;
 	}
@@ -139,8 +141,8 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	 * @return amount
 	 **/
 
-	@Schema(example = "1000", requiredMode = Schema.RequiredMode.REQUIRED,
-			description = "amount (in cents) of the donation")
+	@Schema(example = "5", requiredMode = Schema.RequiredMode.REQUIRED,
+			description = "amount (in US dollars) of the donation")
 
 	@NotNull
 	public Integer getAmount() {
@@ -184,10 +186,14 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	@Override
 	public String toString() {
 
-		String sb = "class Donation {\n" + "    id: " + toIndentedString(getId()) + "\n" + "    donorId: "
-				+ toIndentedString(donor.getId()) + "\n" + "    recipientId: " + toIndentedString(recipient.getId())
-				+ "\n" + "    amount: " + toIndentedString(amount) + "\n" + "}";
+		// @formatter:off
+		String sb = "class Donation {\n"
+				+ "    id: " + toIndentedString(getId()) + "\n"
+				+ "    donorId: " + toIndentedString(donor.getId()) + "\n"
+				+ "    recipientId: " + toIndentedString(recipient.getId()) + "\n"
+				+ "    amount: " + toIndentedString(amount) + "\n" + "}";
 		return sb;
+		// @formatter:on
 	}
 
 	@Override
