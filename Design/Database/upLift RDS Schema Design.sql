@@ -23,7 +23,8 @@ CREATE TABLE `recipients` (
   `income_last_verified` timestamp(3),
   `nickname` nvarchar(64),
   `tags_last_generated_at` timestamp(3),
-  `created_at` timestamp(3) NOT NULL
+  `created_at` timestamp(3) NOT NULL,
+  `last_donation_timestamp` timestamp(3)
 );
 
 CREATE TABLE `donors` (
