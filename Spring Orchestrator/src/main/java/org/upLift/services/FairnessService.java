@@ -8,7 +8,8 @@ import java.util.Set;
 
 public interface FairnessService {
 
-    Set<RecipientTag> getWeightedRecipientTags(List<String> tags);
+	Set<RecipientTag> getWeightedRecipientTags(List<String> tags);
 
-    Set<Recipient> getRecipientsFromRecipientTags(Set<RecipientTag> recipientTags);
+	Set<Recipient> getRecipientsFromRecipientTags(Set<RecipientTag> recipientTags);
+
 }

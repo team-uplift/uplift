@@ -20,15 +20,16 @@ import java.util.stream.Collectors;
 @Service
 public class BedrockServiceImpl implements BedrockService {
 
-    private final TagRepository tagRepository;
-    public Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final TagRepository tagRepository;
+
+	public Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private final ChatModel chatModel;
 
 	public BedrockServiceImpl(ChatModel chatModel, TagRepository tagRepository) {
 		this.chatModel = chatModel;
-        this.tagRepository = tagRepository;
-    }
+		this.tagRepository = tagRepository;
+	}
 
 	@Override
     public Map<String, Double> getTagsFromPrompt(String prompt) {
@@ -55,7 +56,7 @@ public class BedrockServiceImpl implements BedrockService {
         return finalTags;
     }
 
-    /**
+	/**
      * This method will implement the LLM recipient matching based on the tag generation with a simple rag based prompting.
      * @param prompt
      * @return

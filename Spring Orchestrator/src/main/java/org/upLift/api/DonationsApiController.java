@@ -37,11 +37,12 @@ public class DonationsApiController implements DonationsApi {
 	private final UserService userService;
 
 	private final DonationService donationService;
+
 	private final RecipientService recipientService;
 
 	@Autowired
 	public DonationsApiController(HttpServletRequest request, TremendousService tremendousService,
-								  UserService userService, DonationService donationService, RecipientService recipientService) {
+			UserService userService, DonationService donationService, RecipientService recipientService) {
 		this.request = request;
 		this.tremendousService = tremendousService;
 		this.userService = userService;

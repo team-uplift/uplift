@@ -32,10 +32,12 @@ public class RecipientServiceImpl implements RecipientService {
 	private final TagRepository tagRepository;
 
 	private final RecipientTagsRepository recipientTagsRepository;
+
 	private final FairnessService fairnessService;
 
 	public RecipientServiceImpl(RecipientRepository recipientRepository, BedrockService bedrockService,
-								TagRepository tagRepository, RecipientTagsRepository recipientTagsRepository, FairnessService fairnessService) {
+			TagRepository tagRepository, RecipientTagsRepository recipientTagsRepository,
+			FairnessService fairnessService) {
 		this.recipientRepository = recipientRepository;
 		this.bedrockService = bedrockService;
 		this.tagRepository = tagRepository;

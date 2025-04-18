@@ -15,61 +15,67 @@ import java.util.*;
 @Transactional
 public class FairnessServiceImpl implements FairnessService {
 
-    private final RecipientTagsRepository recipientTagsRepository;
-    private final RecipientRepository recipientRepository;
+	private final RecipientTagsRepository recipientTagsRepository;
 
-    public FairnessServiceImpl(RecipientTagsRepository recipientTagsRepository, RecipientRepository recipientRepository) {
-        this.recipientTagsRepository = recipientTagsRepository;
-        this.recipientRepository = recipientRepository;
-    }
-    public Set<RecipientTag> getWeightedRecipientTags(List<String> tags) {
-        Set<RecipientTag> recipientTags = new HashSet<>();
+	private final RecipientRepository recipientRepository;
 
-        for (String tag : tags) {
-            recipientTags.addAll(recipientTagsRepository.getRecipientTagsByTagOrderedByWeight(tag));
-        }
+	public FairnessServiceImpl(RecipientTagsRepository recipientTagsRepository,
+			RecipientRepository recipientRepository) {
+		this.recipientTagsRepository = recipientTagsRepository;
+		this.recipientRepository = recipientRepository;
+	}
 
-        return recipientTags;
-    }
+	public Set<RecipientTag> getWeightedRecipientTags(List<String> tags) {
+		Set<RecipientTag> recipientTags = new HashSet<>();
 
-    public Set<Recipient> getRecipientsFromRecipientTags(Set<RecipientTag> recipientTags) {
-        Set<Recipient> recipients = new HashSet<>();
+		for (String tag : tags) {
+			recipientTags.addAll(recipientTagsRepository.getRecipientTagsByTagOrderedByWeight(tag));
+		}
 
-        // Gather the recipients
-        for (RecipientTag recipientTag : recipientTags) {
-            recipients.add(recipientTag.getRecipient());
-        }
+		return recipientTags;
+	}
 
-        // Examine when the last donated timestamp was and lower the priority of those recipients.
-        Set<Recipient> sortedSet = new TreeSet<>(
-                Comparator.comparing(Recipient::getLastDonationTimestamp, Comparator.nullsFirst(Comparator.naturalOrder()))
-                        // if timestamps can be equal, add a tie‑breaker to avoid “equal” elements albeit the small chance
-                        .thenComparing(Recipient::getId)
-        );
-        sortedSet.addAll(recipients);
+	public Set<Recipient> getRecipientsFromRecipientTags(Set<RecipientTag> recipientTags) {
+		Set<Recipient> recipients = new HashSet<>();
 
-        // If there are less than 10 recipients, gather the recipients with the least donations.
-        if (sortedSet.size() < 10) {
-            // Selecting a cutoff for recipients who received a donation today.
-            Instant cutoff = Instant.now().minus(1, ChronoUnit.DAYS);
-            List<Recipient> extraRecipients = recipientRepository.getRecipientsByLastDonationTimestamp(cutoff);
+		// Gather the recipients
+		for (RecipientTag recipientTag : recipientTags) {
+			recipients.add(recipientTag.getRecipient());
+		}
 
-            // Add enough recipients up to ten.
-            for(int i = 0; i < 10 - sortedSet.size(); i++) {
-                if (extraRecipients.size() >= i + 1) {
-                    sortedSet.add(extraRecipients.get(i));
-                }
-            }
-        }
+		// Examine when the last donated timestamp was and lower the priority of those
+		// recipients.
+		Set<Recipient> sortedSet = new TreeSet<>(Comparator
+			.comparing(Recipient::getLastDonationTimestamp, Comparator.nullsFirst(Comparator.naturalOrder()))
+			// if timestamps can be equal, add a tie‑breaker to avoid “equal” elements
+			// albeit the small chance
+			.thenComparing(Recipient::getId));
+		sortedSet.addAll(recipients);
 
-        // Remove unverified recipients
-        Instant oneYearAgo = Instant.now().minus(365, ChronoUnit.DAYS);
-        for (Recipient recipient : sortedSet) {
-            if(recipient.getIncomeLastVerified() == null || recipient.getIncomeLastVerified().isBefore(oneYearAgo)) {
-                sortedSet.remove(recipient);
-            }
-        }
+		// If there are less than 10 recipients, gather the recipients with the least
+		// donations.
+		if (sortedSet.size() < 10) {
+			// Selecting a cutoff for recipients who received a donation today.
+			Instant cutoff = Instant.now().minus(1, ChronoUnit.DAYS);
+			List<Recipient> extraRecipients = recipientRepository.getRecipientsByLastDonationTimestamp(cutoff);
 
-        return recipients;
-    }
+			// Add enough recipients up to ten.
+			for (int i = 0; i < 10 - sortedSet.size(); i++) {
+				if (extraRecipients.size() >= i + 1) {
+					sortedSet.add(extraRecipients.get(i));
+				}
+			}
+		}
+
+		// Remove unverified recipients
+		Instant oneYearAgo = Instant.now().minus(365, ChronoUnit.DAYS);
+		for (Recipient recipient : sortedSet) {
+			if (recipient.getIncomeLastVerified() == null || recipient.getIncomeLastVerified().isBefore(oneYearAgo)) {
+				sortedSet.remove(recipient);
+			}
+		}
+
+		return recipients;
+	}
+
 }

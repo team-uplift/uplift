@@ -37,12 +37,13 @@ public interface RecipientRepository extends JpaRepository<Recipient, Integer> {
 	List<Recipient> findByTags_Tag_TagName(List<String> tags, Pageable pageable);
 
 	@Query("""
-      SELECT e
-        FROM Recipient e
-       WHERE e.lastDonationTimestamp < :cutoff
-          OR e.lastDonationTimestamp IS NULL
-    ORDER BY CASE WHEN e.lastDonationTimestamp IS NULL THEN 0 ELSE 1 END,
-             e.lastDonationTimestamp ASC
-    """)
+			  SELECT e
+			    FROM Recipient e
+			   WHERE e.lastDonationTimestamp < :cutoff
+			      OR e.lastDonationTimestamp IS NULL
+			ORDER BY CASE WHEN e.lastDonationTimestamp IS NULL THEN 0 ELSE 1 END,
+			         e.lastDonationTimestamp ASC
+			""")
 	List<Recipient> getRecipientsByLastDonationTimestamp(@Param("cutoff") Instant cutoff);
+
 }
