@@ -106,23 +106,112 @@ class _RecipientListState extends State<RecipientList> {
     return Scaffold(
       drawer: const DrawerWidget(),
       appBar: AppBar(
-        title: const Text("You Might Like to Help"),
+        title: const Text(
+          "Recipients",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
       body: recipients.isEmpty
-          ? const Center(
-              child: Text(
-                'No recipients found matching your selected tags',
-                style: TextStyle(fontSize: 16),
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.search_off,
+                    size: 64,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No recipients found matching your selected tags',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             )
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: ListView.builder(
-                itemCount: recipients.length,
-                itemBuilder: (context, index) {
-                  return RecipientListCard(recipient: recipients[index]);
-                },
-              ),
+          : Stack(
+              children: [
+                SingleChildScrollView(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Hero Section
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).primaryColor.withOpacity(0.8),
+                            ],
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "People Who Need Your Help",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Browse through these recipients who match your selected causes",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Recipients List
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Found ${recipients.length} Recipients",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: recipients.length,
+                              itemBuilder: (context, index) {
+                                return RecipientListCard(
+                                  recipient: recipients[index],
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
     );
   }
