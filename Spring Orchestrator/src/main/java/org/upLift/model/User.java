@@ -1,9 +1,6 @@
 package org.upLift.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
@@ -97,6 +94,11 @@ public class User extends AbstractCreatedEntity {
 
 	public void setRecipient(boolean recipient) {
 		this.recipient = recipient;
+	}
+
+	@JsonIgnore
+	public boolean isDonor() {
+		return !recipient;
 	}
 
 	@Schema(implementation = Recipient.class,
