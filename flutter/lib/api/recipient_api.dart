@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class RecipientApi {
-  static const String baseUrl = 'http://your-api-url/uplift';
+  static const String baseUrl = 'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
 
   static Future<String?> createRecipientUser(
     Map<String, dynamic> formData,

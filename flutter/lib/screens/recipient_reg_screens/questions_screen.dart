@@ -53,7 +53,7 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
 
   //   // ✅ Reset state when switching to a new question
   //   if (oldWidget.questionIndex != widget.questionIndex) {
-  //     _initializeQuestion();
+  //     _formKey.currentState?.reset();
   //   }
   // }
 
@@ -108,9 +108,7 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
           padding: const EdgeInsets.all(16),
           child: FormBuilder(
             key: _formKey,
-            initialValue: {
-              questionKey: widget.formData[questionKey],
-            },
+            initialValue: Map<String, dynamic>.from(widget.formData),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -119,36 +117,41 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
                 // ✅ TEXT INPUT (Ensures fresh controller per question)
                 if (question['type'] == 'text')
                   FormBuilderTextField(
+                    key: ValueKey(questionKey),
                     name: questionKey,
                     maxLines: 4,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: "Enter your response...",
                     ),
-                  validator: question['required'] == true
-                    ? FormBuilderValidators.required()
-                    : null,
+                    validator: question['required'] == true
+                      ? FormBuilderValidators.required()
+                      : null,
 
                   ),
 
                 // ✅ MULTIPLE CHOICE (Radio Buttons - Ensure state is saved)
                 if (question['type'] == 'multipleChoice')
                   FormBuilderRadioGroup<String>(
+                    key: ValueKey(questionKey),
                     name: questionKey, 
                     decoration: const InputDecoration(border: InputBorder.none),
+                    orientation: OptionsOrientation.vertical,
                     options: (question['options'] as List<String>)
                       .map((opt) => FormBuilderFieldOption(value: opt, child: Text(opt)))
                       .toList(),
                     validator: question['required'] == true
                         ? FormBuilderValidators.required()
                         : null,
-                    ),
+                  ),
 
                 // CHECKBOX GROUP
                 if (question['type'] == 'checkbox')
                   FormBuilderCheckboxGroup<String>(
+                    key: ValueKey(questionKey),
                     name: questionKey,
                     decoration: const InputDecoration(border: InputBorder.none),
+                    orientation: OptionsOrientation.vertical,
                     options: (question['options'] as List<String>)
                         .map((opt) => FormBuilderFieldOption(value: opt, child: Text(opt)))
                         .toList(),
@@ -162,35 +165,41 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
                   Column(
                     children: [
                       FormBuilderTextField(
+                        key: const ValueKey('firstName'),
                         name: 'firstName',
                         decoration: const InputDecoration(labelText: 'First Name'),
                         validator: FormBuilderValidators.required(),
                       ),
                       const SizedBox(height: 8),
                       FormBuilderTextField(
+                        key: const ValueKey('lastName'),
                         name: 'lastName',
                         decoration: const InputDecoration(labelText: 'Last Name'),
                         validator: FormBuilderValidators.required(),
                       ),
                       const SizedBox(height: 8),
                       FormBuilderTextField(
+                        key: const ValueKey('streetAddress1'),
                         name: 'streetAddress1',
                         decoration: const InputDecoration(labelText: 'Street Address 1'),
                         validator: FormBuilderValidators.required(),
                       ),
                       const SizedBox(height: 8),
                       FormBuilderTextField(
+                        key: const ValueKey('streetAddress2'),
                         name: 'streetAddress2',
                         decoration: const InputDecoration(labelText: 'Street Address 2 (optional)'),
                       ),
                       const SizedBox(height: 8),
                       FormBuilderTextField(
+                        key: const ValueKey('city'),
                         name: 'city',
                         decoration: const InputDecoration(labelText: 'City'),
                         validator: FormBuilderValidators.required(),
                       ),
                       const SizedBox(height: 8),
                       FormBuilderDropdown<String>(
+                        key: const ValueKey('state'),
                         name: 'state',
                         decoration: InputDecoration(labelText: 'State'),
                         items: usStates
