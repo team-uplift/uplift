@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:uplift/models/recipient_model.dart';
 
 class Transaction {
@@ -18,28 +19,18 @@ class Transaction {
     required Recipient recipient,
     required double amount,
   }) {
-    return Transaction(
-      id: DateTime.now().toString(), // Unique ID
-      recipient: Recipient(
-        id: recipient.id,
-        firstName: recipient.firstName,
-        lastName: recipient.lastName,
-        imageURL: recipient.imageURL,
-        lastAboutMe: recipient.lastAboutMe,
-        streetAddress1: recipient.streetAddress1,
-        streetAddress2: recipient.streetAddress2,
-        city: recipient.city,
-        state: recipient.state,
-        zipCode: recipient.zipCode,
-        lastReasonForHelp: recipient.lastReasonForHelp,
-        identityLastVerified: recipient.identityLastVerified,
-        incomeLastVerified: recipient.incomeLastVerified,
-        nickname: recipient.nickname,
-        createdAt: recipient.createdAt
-
-      ),
+    final transaction = Transaction(
+      id: DateTime.now().toString(),
+      recipient: recipient,
       amount: amount,
-      date: DateTime.now(), // Sets default to today
+      date: DateTime.now(),
     );
+    debugPrint('Created transaction: $transaction');
+    return transaction;
+  }
+
+  @override
+  String toString() {
+    return 'Transaction(id: $id, recipient: ${recipient.firstName ?? "Anonymous"}, amount: \$$amount, date: $date)';
   }
 }

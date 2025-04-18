@@ -16,7 +16,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.upLift.model.Donation;
 
 import java.util.List;
@@ -93,9 +96,6 @@ public interface DonationsApi {
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@PostMapping(value = "/donations", produces = { "application/json" }, consumes = { "application/json" })
 	ResponseEntity<Donation> donationsPost(
-			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-					required = true,
-					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
 			@Parameter(in = ParameterIn.DEFAULT, description = "new donation to be saved", required = true,
 					schema = @Schema()) @Valid @RequestBody Donation body);
 

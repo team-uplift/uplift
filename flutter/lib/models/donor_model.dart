@@ -10,18 +10,29 @@ class Donor {
   });
 
   factory Donor.fromJson(Map<String, dynamic> json) {
-    return Donor(
-      id: json['id'],
-      nickname: json['nickname'],
-      createdAt: DateTime.parse(json['created_at']),
-    );
+    try {
+      return Donor(
+        id: json['id'] as int,
+        nickname: json['nickname'] as String,
+        createdAt: DateTime.parse(json['createdAt']),
+      );
+    } catch (e) {
+      print('Error parsing Donor from JSON: $e');
+      print('JSON received: $json');
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'nickname': nickname,
-      'created_at': createdAt.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
     };
+  }
+
+  @override
+  String toString() {
+    return 'Donor(id: $id, nickname: $nickname, createdAt: $createdAt)';
   }
 }
