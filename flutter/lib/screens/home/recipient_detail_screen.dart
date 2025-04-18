@@ -12,8 +12,13 @@ class RecipientDetailPage extends StatefulWidget {
 }
 
 class _RecipientDetailPageState extends State<RecipientDetailPage> {
+  bool get _isValidRecipient =>
+      widget.recipient.id != null &&
+      (widget.recipient.firstName != null || widget.recipient.nickname != null);
+
   @override
   Widget build(BuildContext context) {
+    print('Full recipient data: ${widget.recipient.toString()}');
     return Scaffold(
       appBar: AppBar(
         title: const Text("Recipient Detail"),
@@ -27,7 +32,7 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Hero(
-                    tag: widget.recipient.id,
+                    tag: widget.recipient.id ?? 'unknown',
                     child: widget.recipient.imageURL != null
                         ? Image.network(
                             widget.recipient.imageURL!,
@@ -49,13 +54,16 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.recipient.firstName ?? 'Anonymous',
+                          widget.recipient.firstName ??
+                              widget.recipient.nickname ??
+                              'Anonymous',
                           style: Theme.of(context).textTheme.headlineMedium,
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          widget.recipient.lastAboutMe ??
-                              'No description available',
+                          (widget.recipient.lastAboutMe?.isNotEmpty ?? false)
+                              ? widget.recipient.lastAboutMe!
+                              : 'No description available',
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         const SizedBox(height: 16),
@@ -96,21 +104,30 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
             decoration: const BoxDecoration(
-              color: Colors.white, // Ensures text is not visible below button
+              color: Colors.white,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 5,
                   spreadRadius: 1,
-                  offset: Offset(0, -3), // Adds shadow for separation
+                  offset: Offset(0, -3),
                 )
               ],
             ),
-            child: StandardButton(
-              title: "DONATE",
-              onPressed: () =>
-                  context.pushNamed('/donate', extra: widget.recipient),
-            ),
+            child: _isValidRecipient
+                ? StandardButton(
+                    title: "DONATE",
+                    onPressed: () =>
+                        context.pushNamed('/donate', extra: widget.recipient),
+                  )
+                : const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "Cannot donate to this recipient - missing required information",
+                      style: TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
           ),
         ],
       ),

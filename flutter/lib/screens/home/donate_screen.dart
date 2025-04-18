@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +18,7 @@ import 'package:uplift/components/standard_button.dart';
 import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/models/transaction_model.dart';
 import 'package:uplift/providers/transaction_notifier_provider.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 
 final String secretKey =
     "EKwrpcfi3uHe0lxsC_kwuKr3L5paEFn41Z49fZEwdjVFohu0x-djRhfNGqusnpP_cJ3C6rbErp_HqYc4";
@@ -35,7 +38,7 @@ class _DonatePageState extends ConsumerState<DonatePage> {
   final FocusNode _focusNode = FocusNode();
 
   final _flutterPaypalNativePlugin = FlutterPaypalNative.instance;
-  
+
   // log queue
   List<String> logQueue = [];
 
@@ -54,10 +57,10 @@ class _DonatePageState extends ConsumerState<DonatePage> {
   }
 
   String _formatAmount(String value) {
+    // Only allow digits, remove any non-digit characters
     value = value.replaceAll(RegExp(r'[^0-9]'), '');
     if (value.isEmpty) return '';
-    double parsed = double.parse(value) / 100;
-    return parsed.toStringAsFixed(2);
+    return value;
   }
 
   List<Map<String, dynamic>> buildTransaction(String amount) {
@@ -100,8 +103,8 @@ class _DonatePageState extends ConsumerState<DonatePage> {
   void usePaypal() {
     final amount = _amountController.text;
     if (amount.isEmpty ||
-        double.tryParse(amount) == null ||
-        double.parse(amount) <= 0) {
+        int.tryParse(amount) == null ||
+        int.parse(amount) <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter a valid donation amount")),
       );
@@ -146,9 +149,9 @@ class _DonatePageState extends ConsumerState<DonatePage> {
     //initiate payPal plugin
     await _flutterPaypalNativePlugin.init(
       //your app id !!! No Underscore!!! see readme.md for help
-      returnUrl: "com.piccmaq.flutter.paypal.native.example://paypalpay",
+      returnUrl: "com.uplift.app://paypalpay",
       //client id from developer dashboard
-      clientID: "AZsCX8....",
+      clientID: clientID,
       //sandbox, staging, live etc
       payPalEnvironment: FPayPalEnvironment.sandbox,
       //what currency do you plan to use? default is US dollars
@@ -162,27 +165,47 @@ class _DonatePageState extends ConsumerState<DonatePage> {
       callback: FPayPalOrderCallback(
         onCancel: () {
           //user canceled the payment
-          showResult("cancel");
+          showResult("Payment cancelled");
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Payment cancelled")),
+          );
         },
         onSuccess: (data) {
           //successfully paid
           //remove all items from queue
           _flutterPaypalNativePlugin.removeAllPurchaseItems();
-          String visitor = data.cart?.shippingAddress?.firstName ?? 'Visitor';
-          String address =
-              data.cart?.shippingAddress?.line1 ?? 'Unknown Address';
-          showResult(
-            "Order successful ${data.payerId ?? ""} - ${data.orderId ?? ""} - $visitor -$address",
+
+          // Create and log the transaction
+          final amount = int.parse(_amountController.text);
+          final newTransaction = Transaction.create(
+            recipient: widget.recipient,
+            amount: amount
+                .toDouble(), // Convert to double for backward compatibility
           );
+
+          debugPrint(
+              "✅ Logging PayPal transaction: \$${newTransaction.amount} to ${newTransaction.recipient.firstName}");
+          ref
+              .read(transactionNotifierProvider.notifier)
+              .addTransaction(newTransaction);
+
+          showResult("Payment successful!");
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Payment successful!")),
+          );
+          context.goNamed('/dashboard');
         },
         onError: (data) {
-          //an error occured
-          showResult("error: ${data.reason}");
+          //an error occurred
+          showResult("Payment error: ${data.reason}");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Payment error: ${data.reason}")),
+          );
         },
         onShippingChange: (data) {
           //the user updated the shipping address
           showResult(
-            "shipping change: ${data.shippingChangeAddress?.adminArea1 ?? ""}",
+            "Shipping change: ${data.shippingChangeAddress?.adminArea1 ?? ""}",
           );
         },
       ),
@@ -191,6 +214,9 @@ class _DonatePageState extends ConsumerState<DonatePage> {
 
   @override
   Widget build(BuildContext context) {
+    final displayName =
+        widget.recipient.firstName ?? widget.recipient.nickname ?? 'Anonymous';
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(title: const Text("Donate")),
@@ -212,7 +238,7 @@ class _DonatePageState extends ConsumerState<DonatePage> {
               ),
               const SizedBox(height: 24),
               Text(
-                "You are donating to ${widget.recipient.firstName}",
+                "You are donating to $displayName",
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -223,22 +249,24 @@ class _DonatePageState extends ConsumerState<DonatePage> {
                 focusNode: _focusNode,
                 controller: _amountController,
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                onChanged: (value) {
-                  String formatted = _formatAmount(value);
-                  _amountController.value = TextEditingValue(
-                    text: formatted,
-                    selection:
-                        TextSelection.collapsed(offset: formatted.length),
-                  );
-                },
-                decoration: InputDecoration(
-                  prefixText: "\$",
-                  labelText: "Enter amount",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                decoration: const InputDecoration(
+                  prefixText: '\$',
+                  border: OutlineInputBorder(),
+                  labelText: 'Amount',
                 ),
+                onChanged: (value) {
+                  final formatted = _formatAmount(value);
+                  if (formatted != value) {
+                    _amountController.value = TextEditingValue(
+                      text: formatted,
+                      selection:
+                          TextSelection.collapsed(offset: formatted.length),
+                    );
+                  }
+                },
               ),
               const SizedBox(height: 24),
               SizedBox(
@@ -252,7 +280,7 @@ class _DonatePageState extends ConsumerState<DonatePage> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     _focusNode.unfocus();
                     final text = _amountController.text;
                     if (text.isEmpty ||
@@ -267,20 +295,180 @@ class _DonatePageState extends ConsumerState<DonatePage> {
                       return;
                     }
 
+                    if (widget.recipient.id == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Invalid recipient information"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+
                     double amount = double.parse(text);
-                    final newTransaction = Transaction.create(
-                      recipient: widget.recipient,
-                      amount: amount,
-                    );
 
-                    debugPrint(
-                        "✅ Logging transaction: \$${newTransaction.amount} to ${newTransaction.recipient.firstName}");
+                    try {
+                      debugPrint('Making donation request...');
+                      debugPrint(
+                          'Full recipient data: ${widget.recipient.toString()}');
 
-                    ref
-                        .read(transactionNotifierProvider.notifier)
-                        .addTransaction(newTransaction);
+                      // Get current user attributes
+                      final attributes =
+                          await Amplify.Auth.fetchUserAttributes();
+                      final attrMap = {
+                        for (final attr in attributes)
+                          attr.userAttributeKey.key: attr.value,
+                      };
+                      final cognitoId = attrMap['sub'];
 
-                    context.goNamed('/dashboard');
+                      if (cognitoId == null) {
+                        throw Exception(
+                            'Failed to get user authentication information');
+                      }
+
+                      // Get user info from backend
+                      final userResponse = await http.get(
+                        Uri.parse(
+                            'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift/users/cognito/$cognitoId'),
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json'
+                        },
+                      );
+
+                      if (userResponse.statusCode != 200) {
+                        throw Exception('Failed to get user information');
+                      }
+
+                      final userData = jsonDecode(userResponse.body);
+                      final userId = userData['id'];
+                      final donorData = userData['donorData'];
+
+                      if (userId == null) {
+                        throw Exception('Failed to get user ID');
+                      }
+
+                      // Create donation
+                      final uri = Uri.parse(
+                          'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift/donations');
+
+                      final headers = {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                      };
+
+                      // Validate all required fields
+                      if (amount <= 0) {
+                        throw Exception(
+                            'Donation amount must be greater than 0');
+                      }
+
+                      if (userId == null || userId <= 0) {
+                        throw Exception('Invalid donor ID');
+                      }
+
+                      if (widget.recipient.id == null ||
+                          widget.recipient.id <= 0) {
+                        throw Exception('Invalid recipient ID');
+                      }
+
+                      final requestBody = {
+                        'amount': amount.toInt(), // Convert to integer
+                        'donorId': userId,
+                        'recipientId': widget.recipient.id,
+                      };
+
+                      debugPrint('Request URI: $uri');
+                      debugPrint('Request headers: ${jsonEncode(headers)}');
+                      debugPrint('Request body: ${jsonEncode(requestBody)}');
+
+                      try {
+                        final response = await http.post(
+                          uri,
+                          headers: headers,
+                          body: jsonEncode(requestBody),
+                        );
+
+                        debugPrint(
+                            'Response status code: ${response.statusCode}');
+                        debugPrint('Response headers: ${response.headers}');
+                        debugPrint('Raw response body: ${response.body}');
+
+                        if (response.statusCode != 200 &&
+                            response.statusCode != 201) {
+                          if (response.body.isEmpty) {
+                            throw Exception(
+                                'Failed to create donation: Empty response from server (Status ${response.statusCode})');
+                          }
+
+                          try {
+                            final errorData = jsonDecode(response.body);
+                            final errorMessage = errorData['message'] ??
+                                errorData['error'] ??
+                                errorData['details'] ??
+                                'Unknown error occurred';
+                            throw Exception(
+                                'Failed to create donation: $errorMessage');
+                          } catch (e) {
+                            debugPrint('Error parsing error response: $e');
+                            throw Exception(
+                                'Failed to create donation: Invalid error response from server (Status ${response.statusCode})');
+                          }
+                        }
+
+                        // Only try to parse response if we have content
+                        if (response.body.isNotEmpty) {
+                          try {
+                            final donationData = jsonDecode(response.body);
+                            debugPrint(
+                                'Donation created successfully: ${donationData['id']}');
+                          } catch (e) {
+                            debugPrint(
+                                'Warning: Could not parse successful response: $e');
+                          }
+                        }
+
+                        // Create local transaction
+                        final newTransaction = Transaction.create(
+                          recipient: widget.recipient,
+                          amount: amount,
+                        );
+
+                        debugPrint(
+                            "✅ Logging transaction: \$${newTransaction.amount} to ${newTransaction.recipient.firstName ?? 'Anonymous'}");
+
+                        ref
+                            .read(transactionNotifierProvider.notifier)
+                            .addTransaction(newTransaction);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Donation successful!"),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+
+                        context.goNamed('/dashboard');
+                      } catch (e) {
+                        debugPrint("❌ Error creating donation: $e");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                "Failed to process donation: ${e.toString()}"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      debugPrint("❌ Error in donation process: $e");
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Failed to process donation: ${e.toString()}"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   },
                   child: const Text("Donate",
                       style:
@@ -300,18 +488,29 @@ class _DonatePageState extends ConsumerState<DonatePage> {
   }
 
   void usePaypal2() {
+    final text = _amountController.text;
+    if (text.isEmpty ||
+        double.tryParse(text) == null ||
+        double.parse(text) <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter a valid amount"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    double amount = double.parse(text);
     if (_flutterPaypalNativePlugin.canAddMorePurchaseUnit) {
       _flutterPaypalNativePlugin.addPurchaseUnit(
         FPayPalPurchaseUnit(
-          // random prices
-          amount: Random().nextDouble() * 100,
-
-          ///please use your own algorithm for referenceId. Maybe ProductID?
-          referenceId: FPayPalStrHelper.getRandomString(16),
+          amount: amount,
+          referenceId: DateTime.now().millisecondsSinceEpoch.toString(),
         ),
       );
     }
-    // initPayPal();
+
     _flutterPaypalNativePlugin.makeOrder(
       action: FPayPalUserAction.payNow,
     );
