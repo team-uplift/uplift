@@ -1,7 +1,6 @@
 package org.upLift.api;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.upLift.model.Donation;
 import org.upLift.model.TremendousOrderResponse;
 import org.upLift.model.UpliftJsonViews;
-import org.upLift.model.User;
 import org.upLift.services.DonationService;
 import org.upLift.services.TremendousService;
 import org.upLift.services.UserService;
@@ -27,9 +25,7 @@ import java.util.List;
 @RestController
 public class DonationsApiController implements DonationsApi {
 
-	private static final Logger log = LoggerFactory.getLogger(DonationsApiController.class);
-
-	private final ObjectMapper objectMapper;
+	private static final Logger LOG = LoggerFactory.getLogger(DonationsApiController.class);
 
 	private final HttpServletRequest request;
 
@@ -40,9 +36,8 @@ public class DonationsApiController implements DonationsApi {
 	private final DonationService donationService;
 
 	@Autowired
-	public DonationsApiController(ObjectMapper objectMapper, HttpServletRequest request,
+	public DonationsApiController(HttpServletRequest request,
 			TremendousService tremendousService, UserService userService, DonationService donationService) {
-		this.objectMapper = objectMapper;
 		this.request = request;
 		this.tremendousService = tremendousService;
 		this.userService = userService;
@@ -86,44 +81,38 @@ public class DonationsApiController implements DonationsApi {
 
 	@Override
 	public ResponseEntity<Donation> donationsPost(@Valid @RequestBody Donation body) {
+		LOG.info("Donation from donor {} to recipient {}", body.getDonorId(), body.getRecipientId());
+		LOG.debug("Donation body: {}", body);
 		String accept = request.getHeader("Accept");
 		if (accept != null) {
 			try {
-				User recipient;
-				User donor;
+				var donor = userService.getUserById(body.getDonorId());
+				var recipient = userService.getUserById(body.getRecipientId());
+				if (donor.isPresent() && donor.get().isDonor() && recipient.isPresent()
+						&& recipient.get().isRecipient()) {
 
-				if (userService.getUserById(body.getRecipientId()).isPresent()
-						&& userService.getUserById(body.getDonorId()).isPresent()) {
-					recipient = userService.getUserById(body.getRecipientId()).get();
-					donor = userService.getUserById(body.getDonorId()).get();
+					TremendousOrderResponse response = tremendousService.submitDonationOrder(recipient.get(),
+							donor.get(), body.getAmount());
+					LOG.debug("Donation order response: {}", response);
 
-					TremendousOrderResponse response = tremendousService.submitDonationOrder(recipient, donor,
-							body.getAmount());
-
-					Donation donation = new Donation();
-					donation.setRecipientId(recipient.getId());
-					donation.setDonorId(donor.getId());
-					donation.setAmount(body.getAmount());
-					donation.setRecipient(recipient.getRecipientData());
-					donation.setDonor(donor.getDonorData());
-
-					Donation newDonation = donationService.saveDonation(donation);
+					Donation newDonation = donationService.saveDonation(body);
+					LOG.info("Donation submitted successfully");
 
 					return new ResponseEntity<>(newDonation, HttpStatus.CREATED);
 				}
 				else {
-					log.error("Couldn't find recipient or donor. Check Ids.");
+					LOG.error("Couldn't find recipient or donor. Check Ids.");
 					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				}
 
 			}
 			catch (RuntimeException e) {
-				log.error("Couldn't serialize response for content type application/json", e);
+				LOG.error("Couldn't serialize response for content type application/json", e);
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 
-		log.error("Couldn't accept request check headers");
+		LOG.error("Couldn't accept request check headers");
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
