@@ -2,6 +2,8 @@ package org.upLift.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.upLift.exceptions.ModelException;
+import org.upLift.model.Donor;
 import org.upLift.model.User;
 import org.upLift.repositories.UserRepository;
 
@@ -52,6 +54,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User addUser(User user) {
+		// Donor entries may not come with any associated donor data, in which case it
+		// must be added manually
+		if (user.isDonor() && user.getDonorData() == null) {
+			user.setDonorData(new Donor());
+		}
+		// Recipient entries must always include additional data
+		if (user.isRecipient() && user.getRecipientData() == null) {
+			throw new ModelException("New recipient entry must include recipient data");
+		}
+
 		return userRepository.save(user);
 	}
 
