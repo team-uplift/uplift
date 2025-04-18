@@ -48,14 +48,6 @@ public class FairnessServiceImpl implements FairnessService {
         );
         sortedSet.addAll(recipients);
 
-        // Remove unverified recipients
-        Instant oneYearAgo = Instant.now().minus(1, ChronoUnit.YEARS);
-        for (Recipient recipient : sortedSet) {
-            if(recipient.getIncomeLastVerified().isBefore(oneYearAgo)) {
-                sortedSet.remove(recipient);
-            }
-        }
-
         // If there are less than 10 recipients, gather the recipients with the least donations.
         if (sortedSet.size() < 10) {
             // Selecting a cutoff for recipients who received a donation today.
@@ -64,9 +56,17 @@ public class FairnessServiceImpl implements FairnessService {
 
             // Add enough recipients up to ten.
             for(int i = 0; i < 10 - sortedSet.size(); i++) {
-                if (extraRecipients.size() > i + 1) {
+                if (extraRecipients.size() >= i + 1) {
                     sortedSet.add(extraRecipients.get(i));
                 }
+            }
+        }
+
+        // Remove unverified recipients
+        Instant oneYearAgo = Instant.now().minus(365, ChronoUnit.DAYS);
+        for (Recipient recipient : sortedSet) {
+            if(recipient.getIncomeLastVerified() == null || recipient.getIncomeLastVerified().isBefore(oneYearAgo)) {
+                sortedSet.remove(recipient);
             }
         }
 

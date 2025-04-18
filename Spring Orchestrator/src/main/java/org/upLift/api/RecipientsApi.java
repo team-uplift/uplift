@@ -108,10 +108,10 @@ public interface RecipientsApi {
 
 
 	@Operation(summary = "Gathers a list of recipients with a series of donor questions", description = "", tags = { "Recipient" })
-	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Created"),
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
 
 			@ApiResponse(responseCode = "400", description = "Invalid input") })
-	@RequestMapping(value = "/recipients/matching", method = RequestMethod.POST)
+	@RequestMapping(value = "/recipients/matching", method = RequestMethod.GET)
 	ResponseEntity<List<Recipient>> getMatchedRecipient(
 			@Parameter(in = ParameterIn.DEFAULT, description = "A new set of form questions from the donor.",
 					required = true, schema = @Schema()) @Valid @RequestBody List<FormQuestion> formQuestions);

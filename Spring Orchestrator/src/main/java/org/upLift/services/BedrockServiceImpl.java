@@ -66,15 +66,13 @@ public class BedrockServiceImpl implements BedrockService {
         knownTags = tagRepository.findAll();
 
         // Implement the injected rag content to filter the output and isolate responses to specifically known tags.
-        String allTags = STR."Tags: \{knownTags.stream().map(Tag::toString).collect(Collectors.joining(", "))}";
+        String allTags = STR."Tags: \{knownTags.stream().map(Tag::toPromptString).collect(Collectors.joining(", "))}";
 
         // Build the request to send to bedrock with the rag sidecar.
-        String finalPrompt = STR."Match to the provided list tags that best describe the contents of the following prompt and respond with a comma separated list of the tags: \{prompt}";
+        String finalPrompt = STR."Match to the provided list tags that best match the contents of the following prompt. Only respond with a comma separated list of the tags. Do not respond in sentences. Do not organize the tags. Do not categorize the tags. Do not use underscores or dashes. \n Prompt: \{prompt} \n" + allTags;
         String response = ChatClient.create(chatModel)
                 .prompt()
-                .user(u -> u.text(finalPrompt)
-                        .text(allTags)
-                )
+                .user(u -> u.text(finalPrompt))
                 .call()
                 .content();
 
