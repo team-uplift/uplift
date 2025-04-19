@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:http/http.dart' as http;
 
 class RecipientApi {
@@ -26,6 +27,7 @@ class RecipientApi {
       },
     };
 
+    print("Recipient api payload: $payload");
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/users'),
@@ -35,7 +37,7 @@ class RecipientApi {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        return data['id'];
+        return data['id'].toString();
       } else {
         print("Recipient creation failed: ${response.statusCode}");
         return null;
@@ -46,13 +48,15 @@ class RecipientApi {
     }
   }
 
-  static Future<bool> updateRecipient(String userId, Map<String, dynamic> updatedFields) async {
+  static Future<bool> updateTags(String userId, List<String> selectedTags) async {
     try {
+      print("update tags: $selectedTags");
       final response = await http.put(
-        Uri.parse('$baseUrl/recipients/$userId'),
+        Uri.parse('$baseUrl/recipients/tagSelection/$userId'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(updatedFields),
+        body: jsonEncode(selectedTags),
       );
+      print("update recipient: ${response.body}");
 
       return response.statusCode == 204;
     } catch (e) {

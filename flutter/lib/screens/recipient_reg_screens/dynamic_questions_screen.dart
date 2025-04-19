@@ -9,6 +9,7 @@ class DynamicQuestionScreen extends StatefulWidget {
   final VoidCallback onNext;
   final VoidCallback onBack;
   final VoidCallback onGenerate;
+  final bool returnToConfirmation;
 
   const DynamicQuestionScreen({
     required this.formData,
@@ -17,6 +18,7 @@ class DynamicQuestionScreen extends StatefulWidget {
     required this.onNext,
     required this.onBack,
     required this.onGenerate,
+    required this.returnToConfirmation,
     super.key,
   });
 
@@ -215,53 +217,27 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
 
 
                 const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-
-                    // this is for generating tags
-                    if (question['type'] == 'confirmation') 
-                      ElevatedButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text("Generate Tags?"),
-                              content: const Text("Are you sure you want to generate tags? You will not be able to go back."),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text("Cancel"),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context); // Close dialog
-                                    widget.onGenerate();    // Now trigger tag generation
-                                  },
-                                    child: const Text("Yes, Generate Tags"),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      child: const Text("Generate Tags"),
-                      ),
-                      
-                    if (question['type'] != 'generateTags')  
-                      ElevatedButton(
-                        onPressed: () {
-                          final isValid = _formKey.currentState?.saveAndValidate() ?? false;
-                          if (isValid) {
-                            widget.formData.addAll(_formKey.currentState!.value);
-                            widget.onNext();
-                          }
-                        },
-                        child: const Text("Next"),
-                      ),
-                  ],
-                ),
               ],
             ),
+          ),
+        ),
+        bottomNavigationBar: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          // color: Colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  final isValid = _formKey.currentState?.saveAndValidate() ?? false;
+                  if (isValid) {
+                    widget.formData.addAll(_formKey.currentState!.value);
+                    widget.onNext();
+                  }
+                },
+                child: Text(widget.returnToConfirmation ? "Back to Confirmation" : "Next"),
+              ),
+            ],
           ),
         ),
       )

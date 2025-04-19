@@ -58,7 +58,7 @@ class Confirmation extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  Icon(Icons.edit, size: 18, color: Colors.grey), // 👈 edit icon
+                                  Icon(Icons.edit, size: 18, color: Colors.grey),
                                 ],
                               ),
                               const SizedBox(height: 4),
@@ -70,30 +70,49 @@ class Confirmation extends StatelessWidget {
                               const Text(
                                 "Tap to edit",
                                 style: TextStyle(fontSize: 12, color: Colors.grey),
-                              ), // 👈 subtle hint
+                              ),
                             ],
                           ),
                         ),
                       ),
-
                       const Divider(thickness: 1),
                     ],
                   );
                 }).toList(),
               ),
             ),
+
+            /// 👇 Confirmation dialog now added here
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              color: Colors.white,
+              // color: Colors.white,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  // OutlinedButton(
-                  //   onPressed: onBack,
-                  //   child: const Text("Back"),
-                  // ),
                   ElevatedButton(
-                    onPressed: onGenerate,
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text("Generate Tags?"),
+                          content: const Text(
+                              "Are you sure you want to generate tags? You will not be able to edit your profile or regenerate tags for 24 hours."),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("Cancel"),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context); // Close dialog
+                                onGenerate(); // Proceed to tag generation
+                              },
+                              child: const Text("Yes, Generate Tags"),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,

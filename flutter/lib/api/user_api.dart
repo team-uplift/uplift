@@ -28,4 +28,23 @@ class UserApi {
       return null;
     }
   }
+
+  static Future<bool> updateUser(User user) async {
+    final url = Uri.parse('$baseUrl/users');
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(user.toJson()),
+      );
+
+      print("Update user response: ${response.body}");
+
+      return response.statusCode == 200; // or check 200/201 if API differs
+    } catch (e) {
+      print("Error updating user: $e");
+      return false;
+    }
+  }
 }

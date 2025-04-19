@@ -14,7 +14,7 @@ import 'package:uplift/models/recipient_model.dart';
 
 import 'tag_selection_screen.dart';
 import 'registration_questions.dart';
-import 'questions_screen.dart';
+import 'dynamic_questions_screen.dart';
 import 'confirmation_screen.dart';
 // import 'package:http/http.dart' as http;
 
@@ -37,14 +37,25 @@ class _RegistrationControllerState extends State<RegistrationController> {
   final Map<String, dynamic> formData = {};
   late List<Tag> generatedTags; 
   bool _isLoading = false;
+  bool returnToConfirmation = false;
+
 
 
 
   void _stepForward() {
     setState(() {
-      if (_currentIndex < registrationQuestions.length - 1) {
+      if (returnToConfirmation) {
+        final confirmationIndex = registrationQuestions.indexWhere((q) => q['type'] == 'confirmation');
+        if (confirmationIndex != -1) {
+          _currentIndex = confirmationIndex;
+          returnToConfirmation = false; // reset after use
+        }
+      }
+      else if (_currentIndex < registrationQuestions.length - 1) {
         _currentIndex++;
-      } else {
+      } 
+
+      else {
         _submit();
       }
     });
@@ -110,9 +121,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
         .toList();
       
     try {
-      final success = await RecipientApi.updateRecipient(userId, {
-        'selectedTags': selectedTags,
-      });
+      final success = await RecipientApi.updateTags(userId, selectedTags);
 
       if (success) {
         context.goNamed('/recipient_home');
@@ -322,6 +331,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
                 : formData[q['key']],
           }
     ];
+    print("form questions storeUser: $formQuestions");
 
     return await RecipientApi.createRecipientUser(
       formData,
@@ -409,6 +419,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
                     value: (_currentIndex + 1) / registrationQuestions.length,
                     backgroundColor: Colors.grey,
                     color: Colors.blue,
+                    minHeight: 7.0,
                   ),
                 ),
               ],
@@ -436,7 +447,12 @@ class _RegistrationControllerState extends State<RegistrationController> {
         onGenerate: handleUserRegistrationAndTags,
         onJumpToQuestion: (key) {
           final index = registrationQuestions.indexWhere((q) => q['key'] == key);
-          if (index != -1) setState(() => _currentIndex = index);
+          if (index != -1) {
+            setState(() {
+              _currentIndex = index;
+              returnToConfirmation = true;
+            });
+          }
         },
       );
     } else if (question['type'] == 'showTags') {
@@ -454,6 +470,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
         onNext: _stepForward,
         onBack: _stepBack,
         onGenerate: handleUserRegistrationAndTags,
+        returnToConfirmation: returnToConfirmation,
       );
     }
   }

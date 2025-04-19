@@ -1,3 +1,5 @@
+import 'package:uplift/models/tag_model.dart';
+
 class Recipient {
   final int id;
   final String? firstName;
@@ -9,11 +11,16 @@ class Recipient {
   final String? zipCode;
   final String? lastAboutMe;
   final String? lastReasonForHelp;
+  final List<Map<String, dynamic>>? formQuestions;
   final DateTime? identityLastVerified;
   final DateTime? incomeLastVerified;
   final String? nickname;
   final DateTime? createdAt;
   final String? imageURL;
+  final DateTime? lastDonationTimestamp;
+  final List<Tag>? tags;
+  final DateTime? tagsLastGenerated;
+
 
   const Recipient({
     required this.id,
@@ -26,11 +33,16 @@ class Recipient {
     this.zipCode,
     this.lastAboutMe,
     this.lastReasonForHelp,
+    this.formQuestions,
     this.identityLastVerified,
     this.incomeLastVerified,
     this.nickname,
     this.createdAt,
     this.imageURL,
+    this.lastDonationTimestamp,
+    this.tags,
+    this.tagsLastGenerated
+    
   });
 
   factory Recipient.fromJson(Map<String, dynamic> json) {
@@ -46,6 +58,9 @@ class Recipient {
         zipCode: json['zip_code'] as String?,
         lastAboutMe: json['last_about_me'] as String?,
         lastReasonForHelp: json['last_reason_for_help'] as String?,
+        formQuestions: (json['formQuestions'] as List<dynamic>?)
+          ?.map((e) => Map<String, dynamic>.from(e))
+          .toList() ?? [],
         identityLastVerified: json['identity_last_verified'] != null
             ? DateTime.parse(json['identity_last_verified'])
             : null,
@@ -57,6 +72,15 @@ class Recipient {
             ? DateTime.parse(json['created_at'])
             : null,
         imageURL: json['imageURL'] as String?,
+        tagsLastGenerated: json['tagsLastGenerated'] != null
+            ? DateTime.parse(json['tagsLastGenerated'])
+            : null,
+        lastDonationTimestamp: json['lastDonationTimestamp'] != null
+            ? DateTime.parse(json['lastDonationTimestamp'])
+            : null,
+        tags: (json['tags'] is List)
+            ? (json['tags'] as List).map((t) => Tag.fromJson(t)).toList()
+            : null,
       );
     } catch (e) {
       print('Error parsing Recipient from JSON: $e');
@@ -77,6 +101,7 @@ class Recipient {
       'zip_code': zipCode,
       'last_about_me': lastAboutMe,
       'last_reason_for_help': lastReasonForHelp,
+      'formQuestions': formQuestions,
       'identity_last_verified': identityLastVerified?.toIso8601String(),
       'income_last_verified': incomeLastVerified?.toIso8601String(),
       'nickname': nickname,

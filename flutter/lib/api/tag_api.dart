@@ -13,7 +13,7 @@ class TagApi {
         body: jsonEncode(questions),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final tagsData = jsonDecode(response.body);
         return (tagsData as List).map((tag) => Tag.fromJson(tag)).toList();
       } else {
