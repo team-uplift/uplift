@@ -105,6 +105,11 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	private Instant tagsLastGenerated;
 
+	@Column(name = "last_donation_timestamp")
+	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
+	@JsonProperty("lastDonationTimestamp")
+	private Instant lastDonationTimestamp;
+
 	@Valid
 	@OneToMany(mappedBy = "recipient", fetch = FetchType.EAGER)
 	// Only want to send the set of "selected" tags to the front end,
@@ -399,6 +404,16 @@ public class Recipient extends AbstractCreatedAt {
 		else {
 			return null;
 		}
+	}
+
+	@Schema(example = "2025-03-22T18:57:23.571Z", description = "date/time the recipient's last received a donation.")
+
+	public Instant getLastDonationTimestamp() {
+		return lastDonationTimestamp;
+	}
+
+	public void setLastDonationTimestamp(Instant lastDonationTimestamp) {
+		this.lastDonationTimestamp = lastDonationTimestamp;
 	}
 
 	// @formatter:off
