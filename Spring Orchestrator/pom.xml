@@ -38,10 +38,11 @@
                 <spring.profiles.active>dev</spring.profiles.active>
             </properties>
         </profile>
+        <!-- Profile used for CI/CD testing, with H2 embedded database -->
         <profile>
-            <id>test</id>
+            <id>ci</id>
             <properties>
-                <spring.profiles.active>test</spring.profiles.active>
+                <spring.profiles.active>ci</spring.profiles.active>
             </properties>
         </profile>
         <profile>
