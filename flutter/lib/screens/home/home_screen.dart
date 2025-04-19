@@ -28,12 +28,10 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'uplift',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-          ),
+        title: Image.asset(
+          'assets/uplift_black.png',
+          height: 32, // Adjust this value to match your desired logo height
+          fit: BoxFit.contain,
         ),
         elevation: 0,
         backgroundColor: Colors.transparent,
