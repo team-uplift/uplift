@@ -7,12 +7,14 @@ import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+// Don't specify @ComponentScan here - Spring will scan everything in the same package as
+// this class anyway, and it interferes with test configuration because it prevents Spring
+// Boot from selectively loading only subsets of the components for different types of test
+// configuration.
 @SpringBootApplication
 @EnableJpaAuditing
-@ComponentScan(basePackages = { "org.upLift", "org.upLift.api", "org.upLift.configuration", "org.upLift.services" })
 public class UpLiftOrchestrator implements CommandLineRunner {
 
 	@Override
@@ -30,21 +32,6 @@ public class UpLiftOrchestrator implements CommandLineRunner {
 	public Module jsonNullableModule() {
 		return new JsonNullableModule();
 	}
-
-	// Don't need this, Spring/Jackson have standard support for JDK 8 Date/Time types
-	// and it messes up the automated Jackson config
-	// @foramtter:off
-	// @Configuration
-	// static class CustomDateConfig extends WebMvcConfigurationSupport {
-	//
-	// @Override
-	// public void addFormatters(FormatterRegistry registry) {
-	// registry.addConverter(new LocalDateConverter("yyyy-MM-dd"));
-	// registry.addConverter(new LocalDateTimeConverter("yyyy-MM-dd'T'HH:mm:ss.SSS"));
-	// }
-	//
-	// }
-	// @formatter:on
 
 	class ExitException extends RuntimeException implements ExitCodeGenerator {
 
