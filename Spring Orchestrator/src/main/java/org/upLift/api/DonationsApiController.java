@@ -1,7 +1,6 @@
 package org.upLift.api;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +29,6 @@ public class DonationsApiController implements DonationsApi {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DonationsApiController.class);
 
-	private final HttpServletRequest request;
-
 	private final TremendousService tremendousService;
 
 	private final UserService userService;
@@ -41,9 +38,8 @@ public class DonationsApiController implements DonationsApi {
 	private final RecipientService recipientService;
 
 	@Autowired
-	public DonationsApiController(HttpServletRequest request, TremendousService tremendousService,
+	public DonationsApiController(TremendousService tremendousService,
 			UserService userService, DonationService donationService, RecipientService recipientService) {
-		this.request = request;
 		this.tremendousService = tremendousService;
 		this.userService = userService;
 		this.donationService = donationService;
@@ -89,20 +85,17 @@ public class DonationsApiController implements DonationsApi {
 	public ResponseEntity<Donation> donationsPost(@Valid @RequestBody Donation body) {
 		LOG.info("Donation from donor {} to recipient {}", body.getDonorId(), body.getRecipientId());
 		LOG.debug("Donation body: {}", body);
-		String accept = request.getHeader("Accept");
-		if (accept != null) {
-			try {
-				var donor = userService.getUserById(body.getDonorId());
-				var recipient = userService.getUserById(body.getRecipientId());
-				if (donor.isPresent() && donor.get().isDonor() && recipient.isPresent()
-						&& recipient.get().isRecipient()) {
+		try {
+			var donor = userService.getUserById(body.getDonorId());
+			var recipient = userService.getUserById(body.getRecipientId());
+			if (donor.isPresent() && donor.get().isDonor() && recipient.isPresent() && recipient.get().isRecipient()) {
 
-					TremendousOrderResponse response = tremendousService.submitDonationOrder(recipient.get(),
-							donor.get(), body.getAmount());
-					LOG.debug("Donation order response: {}", response);
+				TremendousOrderResponse response = tremendousService.submitDonationOrder(recipient.get(), donor.get(),
+						body.getAmount());
+				LOG.debug("Donation order response: {}", response);
 
-					Donation newDonation = donationService.saveDonation(body);
-					LOG.info("Donation submitted successfully");
+				Donation newDonation = donationService.saveDonation(body);
+				LOG.info("Donation submitted successfully");
 
 					// Save last donation timestamp on recipient
 					Recipient recipientObject = recipientService.getRecipientById(body.getRecipientId());
@@ -122,9 +115,5 @@ public class DonationsApiController implements DonationsApi {
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
-
-		LOG.error("Couldn't accept request check headers");
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-	}
 
 }
