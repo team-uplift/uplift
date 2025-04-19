@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:ffi';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class RecipientApi {
@@ -21,6 +21,7 @@ class RecipientApi {
         'streetAddress2': formData['streetAddress2'],
         'city': formData['city'],
         'state': formData['state'],
+        'zipCode': formData['zipCode'],
         'lastAboutMe': formData['lastAboutMe'],
         'lastReasonForHelp': formData['lastReasonForHelp'],
         'formQuestions': formQuestions,
@@ -61,6 +62,32 @@ class RecipientApi {
       return response.statusCode == 204;
     } catch (e) {
       print("Error updating recipient: $e");
+      return false;
+    }
+  }
+
+  static Future<bool> uploadIncomeVerificationImage(String userId, File imageFile) async {
+    try {
+      final request = http.MultipartRequest(
+        'PUT',
+        Uri.parse('$baseUrl/recipients/verification/income/$userId'),
+      );
+      
+      request.files.add(
+        await http.MultipartFile.fromPath('file', imageFile.path),
+      );
+
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200 && responseBody.trim() == 'true') {
+        return true;
+      } else {
+        print("Verification failed: $responseBody");
+        return false;
+      }
+    } catch (e) {
+      print("Error verifying income: $e");
       return false;
     }
   }

@@ -211,7 +211,20 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
                                 ))
                             .toList(),
                         validator: FormBuilderValidators.required(),
-                      )
+                      ),
+                      const SizedBox(height: 8),
+                      FormBuilderTextField(
+                        key: const ValueKey('zipCode'),
+                        name: 'zipCode',
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(labelText: 'zipCode'),
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(),
+                          FormBuilderValidators.minLength(5, errorText: 'ZIP must be 5 digits'),
+                          FormBuilderValidators.maxLength(5, errorText: 'ZIP must be 5 digits'),
+                          // FormBuilderValidators.match(r'^\d{5}$' as RegExp, errorText: 'Invalid ZIP format'),
+                        ]),
+                      ),
                     ],
                   ),
 

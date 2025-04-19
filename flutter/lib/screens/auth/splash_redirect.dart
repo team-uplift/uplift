@@ -41,10 +41,13 @@ class _SplashRedirectorState extends State<SplashRedirector> {
 
       // Redirect
       if (res.statusCode == 404) {
-        print("route to registration");
+        print("User does not exist in backend. Signing out.");
+
+        await Amplify.Auth.signOut(options: SignOutOptions(globalSignOut: true));
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (!mounted) return;
-            context.goNamed('/donor_or_recipient');
+          if (!mounted) return;
+          context.goNamed('/donor_or_recipient'); // triggers re-registration flow
         });
       } else if (res.statusCode == 200) {
         final user = jsonDecode(res.body);

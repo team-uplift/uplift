@@ -5,24 +5,25 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:uplift/api/user_api.dart';
+import 'package:uplift/models/recipient_model.dart';
+import 'package:uplift/models/user_model.dart';
 
 
 class RecipientSettingsScreen extends StatefulWidget {
   final VoidCallback? editProfile;
-  // final VoidCallback? logout;
-  // final VoidCallback? deleteAccount;
   final VoidCallback? changeEmail;
   final VoidCallback? convertAccount;
-  final Map<String, dynamic> profile;
+  final User profile;
+  final Recipient recipient;
 
   const RecipientSettingsScreen({
     super.key,
     this.editProfile,
-    // this.logout,
-    // this.deleteAccount,
     this.changeEmail,
     this.convertAccount,
     required this.profile,
+    required this.recipient,
   });
 
   @override
@@ -43,16 +44,14 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
   // PROFILE EDIT LOGIC WITH CLOCK
   void _startCooldown() {
     // TODO chatgpt clock logic
-    final tagsLastGenerated = DateTime.parse(
-      widget.profile['recipientData']['tagsLastGenerated'],
-    );
+    final tagsLastGenerated = widget.recipient.tagsLastGenerated;
 
     print("lasttime: $tagsLastGenerated");
 
-    final editTime = tagsLastGenerated.add(const Duration(hours: 24));
+    final editTime = tagsLastGenerated?.add(const Duration(hours: 24));
     final currentTime = DateTime.now();
 
-    if (currentTime.isAfter(editTime)) {
+    if (currentTime.isAfter(editTime!)) {
       setState(() {
         canEdit = true;
         timeRemaining = Duration.zero;
@@ -235,28 +234,28 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
 
 
 
-  // DELETING ACCOUNT LOGIC
-  Future<void> _deleteAccount() async {
-    final userId = widget.profile['id'];
-    print("userid: $userId");
+  // // DELETING ACCOUNT LOGIC
+  // Future<void> _deleteAccount() async {
+  //   final userId = widget.profile.id;
+  //   print("userid: $userId");
 
-    try {
-      final response = await http.delete(
-        Uri.parse('http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift/users/$userId'),
-        headers: {'Content-Type': 'application/json'},
-      );
+  //   try {
+  //     final response = await http.delete(
+  //       Uri.parse('http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift/users/$userId'),
+  //       headers: {'Content-Type': 'application/json'},
+  //     );
 
-      print("get donation response: ${response.body}");
+  //     print("get donation response: ${response.body}");
 
-      if (response.statusCode == 400) {
-        print("delete unsuccessful");
-      } else {
-        await Amplify.Auth.deleteUser();
-      }
-    } catch (e) {
-      print('error with delete request: $e');
-    }
-  }
+  //     if (response.statusCode == 400) {
+  //       print("delete unsuccessful");
+  //     } else {
+  //       await Amplify.Auth.deleteUser();
+  //     }
+  //   } catch (e) {
+  //     print('error with delete request: $e');
+  //   }
+  // }
 
   
   
@@ -331,9 +330,8 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
                       TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
                       ElevatedButton(
                         onPressed: () {
-                          // TODO implement account deletion and route to home
+                          UserApi.convertToDonor(widget.profile);
                           Navigator.pop(context);
-                          print("Account converted");
                           context.goNamed('/login');
                         },
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -363,7 +361,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
                       ElevatedButton(
                         onPressed: () {
                           // TODO implement account deletion and route to home
-                          _deleteAccount();
+                          UserApi.deleteAccount(widget.profile);
                         },
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                         child: Text("Delete"),

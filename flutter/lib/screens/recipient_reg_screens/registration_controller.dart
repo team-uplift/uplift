@@ -53,6 +53,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
       }
       else if (_currentIndex < registrationQuestions.length - 1) {
         _currentIndex++;
+        print("form data: $formData");
       } 
 
       else {

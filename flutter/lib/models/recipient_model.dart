@@ -62,20 +62,20 @@ class Recipient {
 
       return Recipient(
         id: json['id'] as int,
-        firstName: json['first_name'] as String?,
-        lastName: json['last_name'] as String?,
-        streetAddress1: json['street_address1'] as String?,
-        streetAddress2: json['street_address2'] as String?,
+        firstName: json['firstName'] as String?,
+        lastName: json['lastName'] as String?,
+        streetAddress1: json['streetAddress1'] as String?,
+        streetAddress2: json['streetAddress2'] as String?,
         city: json['city'] as String?,
         state: json['state'] as String?,
-        zipCode: json['zip_code'] as String?,
-        lastAboutMe: json['last_about_me'] as String?,
-        lastReasonForHelp: json['last_reason_for_help'] as String?,
+        zipCode: json['zipCode'] as String?,
+        lastAboutMe: json['lastAboutMe'] as String?,
+        lastReasonForHelp: json['lastReasonForHelp'] as String?,
         formQuestions: (json['formQuestions'] as List<dynamic>?)
           ?.map((e) => Map<String, dynamic>.from(e))
           .toList() ?? [],
-        identityLastVerified: json['identity_last_verified'] != null
-            ? DateTime.parse(json['identity_last_verified'])
+        identityLastVerified: json['identityLastVerified'] != null
+            ? DateTime.parse(json['identityLastVerified'])
             : null,
         incomeLastVerified: recipientData['incomeLastVerified'] != null
             ? DateTime.parse(recipientData['incomeLastVerified'])
@@ -127,4 +127,45 @@ class Recipient {
   String toString() {
     return 'Recipient(id: $id, firstName: $firstName, lastName: $lastName, nickname: $nickname)';
   }
+
+  Recipient copyWith({
+    int? id,
+    String? firstName,
+    String? lastName,
+    String? streetAddress1,
+    String? streetAddress2,
+    String? city,
+    String? state,
+    String? zipCode,
+    String? lastAboutMe,
+    String? lastReasonForHelp,
+    DateTime? identityLastVerified,
+    DateTime? incomeLastVerified,
+    String? nickname,
+    DateTime? createdAt,
+    String? imageURL,
+    List<Map<String, dynamic>>? formQuestions,
+    List<Tag>? tags,
+  }) {
+    return Recipient(
+      id: id ?? this.id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      streetAddress1: streetAddress1 ?? this.streetAddress1,
+      streetAddress2: streetAddress2 ?? this.streetAddress2,
+      city: city ?? this.city,
+      state: state ?? this.state,
+      zipCode: zipCode ?? this.zipCode,
+      lastAboutMe: lastAboutMe ?? this.lastAboutMe,
+      lastReasonForHelp: lastReasonForHelp ?? this.lastReasonForHelp,
+      identityLastVerified: identityLastVerified ?? this.identityLastVerified,
+      incomeLastVerified: incomeLastVerified ?? this.incomeLastVerified,
+      nickname: nickname ?? this.nickname,
+      createdAt: createdAt ?? this.createdAt,
+      imageURL: imageURL ?? this.imageURL,
+      formQuestions: formQuestions ?? this.formQuestions,
+      tags: tags ?? this.tags,
+    );
+  }
+
 }
