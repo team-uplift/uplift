@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/models/recipient_model.dart';
+import 'package:uplift/components/recipient_list_card.dart';
 // import 'package:uplift/models/transaction_model.dart';
 import 'package:uplift/screens/auth/donor_or_recipient.dart';
 import 'package:uplift/screens/auth/login_screen.dart';
@@ -10,6 +11,7 @@ import 'package:uplift/screens/auth/splash_redirect.dart';
 // import 'package:uplift/screens/auth/recipient_registration_screen.dart';
 import 'package:uplift/screens/home/dashboard_screen.dart';
 import 'package:uplift/screens/home/donate_screen.dart';
+import 'package:uplift/screens/home/donor_questionnaire_screen.dart';
 import 'package:uplift/screens/home/donor_tag_screen.dart';
 import 'package:uplift/screens/home/home_screen.dart';
 import 'package:uplift/screens/home/profile_screen.dart';
@@ -23,11 +25,8 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
-
 import 'amplifyconfiguration.dart';
 import 'models/ModelProvider.dart';
-
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +40,8 @@ Future<void> _configureAmplify() async {
     //
     // If `ModelProvider.instance` is not available, try running
     // `amplify codegen models` from the root of your project.
-    final api = AmplifyAPI(options: APIPluginOptions(modelProvider: ModelProvider.instance));
+    final api = AmplifyAPI(
+        options: APIPluginOptions(modelProvider: ModelProvider.instance));
 
     // Create the Auth plugin.
     final auth = AmplifyAuthCognito();
@@ -68,19 +68,17 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/donor_registration',
-      name: '/donor_registration',
-      builder: (BuildContext context, GoRouterState state) {
-        return const DonorRegistrationPage();
-      }
-    ),
+        path: '/donor_registration',
+        name: '/donor_registration',
+        builder: (BuildContext context, GoRouterState state) {
+          return const DonorRegistrationPage();
+        }),
     GoRoute(
-      path: '/recipient_registration',
-      name: '/recipient_registration',
-      builder: (BuildContext context, GoRouterState state) {
-        return const RegistrationController();
-      }
-    ),
+        path: '/recipient_registration',
+        name: '/recipient_registration',
+        builder: (BuildContext context, GoRouterState state) {
+          return const RegistrationController();
+        }),
     GoRoute(
       path: '/home',
       name: '/home',
@@ -135,8 +133,13 @@ final GoRouter _router = GoRouter(
       path: '/recipient_detail',
       name: '/recipient_detail',
       builder: (BuildContext context, GoRouterState state) {
-        final recipient = state.extra as Recipient; 
-        return RecipientDetailPage(recipient: recipient);
+        final Map<String, dynamic> extra = state.extra as Map<String, dynamic>;
+        final recipient = extra['recipient'] as Recipient;
+        final placeholderData = extra['placeholderData'] as PlaceholderData?;
+        return RecipientDetailPage(
+          recipient: recipient,
+          placeholderData: placeholderData,
+        );
       },
     ),
     GoRoute(
@@ -155,10 +158,17 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
+      path: '/donor_questionnaire',
+      name: '/donor_questionnaire',
+      builder: (BuildContext context, GoRouterState state) {
+        return const DonorQuestionnaire();
+      },
+    ),
+    GoRoute(
       path: '/donor_tag',
       name: '/donor_tag',
       builder: (BuildContext context, GoRouterState state) {
-        return DonorTagPage();
+        return const DonorTagPage();
       },
     ),
   ],

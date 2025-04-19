@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +18,7 @@ import 'package:uplift/components/standard_button.dart';
 import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/models/transaction_model.dart';
 import 'package:uplift/providers/transaction_notifier_provider.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 
 final String secretKey =
     "EKwrpcfi3uHe0lxsC_kwuKr3L5paEFn41Z49fZEwdjVFohu0x-djRhfNGqusnpP_cJ3C6rbErp_HqYc4";
@@ -35,7 +38,7 @@ class _DonatePageState extends ConsumerState<DonatePage> {
   final FocusNode _focusNode = FocusNode();
 
   final _flutterPaypalNativePlugin = FlutterPaypalNative.instance;
-  
+
   // log queue
   List<String> logQueue = [];
 
@@ -54,10 +57,10 @@ class _DonatePageState extends ConsumerState<DonatePage> {
   }
 
   String _formatAmount(String value) {
+    // Only allow digits, remove any non-digit characters
     value = value.replaceAll(RegExp(r'[^0-9]'), '');
     if (value.isEmpty) return '';
-    double parsed = double.parse(value) / 100;
-    return parsed.toStringAsFixed(2);
+    return value;
   }
 
   List<Map<String, dynamic>> buildTransaction(String amount) {
@@ -100,8 +103,8 @@ class _DonatePageState extends ConsumerState<DonatePage> {
   void usePaypal() {
     final amount = _amountController.text;
     if (amount.isEmpty ||
-        double.tryParse(amount) == null ||
-        double.parse(amount) <= 0) {
+        int.tryParse(amount) == null ||
+        int.parse(amount) <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter a valid donation amount")),
       );
@@ -146,9 +149,9 @@ class _DonatePageState extends ConsumerState<DonatePage> {
     //initiate payPal plugin
     await _flutterPaypalNativePlugin.init(
       //your app id !!! No Underscore!!! see readme.md for help
-      returnUrl: "com.piccmaq.flutter.paypal.native.example://paypalpay",
+      returnUrl: "com.uplift.app://paypalpay",
       //client id from developer dashboard
-      clientID: "AZsCX8....",
+      clientID: clientID,
       //sandbox, staging, live etc
       payPalEnvironment: FPayPalEnvironment.sandbox,
       //what currency do you plan to use? default is US dollars
@@ -162,27 +165,171 @@ class _DonatePageState extends ConsumerState<DonatePage> {
       callback: FPayPalOrderCallback(
         onCancel: () {
           //user canceled the payment
-          showResult("cancel");
+          showResult("Payment cancelled");
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Payment cancelled")),
+          );
         },
-        onSuccess: (data) {
+        onSuccess: (data) async {
           //successfully paid
           //remove all items from queue
           _flutterPaypalNativePlugin.removeAllPurchaseItems();
-          String visitor = data.cart?.shippingAddress?.firstName ?? 'Visitor';
-          String address =
-              data.cart?.shippingAddress?.line1 ?? 'Unknown Address';
-          showResult(
-            "Order successful ${data.payerId ?? ""} - ${data.orderId ?? ""} - $visitor -$address",
-          );
+
+          try {
+            debugPrint('Making PayPal donation request...');
+            debugPrint('Full recipient data: ${widget.recipient.toString()}');
+
+            // Get current user attributes
+            final attributes = await Amplify.Auth.fetchUserAttributes();
+            final attrMap = {
+              for (final attr in attributes)
+                attr.userAttributeKey.key: attr.value,
+            };
+            final cognitoId = attrMap['sub'];
+
+            if (cognitoId == null) {
+              throw Exception('Failed to get user authentication information');
+            }
+
+            // Get user info from backend
+            final userResponse = await http.get(
+              Uri.parse(
+                  'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift/users/cognito/$cognitoId'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+            );
+
+            if (userResponse.statusCode != 200) {
+              throw Exception('Failed to get user information');
+            }
+
+            final userData = jsonDecode(userResponse.body);
+            final userId = userData['id'];
+
+            if (userId == null) {
+              throw Exception('Failed to get user ID');
+            }
+
+            // Create donation
+            final uri = Uri.parse(
+                'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift/donations');
+
+            final headers = {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            };
+
+            final amount = double.parse(_amountController.text);
+
+            // Validate all required fields
+            if (amount <= 0) {
+              throw Exception('Donation amount must be greater than 0');
+            }
+
+            if (userId == null || userId <= 0) {
+              throw Exception('Invalid donor ID');
+            }
+
+            if (widget.recipient.id == null || widget.recipient.id <= 0) {
+              throw Exception('Invalid recipient ID');
+            }
+
+            final requestBody = {
+              'amount': amount.toInt(), // Convert to integer
+              'donorId': userId,
+              'recipientId': widget.recipient.id,
+            };
+
+            debugPrint('Request URI: $uri');
+            debugPrint('Request headers: ${jsonEncode(headers)}');
+            debugPrint('Request body: ${jsonEncode(requestBody)}');
+
+            final response = await http.post(
+              uri,
+              headers: headers,
+              body: jsonEncode(requestBody),
+            );
+
+            debugPrint('Response status code: ${response.statusCode}');
+            debugPrint('Response headers: ${response.headers}');
+            debugPrint('Raw response body: ${response.body}');
+
+            if (response.statusCode != 200 && response.statusCode != 201) {
+              if (response.body.isEmpty) {
+                throw Exception(
+                    'Failed to create donation: Empty response from server (Status ${response.statusCode})');
+              }
+
+              try {
+                final errorData = jsonDecode(response.body);
+                final errorMessage = errorData['message'] ??
+                    errorData['error'] ??
+                    errorData['details'] ??
+                    'Unknown error occurred';
+                throw Exception('Failed to create donation: $errorMessage');
+              } catch (e) {
+                debugPrint('Error parsing error response: $e');
+                throw Exception(
+                    'Failed to create donation: Invalid error response from server (Status ${response.statusCode})');
+              }
+            }
+
+            // Only try to parse response if we have content
+            if (response.body.isNotEmpty) {
+              try {
+                final donationData = jsonDecode(response.body);
+                debugPrint(
+                    'Donation created successfully: ${donationData['id']}');
+              } catch (e) {
+                debugPrint('Warning: Could not parse successful response: $e');
+              }
+            }
+
+            // Create local transaction
+            final newTransaction = Transaction.create(
+              recipient: widget.recipient,
+              amount: amount,
+            );
+
+            debugPrint(
+                "✅ Logging PayPal transaction: \$${newTransaction.amount} to ${newTransaction.recipient.firstName ?? 'Anonymous'}");
+
+            ref
+                .read(transactionNotifierProvider.notifier)
+                .addTransaction(newTransaction);
+
+            showResult("Payment successful!");
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Payment successful!"),
+                backgroundColor: Colors.green,
+              ),
+            );
+            context.goNamed('/dashboard');
+          } catch (e) {
+            debugPrint("❌ Error in PayPal donation process: $e");
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content:
+                    Text("Failed to process PayPal donation: ${e.toString()}"),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         },
         onError: (data) {
-          //an error occured
-          showResult("error: ${data.reason}");
+          //an error occurred
+          showResult("Payment error: ${data.reason}");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Payment error: ${data.reason}")),
+          );
         },
         onShippingChange: (data) {
           //the user updated the shipping address
           showResult(
-            "shipping change: ${data.shippingChangeAddress?.adminArea1 ?? ""}",
+            "Shipping change: ${data.shippingChangeAddress?.adminArea1 ?? ""}",
           );
         },
       ),
@@ -191,106 +338,199 @@ class _DonatePageState extends ConsumerState<DonatePage> {
 
   @override
   Widget build(BuildContext context) {
+    final displayName =
+        widget.recipient.firstName ?? widget.recipient.nickname ?? 'Anonymous';
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: const Text("Donate")),
+      appBar: AppBar(
+        title: const Text(
+          "Make a Donation",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
       body: GestureDetector(
         onTap: () => _focusNode.unfocus(),
         child: SingleChildScrollView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  "https://www.giftcards.com/content/dam/bhn/live/nam/us/en/catalog-assets/product-images/07675041083/07675041083_1006089_master.png/_jcr_content/renditions/cq5dam.web.1280.1280.jpeg",
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                "You are donating to ${widget.recipient.firstName}",
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Text("Please choose a donation amount"),
-              const SizedBox(height: 16),
-              TextField(
-                focusNode: _focusNode,
-                controller: _amountController,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                onChanged: (value) {
-                  String formatted = _formatAmount(value);
-                  _amountController.value = TextEditingValue(
-                    text: formatted,
-                    selection:
-                        TextSelection.collapsed(offset: formatted.length),
-                  );
-                },
-                decoration: InputDecoration(
-                  prefixText: "\$",
-                  labelText: "Enter amount",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+              // Hero Section
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Theme.of(context).primaryColor,
+                      Theme.of(context).primaryColor.withOpacity(0.8),
+                    ],
                   ),
                 ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Support Someone in Need",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "You're donating to $displayName",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white.withOpacity(0.9),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+
+              // Instacart Gift Card
+              Container(
+                padding: const EdgeInsets.all(24),
+                child: Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      "https://www.instacart.com/assets/gift_cards/card-1-0b1b3484746b7043f23c5209a5119504f5b44a0ce30f46c2802c4d615d74b367.png",
+                      fit: BoxFit.contain,
                     ),
                   ),
-                  onPressed: () {
-                    _focusNode.unfocus();
-                    final text = _amountController.text;
-                    if (text.isEmpty ||
-                        double.tryParse(text) == null ||
-                        double.parse(text) <= 0) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Please enter a valid amount"),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                      return;
-                    }
-
-                    double amount = double.parse(text);
-                    final newTransaction = Transaction.create(
-                      recipient: widget.recipient,
-                      amount: amount,
-                    );
-
-                    debugPrint(
-                        "✅ Logging transaction: \$${newTransaction.amount} to ${newTransaction.recipient.firstName}");
-
-                    ref
-                        .read(transactionNotifierProvider.notifier)
-                        .addTransaction(newTransaction);
-
-                    context.goNamed('/dashboard');
-                  },
-                  child: const Text("Donate",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
               ),
-              const SizedBox(height: 10),
-              StandardButton(
-                title: 'DONATE WITH PAYPAL',
-                onPressed: usePaypal2,
+
+              // Content
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Donation Amount",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Enter the amount you'd like to donate",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      focusNode: _focusNode,
+                      controller: _amountController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      decoration: InputDecoration(
+                        prefixText: '\$',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Colors.grey[300]!,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                        labelText: 'Amount',
+                        labelStyle: TextStyle(
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      onChanged: (value) {
+                        final formatted = _formatAmount(value);
+                        if (formatted != value) {
+                          _amountController.value = TextEditingValue(
+                            text: formatted,
+                            selection: TextSelection.collapsed(
+                                offset: formatted.length),
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 32),
+                    const Text(
+                      "Donate with PayPal",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color(0xFF0070BA), // PayPal blue
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                4), // PayPal uses smaller border radius
+                          ),
+                          elevation: 0,
+                        ),
+                        onPressed: usePaypal2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.network(
+                              'https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-small.png',
+                              height: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Pay with PayPal',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -300,18 +540,29 @@ class _DonatePageState extends ConsumerState<DonatePage> {
   }
 
   void usePaypal2() {
+    final text = _amountController.text;
+    if (text.isEmpty ||
+        double.tryParse(text) == null ||
+        double.parse(text) <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter a valid amount"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    double amount = double.parse(text);
     if (_flutterPaypalNativePlugin.canAddMorePurchaseUnit) {
       _flutterPaypalNativePlugin.addPurchaseUnit(
         FPayPalPurchaseUnit(
-          // random prices
-          amount: Random().nextDouble() * 100,
-
-          ///please use your own algorithm for referenceId. Maybe ProductID?
-          referenceId: FPayPalStrHelper.getRandomString(16),
+          amount: amount,
+          referenceId: DateTime.now().millisecondsSinceEpoch.toString(),
         ),
       );
     }
-    // initPayPal();
+
     _flutterPaypalNativePlugin.makeOrder(
       action: FPayPalUserAction.payNow,
     );

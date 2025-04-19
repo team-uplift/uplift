@@ -47,6 +47,19 @@ class Recipient {
 
   factory Recipient.fromJson(Map<String, dynamic> json) {
     try {
+      // Check if the data is nested under recipientData
+      final recipientData = json['recipientData'] ?? json;
+
+      // Generate a default display name if no name fields are present
+      String? firstName = recipientData['firstName'] as String?;
+      String? lastName = recipientData['lastName'] as String?;
+      String? nickname = recipientData['nickname'] as String?;
+
+      // If no name fields are present, use a default based on ID
+      if (firstName == null && lastName == null && nickname == null) {
+        firstName = 'Recipient ${recipientData['id']}';
+      }
+
       return Recipient(
         id: json['id'] as int,
         firstName: json['first_name'] as String?,
@@ -64,12 +77,12 @@ class Recipient {
         identityLastVerified: json['identity_last_verified'] != null
             ? DateTime.parse(json['identity_last_verified'])
             : null,
-        incomeLastVerified: json['income_last_verified'] != null
-            ? DateTime.parse(json['income_last_verified'])
+        incomeLastVerified: recipientData['incomeLastVerified'] != null
+            ? DateTime.parse(recipientData['incomeLastVerified'])
             : null,
-        nickname: json['nickname'] as String?,
-        createdAt: json['created_at'] != null
-            ? DateTime.parse(json['created_at'])
+        nickname: nickname,
+        createdAt: recipientData['createdAt'] != null
+            ? DateTime.parse(recipientData['createdAt'])
             : null,
         imageURL: json['imageURL'] as String?,
         tagsLastGenerated: json['tagsLastGenerated'] != null
@@ -92,10 +105,10 @@ class Recipient {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'first_name': firstName,
-      'last_name': lastName,
-      'street_address1': streetAddress1,
-      'street_address2': streetAddress2,
+      'firstName': firstName,
+      'lastName': lastName,
+      'streetAddress1': streetAddress1,
+      'streetAddress2': streetAddress2,
       'city': city,
       'state': state,
       'zip_code': zipCode,
@@ -105,7 +118,7 @@ class Recipient {
       'identity_last_verified': identityLastVerified?.toIso8601String(),
       'income_last_verified': incomeLastVerified?.toIso8601String(),
       'nickname': nickname,
-      'created_at': createdAt?.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
       'imageURL': imageURL,
     };
   }

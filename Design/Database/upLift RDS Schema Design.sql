@@ -94,6 +94,8 @@ CREATE TABLE `favorite_recipients` (
   PRIMARY KEY (`donor_id`, `recipient_id`)
 );
 
+CREATE UNIQUE INDEX `UQ_users_cognito_id` ON `users` (`cognito_id`);
+
 ALTER TABLE `recipients` ADD CONSTRAINT `FK_recipients_user` FOREIGN KEY (`id`) REFERENCES `users` (`id`);
 
 ALTER TABLE `donors` ADD CONSTRAINT `FK_donors_user` FOREIGN KEY (`id`) REFERENCES `users` (`id`);

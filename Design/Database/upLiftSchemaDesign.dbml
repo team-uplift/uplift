@@ -14,6 +14,10 @@ Table users {
     email varchar(320) // email is serving as username for Cognito accounts
     recipient boolean // tracks whether the user is currently primarily a recipient or a donor
     created_at timestamp(3) [not null]
+
+  indexes {
+    cognito_id [unique, name: 'UQ_users_cognito_id']
+  }
 }
 
 // Note that total donation amount to recipient is tracked using separate donations table to avoid issues with
