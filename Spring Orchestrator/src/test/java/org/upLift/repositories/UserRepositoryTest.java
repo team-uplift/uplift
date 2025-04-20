@@ -86,6 +86,16 @@ public class UserRepositoryTest extends BaseRepositoryTest {
 				hasItems(hasProperty("tagName", is("job-training")), hasProperty("tagName", is("legal-aid")),
 						hasProperty("tagName", is("housing")), hasProperty("tagName", is("transportation")),
 						hasProperty("tagName", is("utilities"))));
+		// Check one of the linked tags
+		var linkedTag1 = recipientData.getSelectedTags().getFirst();
+		assertThat(linkedTag1.getTagName(), is("housing"));
+		assertThat(linkedTag1.getWeight(), is(0.62));
+		assertThat(linkedTag1.getAddedAt(), is(Instant.parse("2023-10-10T18:45:30.987Z")));
+		assertThat(linkedTag1.isSelected(), is(true));
+		var tag1 = linkedTag1.getTag();
+		assertThat(tag1.getTagName(), is("housing"));
+		assertThat(tag1.getCategory(), is("necessities"));
+		assertThat(tag1.getCreatedAt(), is(Instant.parse("2023-10-06T14:15:30.456Z")));
 
 		// Validate Timestamp fields
 		assertThat(recipientData.getIdentityLastVerified(), is(Instant.parse("2023-10-02T18:10:00.789Z")));
