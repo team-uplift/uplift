@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.upLift.model.*;
+import org.upLift.model.TremendousOrderRequest;
+import org.upLift.model.TremendousOrderResponse;
+import org.upLift.model.User;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -41,19 +43,19 @@ public class TremendousServiceImpl implements TremendousService {
 	 */
 	private TremendousOrderResponse postTremendousTransaction(TremendousOrderRequest orderRequest) {
 		return webClient.post()
-//			.uri(System.getenv("TREMENDOUS_URL") + System.getenv("TRE_ORDERS_PATH"))
-			.header("Authorization", STR."Bearer \{System.getenv("TREMENDOUS_API_KEY")}")
+			// .uri(System.getenv("TREMENDOUS_URL") + System.getenv("TRE_ORDERS_PATH"))
+			.header("Authorization", "Bearer " + System.getenv("TREMENDOUS_API_KEY"))
 			.header("Content-Type", "application/json")
 			.bodyValue(orderRequest)
 			.retrieve()
 			.onStatus(status -> status.value() == 400,
 					response -> response.bodyToMono(String.class).flatMap(errorMessage -> {
-                        log.error("400 Error: {}", errorMessage);
+						log.error("400 Error: {}", errorMessage);
 						return Mono.error(new RuntimeException("Bad request: " + errorMessage));
 					}))
 			.onStatus(status -> status.value() == 422,
 					response -> response.bodyToMono(String.class).flatMap(errorMessage -> {
-                        log.error("422 Error: {}", errorMessage);
+						log.error("422 Error: {}", errorMessage);
 						return Mono.error(new RuntimeException("Bad request: " + errorMessage));
 					}))
 			.bodyToMono(TremendousOrderResponse.class)

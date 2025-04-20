@@ -69,22 +69,22 @@ public class RecipientServiceImpl implements RecipientService {
 					recipient.setFormQuestions(formQuestions);
 				}
 
-				// Consolidate all form questions into a single string to invoke the tag generation service.
+				// Consolidate all form questions into a single string to invoke the tag
+				// generation service.
 				recipient.getFormQuestions().forEach(formQuestion -> {
-					recipient_prompt.set(STR."\{recipient_prompt} \{formQuestion.getAnswer()}");
+					recipient_prompt.set(recipient_prompt + " " + formQuestion.getAnswer());
 				});
 
 				Instant tagsUpdated = Instant.now();
 
 				// Only generate tags if there is a valid prompt
-				if(!recipient_prompt.get().isEmpty()) {
+				if (!recipient_prompt.get().isEmpty()) {
 					Map<String, Double> newTags = bedrockService.getTagsFromPrompt(recipient_prompt.get());
 
 					for (Map.Entry<String, Double> entry : newTags.entrySet()) {
 						String tag = entry.getKey();
 						Double weight = entry.getValue();
-						//if tag does not exist, make a new tag
-						// Note that since the tag name is itself the primary key, it just search
+						// if tag does not exist, make a new tag
 						Optional<Tag> knownTagResult = tagRepository.findById(tag);
 						if (knownTagResult.isEmpty()) {
 							Tag newTag = new Tag().tagName(tag);
@@ -93,7 +93,8 @@ public class RecipientServiceImpl implements RecipientService {
 
 							addTagToRecipient(recipient, newTag, weight, tagsUpdated);
 						}
-						// If a known tag does exist, check to see if it's linked to the recipient.
+						// If a known tag does exist, check to see if it's linked to the
+						// recipient.
 						else {
 							var knownTag = knownTagResult.get();
 							Optional<RecipientTag> assignedTag = findMatchingTag(recipient, knownTag.getTagName());
@@ -101,8 +102,9 @@ public class RecipientServiceImpl implements RecipientService {
 							if (assignedTag.isEmpty()) {
 								addTagToRecipient(recipient, knownTag, weight, tagsUpdated);
 							}
-							// If it is already linked, update the weight in case it's changed,
-							// as well as the "added at" to indicate that it's been relinked
+							// If it is already linked, update the weight in case it's
+							// changed, as well as the "added at" to indicate that it's
+							// been relinked
 							else {
 								assignedTag.get().setWeight(weight);
 								assignedTag.get().setAddedAt(tagsUpdated);
@@ -118,7 +120,8 @@ public class RecipientServiceImpl implements RecipientService {
 			else {
 				throw new TimingException("Recipient generated tags too recently.");
 			}
-		} else {
+		}
+		else {
 			throw new ModelException("Recipient not found.");
 		}
 	}
@@ -175,9 +178,10 @@ public class RecipientServiceImpl implements RecipientService {
 
 		AtomicReference<String> donorPrompt = new AtomicReference<>("");
 
-		// Consolidate all form questions into a single string to invoke the matching service.
+		// Consolidate all form questions into a single string to invoke the matching
+		// service.
 		donorQA.forEach(formQuestion -> {
-			donorPrompt.set(STR."\{donorPrompt} \{formQuestion.getAnswer()}");
+			donorPrompt.set(donorPrompt + " " + formQuestion.getAnswer());
 		});
 
 		// Submit prompt to generate appropriate tags.
