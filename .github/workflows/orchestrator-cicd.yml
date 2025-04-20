@@ -19,10 +19,12 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
+          cache: maven
       - name: Run tests
         run: mvn -Pci -f "./Spring Orchestrator/pom.xml" clean test
 
   build:
+    needs: test
     runs-on: [ubuntu-latest]
     steps:
       - name: Checkout code
