@@ -97,11 +97,20 @@ Table donor_prompts { // Tracks historical prompts that donor was given in a spe
 // Create a table to track tags to recipients
 // many-to-many. Many recipients can share a tag and a recipient can have many tags.
 Table recipient_tags {
-    tag_name varchar(64) [pk]
-    recipient_id integer [pk]
+    // Use a separate incremented PK instead of a composite primary key to simplify JPA mapping,
+    // it gets complicated with a many-to-many association table that has attributes of its won
+    id integer [primary key, increment]
+    tag_name varchar(64) [not null]
+    recipient_id integer [not null]
     weight double
     selected boolean [not null]
     added_at timestamp(3) [not null]
+
+    indexes {
+        // Create a unique index on the tag/recipient combination - not as good as a PK,
+        // but helps enforce uniqueness and improves searching
+        (recipient_id, tag_name) [unique, name: 'UQ_recipient_tags_recipient_id_tag_name']
+    }
 }
 
 // Create table to track which tags were shown to a donor in a specific session
