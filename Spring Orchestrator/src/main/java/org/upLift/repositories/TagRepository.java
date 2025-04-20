@@ -6,9 +6,7 @@ import org.upLift.model.Tag;
 
 import java.util.List;
 
-public interface TagRepository extends JpaRepository<Tag, Integer> {
-
-	List<Tag> findByTagName(String tagName);
+public interface TagRepository extends JpaRepository<Tag, String> {
 
 	/**
 	 * Retrieves a list of all tags that have been selected by at least one recipient.
