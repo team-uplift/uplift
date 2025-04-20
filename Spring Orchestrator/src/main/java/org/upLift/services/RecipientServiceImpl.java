@@ -56,13 +56,6 @@ public class RecipientServiceImpl implements RecipientService {
 		return recipientRepository.save(recipient);
 	}
 
-	/**
-	 * This method takes in a recipient ID and assumes the FormQuestions have been set for the
-	 *
-	 * @param id
-	 * @param formQuestions
-	 * @return
-	 */
 	@Override
 	public List<RecipientTag> generateRecipientTags(Integer id, List<FormQuestion> formQuestions) {
 		Recipient recipient = recipientRepository.findById(id).orElse(null);
@@ -178,12 +171,6 @@ public class RecipientServiceImpl implements RecipientService {
 		return recipientRepository.findByTags_Tag_TagName(tags, pageable);
 	}
 
-	/**
-	 * This method takes in a donor's question and answers and passes those as a prompt to amazon bedrock to gather a list
-	 * of known tags and then match those tags to donors that meet the donor's preferences in a fair and balanced strategy.
-	 * @param donorQA
-	 * @return
-	 */
 	@Override
 	public List<Recipient> getMatchingRecipientsByDonorPrompt(List<FormQuestion> donorQA) {
 

@@ -1,6 +1,8 @@
 package org.upLift.services;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 import org.upLift.model.FormQuestion;
 import org.upLift.model.Recipient;
 import org.upLift.model.RecipientTag;
@@ -9,6 +11,7 @@ import org.upLift.model.Tag;
 import java.util.List;
 import java.util.Set;
 
+@Validated
 public interface RecipientService {
 
 	/**
@@ -24,12 +27,26 @@ public interface RecipientService {
 
 	Recipient saveRecipient(@Valid Recipient recipient);
 
-	List<RecipientTag> generateRecipientTags(Integer id, @Valid List<FormQuestion> formQuestions);
+	/**
+	 * This method takes in a recipient ID and the specified form questions and answers,
+	 * using that plus recipient data to generate a set of matching tags.
+	 * @param id recipient persistence index
+	 * @param formQuestions questions and answers from the recipient's profile
+	 * @return tags that match the specified recipient's profile and form questions
+	 */
+	List<RecipientTag> generateRecipientTags(@NotNull Integer id, @Valid List<FormQuestion> formQuestions);
 
 	Recipient getRecipientById(Integer id);
 
 	List<Recipient> getMatchingRecipientsByTags(List<String> tags);
 
+	/**
+	 * This method takes in a donor's question and answers and passes those as a prompt to
+	 * amazon bedrock to gather a list of known tags, then matches those tags to
+	 * recipients that meet the donor's preferences in a fair and balanced strategy.
+	 * @param donorQA
+	 * @return
+	 */
 	List<Recipient> getMatchingRecipientsByDonorPrompt(List<FormQuestion> donorQA);
 
 	/**
