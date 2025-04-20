@@ -28,6 +28,8 @@ public class BedrockServiceImpl implements BedrockService {
 		this.tagRepository = tagRepository;
 	}
 
+	// @formatter:off
+	// Not sure why the Maven run previously worked with this formatting??
 	@Override
 	public Map<String, Double> getTagsFromPrompt(String prompt) {
         String finalPrompt = "Only generate a comma separated list of tags/descriptors and associated "
@@ -91,5 +93,6 @@ public class BedrockServiceImpl implements BedrockService {
 
         return finalResponse;
     }
+	// @formatter:on
 
 }
