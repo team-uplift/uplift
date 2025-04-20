@@ -15,9 +15,10 @@ public class FormQuestion {
 	@JsonProperty("answer")
 	private String answer;
 
-	public FormQuestion() {}
+	public FormQuestion() {
+	}
 
-	public FormQuestion (String question, String answer) {
+	public FormQuestion(String question, String answer) {
 		this.question = question;
 		this.answer = answer;
 	}

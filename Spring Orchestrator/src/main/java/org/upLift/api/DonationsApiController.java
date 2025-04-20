@@ -38,8 +38,8 @@ public class DonationsApiController implements DonationsApi {
 	private final RecipientService recipientService;
 
 	@Autowired
-	public DonationsApiController(TremendousService tremendousService,
-			UserService userService, DonationService donationService, RecipientService recipientService) {
+	public DonationsApiController(TremendousService tremendousService, UserService userService,
+			DonationService donationService, RecipientService recipientService) {
 		this.tremendousService = tremendousService;
 		this.userService = userService;
 		this.donationService = donationService;
@@ -97,23 +97,23 @@ public class DonationsApiController implements DonationsApi {
 				Donation newDonation = donationService.saveDonation(body);
 				LOG.info("Donation submitted successfully");
 
-					// Save last donation timestamp on recipient
-					Recipient recipientObject = recipientService.getRecipientById(body.getRecipientId());
-					recipientObject.setLastDonationTimestamp(Instant.now());
-					recipientService.saveRecipient(recipientObject);
+				// Save last donation timestamp on recipient
+				Recipient recipientObject = recipientService.getRecipientById(body.getRecipientId());
+				recipientObject.setLastDonationTimestamp(Instant.now());
+				recipientService.saveRecipient(recipientObject);
 
-					return new ResponseEntity<>(newDonation, HttpStatus.CREATED);
-				}
-				else {
-					LOG.error("Couldn't find recipient or donor. Check Ids.");
-					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-				}
+				return new ResponseEntity<>(newDonation, HttpStatus.CREATED);
+			}
+			else {
+				LOG.error("Couldn't find recipient or donor. Check Ids.");
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
 
-			}
-			catch (RuntimeException e) {
-				LOG.error("Couldn't serialize response for content type application/json", e);
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
 		}
+		catch (RuntimeException e) {
+			LOG.error("Couldn't serialize response for content type application/json", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 }

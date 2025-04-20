@@ -138,10 +138,9 @@ public class RecipientServiceImpl implements RecipientService {
 	/**
 	 * Links the specified tag to the specified recipient with the specified relevance
 	 * weight.
-	 *
 	 * @param recipient recipient to whom the tag should be linked
-	 * @param tag       tag to link to the recipient
-	 * @param weight    relevance weight of the tag to the recipient
+	 * @param tag tag to link to the recipient
+	 * @param weight relevance weight of the tag to the recipient
 	 * @param addedAt
 	 */
 	void addTagToRecipient(Recipient recipient, Tag tag, double weight, Instant addedAt) {
