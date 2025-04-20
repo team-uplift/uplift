@@ -10,9 +10,8 @@ import java.util.Objects;
 @Table(name = "users")
 public class User extends AbstractCreatedEntity {
 
-	@Column(name = "cognito_id", nullable = false)
+	@Column(name = "cognito_id", unique = true)
 	@JsonProperty("cognitoId")
-	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String cognitoId = null;
 
 	@Column(name = "email", nullable = false)
