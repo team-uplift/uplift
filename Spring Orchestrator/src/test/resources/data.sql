@@ -90,11 +90,11 @@ VALUES
 
     -- tags linked to recipient 2
     ('education', 2, 0.9, FALSE, '2023-10-03 12:40:50.789'),
-    ('job-training', 2, 0.9, TRUE, '2023-10-19 13:20:50.987'),
-    ('legal-aid', 2, 0.6, TRUE, '2023-10-20 14:25:50.321'),
     ('health', 2, 0.7, FALSE, '2023-10-06 10:20:30.456'),
-    ('housing', 2, 0.6, TRUE, '2023-10-10 14:45:30.987'),
-    ('transportation', 2, 0.5, TRUE, '2023-10-18 13:15:45.654'),
+    ('housing', 2, 0.62, TRUE, '2023-10-10 14:45:30.987'),
+    ('job-training', 2, 0.8, TRUE, '2023-10-19 13:20:50.987'),
+    ('legal-aid', 2, 0.6, TRUE, '2023-10-20 14:25:50.321'),
+    ('transportation', 2, 0.54, TRUE, '2023-10-18 13:15:45.654'),
     ('utilities', 2, 0.5, TRUE, '2023-10-19 11:35:20.456'),
 
     -- tags linked to recipient 5
