@@ -333,14 +333,12 @@ public class Recipient extends AbstractCreatedAt {
 	 * Get nickname
 	 * @return nickname
 	 **/
-	@JsonProperty("nickname")
 	@Schema(example = "PotatoKing", description = "nickname for the recipient, assigned when profile is created")
 
 	public String getNickname() {
 		return nickname;
 	}
 
-	@JsonIgnore
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
