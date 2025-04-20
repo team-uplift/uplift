@@ -51,7 +51,7 @@ public class UserRepositoryTest extends BaseRepositoryTest {
 		assertThat(donorData.getNickname(), is("KindDonor1"));
 
 		// Verify createdAt field (from AbstractCreatedAt)
-		assertThat(donorData.getCreatedAt(), is(Instant.parse("2023-10-10T16:30:50.789Z")));
+		assertThat(donorData.getCreatedAt(), is(Instant.parse("2023-10-10T12:30:50.789Z")));
 	}
 
 	void checkUser2(User user) {
@@ -90,18 +90,18 @@ public class UserRepositoryTest extends BaseRepositoryTest {
 		var linkedTag1 = recipientData.getSelectedTags().getFirst();
 		assertThat(linkedTag1.getTagName(), is("housing"));
 		assertThat(linkedTag1.getWeight(), is(0.62));
-		assertThat(linkedTag1.getAddedAt(), is(Instant.parse("2023-10-10T18:45:30.987Z")));
+		assertThat(linkedTag1.getAddedAt(), is(Instant.parse("2023-10-10T14:45:30.987Z")));
 		assertThat(linkedTag1.isSelected(), is(true));
 		var tag1 = linkedTag1.getTag();
 		assertThat(tag1.getTagName(), is("housing"));
 		assertThat(tag1.getCategory(), is("necessities"));
-		assertThat(tag1.getCreatedAt(), is(Instant.parse("2023-10-06T14:15:30.456Z")));
+		assertThat(tag1.getCreatedAt(), is(Instant.parse("2023-10-06T10:15:30.456Z")));
 
 		// Validate Timestamp fields
-		assertThat(recipientData.getIdentityLastVerified(), is(Instant.parse("2023-10-02T18:10:00.789Z")));
-		assertThat(recipientData.getIncomeLastVerified(), is(Instant.parse("2023-10-03T19:20:40.321Z")));
-		assertThat(recipientData.getTagsLastGenerated(), is(Instant.parse("2023-10-10T15:05:20.123Z")));
-		assertThat(recipientData.getCreatedAt(), is(Instant.parse("2023-10-05T15:25:40.456Z")));
+		assertThat(recipientData.getIdentityLastVerified(), is(Instant.parse("2023-10-02T14:10:00.789Z")));
+		assertThat(recipientData.getIncomeLastVerified(), is(Instant.parse("2023-10-03T15:20:40.321Z")));
+		assertThat(recipientData.getTagsLastGenerated(), is(Instant.parse("2023-10-10T11:05:20.123Z")));
+		assertThat(recipientData.getCreatedAt(), is(Instant.parse("2023-10-05T11:25:40.456Z")));
 	}
 
 	@Test
