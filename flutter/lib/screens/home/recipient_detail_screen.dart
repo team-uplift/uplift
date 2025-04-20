@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:uplift/components/standard_button.dart';
 import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/components/recipient_list_card.dart';
+import 'package:share_plus/share_plus.dart';
 
 class RecipientDetailPage extends StatefulWidget {
   final Recipient recipient;
@@ -23,6 +24,42 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
       widget.recipient.id != null &&
       (widget.recipient.firstName != null || widget.recipient.nickname != null);
 
+  Future<void> _shareRecipient() async {
+    try {
+      final name =
+          widget.recipient.firstName ?? widget.recipient.nickname ?? 'Someone';
+      final location =
+          widget.recipient.city != null && widget.recipient.state != null
+              ? ' from ${widget.recipient.city}, ${widget.recipient.state}'
+              : '';
+
+      final message = '''Help support $name$location on Uplift! 🎁
+
+${widget.recipient.lastAboutMe ?? widget.recipient.lastReasonForHelp ?? 'They need your support.'}
+
+Join me in making a difference today! 💝''';
+
+      final box = context.findRenderObject() as RenderBox?;
+      final sharePositionOrigin =
+          box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+
+      await Share.share(
+        message,
+        subject: 'Help Support $name on Uplift',
+        sharePositionOrigin: sharePositionOrigin,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error sharing: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +71,13 @@ class _RecipientDetailPageState extends State<RecipientDetailPage> {
             fontSize: 24,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: _shareRecipient,
+          ),
+          const SizedBox(width: 8),
+        ],
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
