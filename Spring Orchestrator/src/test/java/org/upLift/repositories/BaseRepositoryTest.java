@@ -17,7 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 // the CI config to ensure that time zone is set to UTC
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(BaseRepositoryTest.RepositoryTestConfig.class)
-public abstract class BaseRepositoryTest {
+abstract class BaseRepositoryTest {
 
 	@Configuration
 	public static class RepositoryTestConfig {
