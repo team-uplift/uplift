@@ -33,12 +33,16 @@ public class RecipientServiceImpl implements RecipientService {
 
 	private final RecipientTagsRepository recipientTagsRepository;
 
+	private final FairnessService fairnessService;
+
 	public RecipientServiceImpl(RecipientRepository recipientRepository, BedrockService bedrockService,
-			TagRepository tagRepository, RecipientTagsRepository recipientTagsRepository) {
+			TagRepository tagRepository, RecipientTagsRepository recipientTagsRepository,
+			FairnessService fairnessService) {
 		this.recipientRepository = recipientRepository;
 		this.bedrockService = bedrockService;
 		this.tagRepository = tagRepository;
 		this.recipientTagsRepository = recipientTagsRepository;
+		this.fairnessService = fairnessService;
 	}
 
 	@Override
@@ -165,6 +169,34 @@ public class RecipientServiceImpl implements RecipientService {
 		Pageable pageable = PageRequest.of(0, 5);
 
 		return recipientRepository.findByTags_Tag_TagName(tags, pageable);
+	}
+
+	/**
+	 * This method takes in a donor's question and answers and passes those as a prompt to amazon bedrock to gather a list
+	 * of known tags and then match those tags to donors that meet the donor's preferences in a fair and balanced strategy.
+	 * @param donorQA
+	 * @return
+	 */
+	@Override
+	public List<Recipient> getMatchingRecipientsByDonorPrompt(List<FormQuestion> donorQA) {
+
+		AtomicReference<String> donorPrompt = new AtomicReference<>("");
+
+		// Consolidate all form questions into a single string to invoke the matching service.
+		donorQA.forEach(formQuestion -> {
+			donorPrompt.set(STR."\{donorPrompt} \{formQuestion.getAnswer()}");
+		});
+
+		// Submit prompt to generate appropriate tags.
+		List<String> tags = bedrockService.matchTagsFromPrompt(donorPrompt.toString());
+
+		// Gather the recipientTags with the highest weight to
+		Set<RecipientTag> recipientTags = fairnessService.getWeightedRecipientTags(tags);
+
+		// Extract the best matching recipients from the recipient tags
+		Set<Recipient> recipients = fairnessService.getRecipientsFromRecipientTags(recipientTags);
+
+		return recipients.stream().toList();
 	}
 
 	@Override

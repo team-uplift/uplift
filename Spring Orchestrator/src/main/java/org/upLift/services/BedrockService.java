@@ -7,6 +7,6 @@ public interface BedrockService {
 
 	public Map<String, Double> getTagsFromPrompt(String prompt);
 
-	public Map<String, Double> matchTagsFromPrompt(String prompt);
+	public List<String> matchTagsFromPrompt(String prompt);
 
 }

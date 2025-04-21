@@ -7,21 +7,28 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.model.Media;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.upLift.model.RecipientTag;
+import org.upLift.model.Tag;
+import org.upLift.repositories.TagRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class BedrockServiceImpl implements BedrockService {
+
+	private final TagRepository tagRepository;
 
 	public Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private final ChatModel chatModel;
 
-	public BedrockServiceImpl(ChatModel chatModel) {
+	public BedrockServiceImpl(ChatModel chatModel, TagRepository tagRepository) {
 		this.chatModel = chatModel;
+		this.tagRepository = tagRepository;
 	}
 
 	@Override
@@ -49,22 +56,31 @@ public class BedrockServiceImpl implements BedrockService {
         return finalTags;
     }
 
+	/**
+     * This method will implement the LLM recipient matching based on the tag generation with a simple rag based prompting.
+     * @param prompt
+     * @return
+     */
 	@Override
-    public Map<String, Double> matchTagsFromPrompt(String prompt) {
-        String finalPrompt = STR."Match to the provided list tags/descriptors that best describe the contents of the following prompt and provide numeric weights to each tag to show how close the descriptor is to the prompt: \{prompt}";
+    public List<String> matchTagsFromPrompt(String prompt) {
+        List<Tag> knownTags = new ArrayList<>();
+        knownTags = tagRepository.findAll();
+
+        // Implement the injected rag content to filter the output and isolate responses to specifically known tags.
+        String allTags = STR."Tags: \{knownTags.stream().map(Tag::toPromptString).collect(Collectors.joining(", "))}";
+
+        // Build the request to send to bedrock with the rag sidecar.
+        String finalPrompt = STR."Match to the provided list tags that best match the contents of the following prompt. Only respond with a comma separated list of the tags. Do not respond in sentences. Do not organize the tags. Do not categorize the tags. Do not use underscores or dashes. \n Prompt: \{prompt} \n" + allTags;
         String response = ChatClient.create(chatModel)
                 .prompt()
-                .user(u -> u.text(finalPrompt)
-                        .media(Media.Format.DOC_CSV, new ClassPathResource("/tags.csv"))
-                )
+                .user(u -> u.text(finalPrompt))
                 .call()
                 .content();
 
-        // TODO - Process the output
-        // Recipients -> find the recipients have highest weighted tags
-        // Recipients -> filter recipients with need already met.
-        // Recipients -> Artificially inject recipients based on results.
-        Map<String, Double> finalResponse = new HashMap<>();
+        List<String> finalResponse = new ArrayList<>();
+        if (response != null) {
+            finalResponse = List.of(response.split(", "));
+        }
 
         logger.info(response);
 

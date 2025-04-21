@@ -12,12 +12,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.upLift.model.Donation;
+import org.upLift.model.Recipient;
 import org.upLift.model.TremendousOrderResponse;
 import org.upLift.model.UpliftJsonViews;
 import org.upLift.services.DonationService;
+import org.upLift.services.RecipientService;
 import org.upLift.services.TremendousService;
 import org.upLift.services.UserService;
 
+import java.time.Instant;
 import java.util.List;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
@@ -35,13 +38,16 @@ public class DonationsApiController implements DonationsApi {
 
 	private final DonationService donationService;
 
+	private final RecipientService recipientService;
+
 	@Autowired
 	public DonationsApiController(HttpServletRequest request, TremendousService tremendousService,
-			UserService userService, DonationService donationService) {
+			UserService userService, DonationService donationService, RecipientService recipientService) {
 		this.request = request;
 		this.tremendousService = tremendousService;
 		this.userService = userService;
 		this.donationService = donationService;
+		this.recipientService = recipientService;
 	}
 
 	@Override
@@ -97,6 +103,11 @@ public class DonationsApiController implements DonationsApi {
 
 					Donation newDonation = donationService.saveDonation(body);
 					LOG.info("Donation submitted successfully");
+
+					// Save last donation timestamp on recipient
+					Recipient recipientObject = recipientService.getRecipientById(body.getRecipientId());
+					recipientObject.setLastDonationTimestamp(Instant.now());
+					recipientService.saveRecipient(recipientObject);
 
 					return new ResponseEntity<>(newDonation, HttpStatus.CREATED);
 				}

@@ -127,7 +127,7 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 
 	@Override
 	public int compareTo(RecipientTag o) {
-		return tag.compareTo(o.getTag());
+		return getTagName().compareTo(o.getTagName());
 	}
 
 	@Override
