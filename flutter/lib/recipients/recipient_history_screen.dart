@@ -3,13 +3,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:uplift/models/donation_model.dart';
+import 'package:uplift/models/recipient_model.dart';
+import 'package:uplift/models/user_model.dart';
 import 'recipient_history_details_screen.dart';
 
 
 // combo of chatgpt and me
 class RecipientHistoryScreen extends StatefulWidget {
-  final Map<String, dynamic> profile;
-  const RecipientHistoryScreen({super.key, required this.profile});
+  final User profile;
+  final Recipient recipient;
+  const RecipientHistoryScreen({
+    super.key, 
+    required this.profile,
+    required this.recipient
+  });
 
   @override
   State<RecipientHistoryScreen> createState() => _RecipientHistoryScreenState();
@@ -28,8 +35,8 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
   bool _isLoading = true;
 
   Future<void> _loadDonations() async {
-    final userId = widget.profile['id'];
-    print("userid: $userId");
+    final userId = widget.profile.id;
+
     try {
 
       final response = await http.get(

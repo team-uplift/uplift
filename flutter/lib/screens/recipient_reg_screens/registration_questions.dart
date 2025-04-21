@@ -1,116 +1,113 @@
+// list of all questions for recipient registration
+// type is used to determine which field type is generated on the form
+// required can be toggled to false if we do not need answers to those questions
+// additional options for multiple choice questions can be added under the 'options' list
+
 List<Map<String, dynamic>> registrationQuestions = [
-  // ABOUT ME
+  // boiler plate location information
+  {
+    'key': 'basicAddressInfo',
+    'type': 'compositeAddress',
+    'q': 'Tell us where you’re currently living.',
+    'required': true,
+  },
+
+  // required questions for profile building
   {
     'key': 'lastAboutMe',
     'q': 'Tell us about yourself.',
     'type': 'text',
-    'id': 'special', 
+    'required': true,
   },
   {
     'key': 'lastReasonForHelp',
     'q': 'What is the biggest reason that you feel like you need help?',
     'type': 'text',
-    'id': 'special'
+    'required': true,
   },
 
-  // CHALLENGES & NEEDS
-  {
-    'key': 'mostDifficultThing',
-    'q': 'What is the most difficult thing you face day to day?',
-    'type': 'text',
-    'id': 'normal',
-  },
+  // additional questions to further refine tag generation
+  // {
+  //   'key': 'mostDifficultThing',
+  //   'q': 'What is the most difficult thing you face day to day?',
+  //   'type': 'text',
+  //   'required': true,
+  // },
   {
     'key': 'financialHardship',
     'q': 'What has been the hardest thing for you financially this year?',
     'type': 'multipleChoice',
     'options': ['Job loss', 'Medical bills', 'Rent/mortgage', 'Debt', 'Other'],
-    'id': 'normal',
+    'required': true,
   },
   {
     'key': 'jobSeeking',
     'q': 'Are you currently looking for work?',
     'type': 'multipleChoice',
     'options': ['Yes, full-time', 'Yes, part-time', 'No, unable to work', 'No, not needed'],
-    'id': 'normal',
+    'required': true,
   },
   {
     'key': 'workBarriers',
     'q': 'What barriers are preventing you from working or earning more income?',
     'type': 'checkbox',
     'options': ['Childcare', 'Transportation', 'Disability', 'Job training', 'No job openings'],
-    'id': 'normal',
+    'required': true,
   },
-  {
-    'key': 'housingChallenge',
-    'q': 'What is your biggest challenge related to housing?',
-    'type': 'multipleChoice',
-    'options': ['High rent', 'Unsafe conditions', 'Lack of stability', 'Other'],
-    'id': 'normal',
-  },
-  {
-    'key': 'housingRisk',
-    'q': 'Are you at risk of losing housing in the next 3 months?',
-    'type': 'multipleChoice',
-    'options': ['Yes', 'No'],
-    'id': 'normal',
-  },
-  {
-    'key': 'supportSystem',
-    'q': 'Do you have a support system of friends, family, or community?',
-    'type': 'multipleChoice',
-    'options': ['Yes', 'No'],
-    'id': 'normal',
-  },
-  {
-    'key': 'supportNeeded',
-    'q': 'What kind of support do you wish you had more of?',
-    'type': 'checkbox',
-    'options': ['Emotional', 'Financial', 'Housing', 'Legal'],
-    'id': 'normal',
-  },
-  {
-    'key': 'mentalHealthAccess',
-    'q': 'Do you have regular access to mental health support or counseling?',
-    'type': 'multipleChoice',
-    'options': ['Yes', 'No'],
-    'id': 'normal',
-  },
-  {
-    'key': 'emotionalChallenge',
-    'q': 'What has been the most emotionally difficult part of your current situation?',
-    'type': 'text',
-    'id': 'normal',
-  },
-  
-  // 🏷️ TAG SELECTION
-  // TODO potentailly remove tag selection from here although it would be nice if they were all grouped together like this
   // {
-  //   'key': 'tags',
-  //   'q': 'Select up to 10 interests or areas that describe you.',
-  //   'type': 'tagSelection', // Special UI
+  //   'key': 'housingChallenge',
+  //   'q': 'What is your biggest challenge related to housing?',
+  //   'type': 'multipleChoice',
+  //   'options': ['High rent', 'Unsafe conditions', 'Lack of stability', 'Other'],
+  //   'required': true,
   // },
-  
-  
-  
-  
-  {
-    'key': 'generateTags',
-    'q': 'Click "Generate Tags" to proceed to tag selection.',
-    'type': 'generateTags', // Special type to handle separately
-  },
+  // {
+  //   'key': 'housingRisk',
+  //   'q': 'Are you at risk of losing housing in the next 3 months?',
+  //   'type': 'multipleChoice',
+  //   'options': ['Yes', 'No'],
+  //   'required': true,
+  // },
+  // {
+  //   'key': 'supportSystem',
+  //   'q': 'Do you have a support system of friends, family, or community?',
+  //   'type': 'multipleChoice',
+  //   'options': ['Yes', 'No'],
+  //   'required': true,
+  // },
+  // {
+  //   'key': 'supportNeeded',
+  //   'q': 'What kind of support do you wish you had more of?',
+  //   'type': 'checkbox',
+  //   'options': ['Emotional', 'Financial', 'Housing', 'Legal'],
+  //   'required': true,
+  // },
+  // {
+  //   'key': 'mentalHealthAccess',
+  //   'q': 'Do you have regular access to mental health support or counseling?',
+  //   'type': 'multipleChoice',
+  //   'options': ['Yes', 'No'],
+  //   'required': true,
+  // },
+  // {
+  //   'key': 'emotionalChallenge',
+  //   'q': 'What has been the most emotionally difficult part of your current situation?',
+  //   'type': 'text',
+  //   'required': true,
+  // },
 
-  {
-    'key': 'showTags',
-    'q': '',
-    'type': 'showTags',
-    'id': 'tags', // Special type to handle separately
-  },
-
-  // ✅ CONFIRMATION STEP
+  // last step to show answers before generating tags
   {
     'key': 'confirmation',
     'q': 'Review your answers before submitting.',
     'type': 'confirmation',
+  },
+
+  // generated tags selection screen --> not allowed to once this point is reached
+  {
+    'key': 'showTags',
+    'q': '',
+    'type': 'showTags',
+    'id': 'tags',
   },
 ];

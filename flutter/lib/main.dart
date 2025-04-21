@@ -181,19 +181,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Authenticator(
-      signUpForm: SignUpForm.custom(fields: [
-        SignUpFormField.givenName(),
-        SignUpFormField.familyName(),
-        SignUpFormField.username(),
-        SignUpFormField.email(required: true),
-        SignUpFormField.password(),
-      ]),
-      child: MaterialApp.router(
-        routerConfig: _router,
-        debugShowCheckedModeBanner: false,
-        builder: Authenticator.builder(),
+      signUpForm: SignUpForm.custom(
+        fields: [
+          // SignUpFormField.givenName(),
+          // SignUpFormField.familyName(),
+          SignUpFormField.username(),
+          SignUpFormField.email(required: true),
+          SignUpFormField.password(),
+        ]
       ),
-    );
+           child: MaterialApp.router(
+             routerConfig: _router,
+             debugShowCheckedModeBanner: false,
+             builder: Authenticator.builder(),
+       ),
+     );
     // return MaterialApp.router(
     //   routerConfig: _router,
     //   debugShowCheckedModeBanner: false,

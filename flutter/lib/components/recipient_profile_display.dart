@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/models/tag_model.dart';
 import 'package:uplift/components/tag_card.dart';
+import 'package:uplift/components/address_block.dart';
 
 class RecipientProfileDisplay extends StatelessWidget {
   final Map<String, String> profileFields;
   final List<Tag> tags;
   final VoidCallback? onVerifyPressed;
+  final Recipient recipient;
 
   const RecipientProfileDisplay({
     super.key,
     required this.profileFields,
     required this.tags,
     required this.onVerifyPressed,
+    required this.recipient,
   });
 
   @override
@@ -21,8 +25,9 @@ class RecipientProfileDisplay extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+
         ...entries.map((entry) {
-          final isVerification = entry.key == "Verification";
+          final isVerification = entry.key == "Income Verification";
           final isVerified = entry.value == "✅ Verified";
 
           return Column(
@@ -49,7 +54,8 @@ class RecipientProfileDisplay extends StatelessWidget {
                   ),
                   if (isVerification && !isVerified)
                     IconButton(
-                      icon: const Icon(Icons.camera_alt, color: Colors.red),
+                      icon: const Icon(Icons.camera_alt, color: Color.fromRGBO(244, 67, 54, 1)),
+                      // TODO add camera verification
                       onPressed: onVerifyPressed ?? () {},
                     ),
                 ],

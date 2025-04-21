@@ -1,3 +1,5 @@
+import 'package:uplift/models/tag_model.dart';
+
 class Recipient {
   final int id;
   final String? firstName;
@@ -9,11 +11,16 @@ class Recipient {
   final String? zipCode;
   final String? lastAboutMe;
   final String? lastReasonForHelp;
+  final List<Map<String, dynamic>>? formQuestions;
   final DateTime? identityLastVerified;
   final DateTime? incomeLastVerified;
   final String? nickname;
   final DateTime? createdAt;
   final String? imageURL;
+  final DateTime? lastDonationTimestamp;
+  final List<Tag>? tags;
+  final DateTime? tagsLastGenerated;
+
 
   const Recipient({
     required this.id,
@@ -26,11 +33,16 @@ class Recipient {
     this.zipCode,
     this.lastAboutMe,
     this.lastReasonForHelp,
+    this.formQuestions,
     this.identityLastVerified,
     this.incomeLastVerified,
     this.nickname,
     this.createdAt,
     this.imageURL,
+    this.lastDonationTimestamp,
+    this.tags,
+    this.tagsLastGenerated
+    
   });
 
   factory Recipient.fromJson(Map<String, dynamic> json) {
@@ -49,18 +61,21 @@ class Recipient {
       }
 
       return Recipient(
-        id: recipientData['id'] as int,
-        firstName: firstName,
-        lastName: lastName,
-        streetAddress1: recipientData['streetAddress1'] as String?,
-        streetAddress2: recipientData['streetAddress2'] as String?,
-        city: recipientData['city'] as String?,
-        state: recipientData['state'] as String?,
-        zipCode: recipientData['zipCode'] as String?,
-        lastAboutMe: recipientData['lastAboutMe'] as String?,
-        lastReasonForHelp: recipientData['lastReasonForHelp'] as String?,
-        identityLastVerified: recipientData['identityLastVerified'] != null
-            ? DateTime.parse(recipientData['identityLastVerified'])
+        id: json['id'] as int,
+        firstName: json['firstName'] as String?,
+        lastName: json['lastName'] as String?,
+        streetAddress1: json['streetAddress1'] as String?,
+        streetAddress2: json['streetAddress2'] as String?,
+        city: json['city'] as String?,
+        state: json['state'] as String?,
+        zipCode: json['zipCode'] as String?,
+        lastAboutMe: json['lastAboutMe'] as String?,
+        lastReasonForHelp: json['lastReasonForHelp'] as String?,
+        formQuestions: (json['formQuestions'] as List<dynamic>?)
+          ?.map((e) => Map<String, dynamic>.from(e))
+          .toList() ?? [],
+        identityLastVerified: json['identityLastVerified'] != null
+            ? DateTime.parse(json['identityLastVerified'])
             : null,
         incomeLastVerified: recipientData['incomeLastVerified'] != null
             ? DateTime.parse(recipientData['incomeLastVerified'])
@@ -69,7 +84,16 @@ class Recipient {
         createdAt: recipientData['createdAt'] != null
             ? DateTime.parse(recipientData['createdAt'])
             : null,
-        imageURL: recipientData['imageUrl'] as String?,
+        imageURL: json['imageURL'] as String?,
+        tagsLastGenerated: json['tagsLastGenerated'] != null
+            ? DateTime.parse(json['tagsLastGenerated'])
+            : null,
+        lastDonationTimestamp: json['lastDonationTimestamp'] != null
+            ? DateTime.parse(json['lastDonationTimestamp'])
+            : null,
+        tags: (json['tags'] is List)
+            ? (json['tags'] as List).map((t) => Tag.fromJson(t)).toList()
+            : null,
       );
     } catch (e) {
       print('Error parsing Recipient from JSON: $e');
@@ -87,11 +111,12 @@ class Recipient {
       'streetAddress2': streetAddress2,
       'city': city,
       'state': state,
-      'zipCode': zipCode,
-      'lastAboutMe': lastAboutMe,
-      'lastReasonForHelp': lastReasonForHelp,
-      'identityLastVerified': identityLastVerified?.toIso8601String(),
-      'incomeLastVerified': incomeLastVerified?.toIso8601String(),
+      'zip_code': zipCode,
+      'last_about_me': lastAboutMe,
+      'last_reason_for_help': lastReasonForHelp,
+      'formQuestions': formQuestions,
+      'identity_last_verified': identityLastVerified?.toIso8601String(),
+      'income_last_verified': incomeLastVerified?.toIso8601String(),
       'nickname': nickname,
       'createdAt': createdAt?.toIso8601String(),
       'imageURL': imageURL,
@@ -102,4 +127,45 @@ class Recipient {
   String toString() {
     return 'Recipient(id: $id, firstName: $firstName, lastName: $lastName, nickname: $nickname)';
   }
+
+  Recipient copyWith({
+    int? id,
+    String? firstName,
+    String? lastName,
+    String? streetAddress1,
+    String? streetAddress2,
+    String? city,
+    String? state,
+    String? zipCode,
+    String? lastAboutMe,
+    String? lastReasonForHelp,
+    DateTime? identityLastVerified,
+    DateTime? incomeLastVerified,
+    String? nickname,
+    DateTime? createdAt,
+    String? imageURL,
+    List<Map<String, dynamic>>? formQuestions,
+    List<Tag>? tags,
+  }) {
+    return Recipient(
+      id: id ?? this.id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      streetAddress1: streetAddress1 ?? this.streetAddress1,
+      streetAddress2: streetAddress2 ?? this.streetAddress2,
+      city: city ?? this.city,
+      state: state ?? this.state,
+      zipCode: zipCode ?? this.zipCode,
+      lastAboutMe: lastAboutMe ?? this.lastAboutMe,
+      lastReasonForHelp: lastReasonForHelp ?? this.lastReasonForHelp,
+      identityLastVerified: identityLastVerified ?? this.identityLastVerified,
+      incomeLastVerified: incomeLastVerified ?? this.incomeLastVerified,
+      nickname: nickname ?? this.nickname,
+      createdAt: createdAt ?? this.createdAt,
+      imageURL: imageURL ?? this.imageURL,
+      formQuestions: formQuestions ?? this.formQuestions,
+      tags: tags ?? this.tags,
+    );
+  }
+
 }

@@ -106,7 +106,7 @@ class _TagSelectionState extends State<TagSelection> {
             ElevatedButton(
               // TODO implement submit logic here
               onPressed: selectedTags.isNotEmpty ? _submit : null,
-              child: const Text("Next"),
+              child: const Text("Submit"),
             ),
           ],
         )
