@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:uplift/api/recipient_api.dart';
 import 'package:uplift/models/donation_model.dart';
 import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/models/user_model.dart';
 import 'recipient_history_details_screen.dart';
+import 'package:uplift/api/recipient_api.dart';
 
 
 // combo of chatgpt and me
@@ -35,35 +37,13 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
   bool _isLoading = true;
 
   Future<void> _loadDonations() async {
-    final userId = widget.profile.id;
+    // final userId = widget.profile.id;
+    final donations = await RecipientApi.fetchDonationsForRecipient('${widget.profile.id}');
 
-    try {
-
-      final response = await http.get(
-        Uri.parse('http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift/donations/recipient/$userId'),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      print("get donation response: ${response.body}");
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-
-        setState(() {
-          historyItems = data.map((json) => Donation.fromJson(json)).toList();
-          _isLoading = false;
-        });
-
-        // final data = testProfile;
-
-      } else {
-        print("History fetch failed: ${response.statusCode}");
-        _isLoading = false;
-      }
-    } catch (e) {
-      print("Error loading history: $e");
+    setState(() {
+      historyItems = donations;
       _isLoading = false;
-    }
+    });
   }
 
 
@@ -106,7 +86,7 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => HistoryDetailScreen(item: donation,),
+                builder: (context) => HistoryDetailScreen(item: donation, profile: widget.profile,),
               ),
             );
           },
@@ -119,6 +99,5 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
 }
 
 // TODO format and clean up
-// TODO ensure API is hooked up to bring in variable amount of history items
 // TODO Need the db tro be seeded with donations to continue with next steps. 
 // i could create some demo donations but would rather ping api instead

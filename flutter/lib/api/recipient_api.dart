@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
+import '../models/donation_model.dart';
+
 class RecipientApi {
   static const String baseUrl = 'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
 
@@ -91,5 +93,60 @@ class RecipientApi {
       return false;
     }
   }
+
+  static Future<List<Donation>> fetchDonationsForRecipient(String recipientId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/donations/recipient/$recipientId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((json) => Donation.fromJson(json)).toList();
+      } else {
+        print("Failed to fetch donations: ${response.statusCode}");
+        return [];
+      }
+    } catch (e) {
+      print("Error fetching donations: $e");
+      return [];
+    }
+  }
+
+  static Future<bool> sendThankYouMessage({
+    // required int userId,
+    required int donationId,
+    required String message,
+  }) async {
+
+
+    final payload = {
+      // 'id': userId,
+      'donationId': donationId,
+      'message': message,
+      // 'donorRead': false,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/messages'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(payload),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print("Message sent successfully.");
+        return true;
+      } else {
+        print("Failed to send message: ${response.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("Error sending thank you message: $e");
+      return false;
+    }
+  }
+
 }
 
