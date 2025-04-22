@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -101,7 +102,10 @@ public class FairnessServiceImpl implements FairnessService {
 		// Order the recipients
 		sortWeightedRecipients(weightedRecipients);
 
-		var recipients = weightedRecipients.stream().map(WeightedRecipient::recipient).toList();
+		var recipients = weightedRecipients.stream()
+			.map(WeightedRecipient::recipient)
+			// We don't want an immutable list, so use the Collector instead of toList()
+			.collect(Collectors.toList());
 
 		// Add or remove recipients as needed to match the desired number of recipients
 		recipients = resizeRecipients(recipients);
