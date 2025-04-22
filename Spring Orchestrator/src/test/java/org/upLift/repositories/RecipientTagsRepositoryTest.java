@@ -52,4 +52,5 @@ class RecipientTagsRepositoryTest extends BaseRepositoryTest {
 		assertThat(tag.isSelected(), is(true));
 		assertThat(tag.getAddedAt(), is(Instant.parse("2023-10-05T09:30:30.123Z")));
 	}
+
 }

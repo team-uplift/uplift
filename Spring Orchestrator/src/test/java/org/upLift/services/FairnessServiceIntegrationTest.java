@@ -41,7 +41,8 @@ class FairnessServiceIntegrationTest {
 	@Test
 	void getRecipientsFromTags() {
 		// Recipient 1 selected both "childcare" and "health
-		// Recipient 2 matched "education" and "health", but didn't select either - expired income verification
+		// Recipient 2 matched "education" and "health", but didn't select either -
+		// expired income verification
 		// Recipient 5 selected "childcare", also matched "health" but not selected
 		// Recipient 6 selected "health" - no income verification
 		// Recipient 7 doesn't match any of the tags
