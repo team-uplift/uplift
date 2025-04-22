@@ -127,6 +127,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private String generateRandomNickname() {
+		List<String> colors = List.of("Red", "Blue", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown", "Black",
+				"White", "Cyan", "Magenta", "Teal", "Lavender", "Maroon", "Navy", "Olive", "Silver", "Gold", "Beige",
+				"Coral", "Turquoise", "Indigo", "Violet", "Amber", "Emerald", "Peach", "Mint", "Charcoal", "Ruby",
+				"Sapphire", "Crimson", "Ivory", "Lilac", "Periwinkle", "Aquamarine", "Fuchsia", "Mustard", "Plum",
+				"Tan");
 		List<String> nicknames = List.of("alligator", "anteater", "armadillo", "auroch", "axolotl", "badger", "bat",
 				"beaver", "buffalo", "camel", "chameleon", "cheetah", "chipmunk", "chinchilla", "chupacabra",
 				"cormorant", "coyote", "crow", "dingo", "dinosaur", "dolphin", "duck", "dragon", "elephant", "ferret",
@@ -136,7 +141,9 @@ public class UserServiceImpl implements UserService {
 				"quagga", "rabbit", "raccoon", "rhino", "sheep", "shrew", "skunk", "slow loris", "squirrel", "turtle",
 				"walrus", "wolf", "wolverine", "wombat");
 		Random random = new Random();
-		return nicknames.get(random.nextInt(nicknames.size()));
+		String color = colors.get(random.nextInt(colors.size()));
+		String nickname = nicknames.get(random.nextInt(nicknames.size()));
+		return color + " " + nickname;
 	}
 
 	private String generateIconUrl(String seed) {
