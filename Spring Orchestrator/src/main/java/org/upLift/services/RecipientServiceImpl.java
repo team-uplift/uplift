@@ -187,13 +187,10 @@ public class RecipientServiceImpl implements RecipientService {
 		// Submit prompt to generate appropriate tags.
 		List<String> tags = bedrockService.matchTagsFromPrompt(donorPrompt.toString());
 
-		// Gather the recipientTags with the highest weight to
-		Set<RecipientTag> recipientTags = fairnessService.getWeightedRecipientTags(tags);
+		// Extract the best matching recipients from the selected
+		List<Recipient> recipients = fairnessService.getRecipientsFromTags(tags);
 
-		// Extract the best matching recipients from the recipient tags
-		Set<Recipient> recipients = fairnessService.getRecipientsFromRecipientTags(recipientTags);
-
-		return recipients.stream().toList();
+		return recipients;
 	}
 
 	@Override
