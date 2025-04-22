@@ -13,6 +13,6 @@ public interface RecipientTagsRepository extends JpaRepository<RecipientTag, Int
 						JOIN FETCH recipientTag.recipient
 						WHERE recipientTag.tag.tagName = :tagName
 			""")
-	List<RecipientTag> getRecipientTagsByTag_TagName(String tagName);
+	List<RecipientTag> getRecipientTagsByTagName(String tagName);
 
 }

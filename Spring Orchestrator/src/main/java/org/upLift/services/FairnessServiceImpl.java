@@ -125,7 +125,7 @@ public class FairnessServiceImpl implements FairnessService {
 	Map<Integer, RecipientWithMatchedTagWeights> buildRecipientMap(List<String> tags) {
 		var recipientTagMap = new HashMap<Integer, RecipientWithMatchedTagWeights>();
 		for (String tag : tags) {
-			List<RecipientTag> recipientTags = recipientTagsRepository.getRecipientTagsByTag_TagName(tag);
+			List<RecipientTag> recipientTags = recipientTagsRepository.getRecipientTagsByTagName(tag);
 			for (RecipientTag recipientTag : recipientTags) {
 				var recipient = recipientTag.getRecipient();
 				if (excludeUnverifiedIncome && !recipient.isIncomeVerified()) {

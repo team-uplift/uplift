@@ -131,8 +131,8 @@ class FairnessServiceImplUnitTest {
 																		// tags
 
 		// Mock repository responses
-		Mockito.when(recipientTagsRepository.getRecipientTagsByTag_TagName("tag1")).thenReturn(List.of(tag1, tag3));
-		Mockito.when(recipientTagsRepository.getRecipientTagsByTag_TagName("tag2")).thenReturn(List.of(tag2, tag4));
+		Mockito.when(recipientTagsRepository.getRecipientTagsByTagName("tag1")).thenReturn(List.of(tag1, tag3));
+		Mockito.when(recipientTagsRepository.getRecipientTagsByTagName("tag2")).thenReturn(List.of(tag2, tag4));
 
 		// Call method under test
 		List<Recipient> result = fairnessService.getRecipientsFromTags(List.of("tag1", "tag2"));
@@ -198,13 +198,13 @@ class FairnessServiceImplUnitTest {
 		var tag5D = createRecipientTag(recipient2, "tag4", 0.8, true);
 		recipient5.setTags(new TreeSet<>(List.of(tag5A, tag5B, tag5C, tag5D)));
 
-		Mockito.when(recipientTagsRepository.getRecipientTagsByTag_TagName("tag1"))
+		Mockito.when(recipientTagsRepository.getRecipientTagsByTagName("tag1"))
 			.thenReturn(List.of(tag1A, tag2A, tag3A, tag4A, tag5A));
-		Mockito.when(recipientTagsRepository.getRecipientTagsByTag_TagName("tag2"))
+		Mockito.when(recipientTagsRepository.getRecipientTagsByTagName("tag2"))
 			.thenReturn(List.of(tag1B, tag2B, tag3B, tag4B, tag5B));
-		Mockito.when(recipientTagsRepository.getRecipientTagsByTag_TagName("tag3"))
+		Mockito.when(recipientTagsRepository.getRecipientTagsByTagName("tag3"))
 			.thenReturn(List.of(tag1C, tag2C, tag3C, tag4C, tag5C));
-		Mockito.when(recipientTagsRepository.getRecipientTagsByTag_TagName("tag4"))
+		Mockito.when(recipientTagsRepository.getRecipientTagsByTagName("tag4"))
 			.thenReturn(List.of(tag1D, tag2D, tag3D, tag5D));
 
 		var result = fairnessService.buildRecipientMap(List.of("tag1", "tag2", "tag3", "tag4"));
