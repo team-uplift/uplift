@@ -50,12 +50,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Optional<User> getUserByEmail(String email) {
-		var result = userRepository.findByEmail(email);
-		return loadChildData(result);
-	}
-
-	@Override
 	public User addUser(User user) {
 		// Donor entries may not come with any associated donor data, in which case it
 		// must be added manually

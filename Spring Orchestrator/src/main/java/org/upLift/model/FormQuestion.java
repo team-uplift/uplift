@@ -15,6 +15,14 @@ public class FormQuestion {
 	@JsonProperty("answer")
 	private String answer;
 
+	public FormQuestion() {
+	}
+
+	public FormQuestion(String question, String answer) {
+		this.question = question;
+		this.answer = answer;
+	}
+
 	@Schema(example = "What was the biggest challenge in the last 6 months?",
 			description = "question posed to the user")
 

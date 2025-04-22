@@ -2,9 +2,7 @@ package org.upLift.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /***
@@ -16,11 +14,11 @@ import java.util.List;
 public class TremendousOrderRequest {
 
 	public TremendousOrderRequest(User recipient, int donation_amount) {
-        reward = new Reward(STR."\{recipient.getRecipientData().getFirstName()} \{recipient.getRecipientData().getLastName()}",
-                recipient.getEmail(),
-                donation_amount);
+		reward = new Reward(
+				recipient.getRecipientData().getFirstName() + " " + recipient.getRecipientData().getLastName(),
+				recipient.getEmail(), donation_amount);
 
-    }
+	}
 
 	private Payment payment = new Payment(); // Payment is set by an env variable but for
 												// the POC will always be "BALANCE"

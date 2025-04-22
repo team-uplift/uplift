@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Table(name = "recipients")
 public class Recipient extends AbstractCreatedAt {
 
-	@OneToOne
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	@MapsId
 	@JoinColumn(name = "id", referencedColumnName = "id")
 	@JsonIgnore
@@ -111,7 +111,7 @@ public class Recipient extends AbstractCreatedAt {
 	private Instant lastDonationTimestamp;
 
 	@Valid
-	@OneToMany(mappedBy = "recipient", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	// Only want to send the set of "selected" tags to the front end,
 	// since only the back end cares about tracking the "unselected" tags
 	@JsonIgnore
@@ -369,11 +369,13 @@ public class Recipient extends AbstractCreatedAt {
 		return this;
 	}
 
-	public Recipient addTagsItem(RecipientTag tagsItem) {
+	public Recipient addTagsItem(RecipientTag tag) {
 		if (this.tags == null) {
 			this.tags = new TreeSet<>();
 		}
-		this.tags.add(tagsItem);
+		tag.setRecipient(this);
+		this.tags.add(tag);
+
 		return this;
 	}
 
@@ -381,6 +383,8 @@ public class Recipient extends AbstractCreatedAt {
 	 * Get tags
 	 * @return tags
 	 **/
+
+	@Schema(implementation = RecipientTag.class, description = "tags linked to the recipient, ordered by tag name")
 
 	@Valid
 	@JsonIgnore
@@ -391,6 +395,11 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonIgnore
 	public void setTags(SortedSet<RecipientTag> tags) {
 		this.tags = tags;
+		if (tags != null) {
+			for (RecipientTag tag : tags) {
+				tag.setRecipient(this);
+			}
+		}
 	}
 
 	@Schema(implementation = RecipientTag.class, description = "tags linked to the recipient")

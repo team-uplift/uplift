@@ -12,14 +12,10 @@ import java.time.Instant;
 import java.util.Objects;
 
 @Entity
-@Table(name = "recipient_tags")
-public class RecipientTag implements Comparable<RecipientTag>, Serializable {
-
-	// Apparently many-to-many association tables only work correctly with @EmbeddedId,
-	// not @IdClass
-	@EmbeddedId
-	@JsonIgnore
-	private RecipientTagId id;
+@Table(name = "recipient_tags",
+		uniqueConstraints = { @UniqueConstraint(name = "UQ_recipient_tags_recipient_id_tag_name",
+				columnNames = { "recipient_id", "tag_name" }) })
+public class RecipientTag extends AbstractEntity implements Comparable<RecipientTag>, Serializable {
 
 	@Column(name = "weight")
 	@JsonProperty("weight")
@@ -33,8 +29,7 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 	@JsonProperty("selected")
 	private boolean selected;
 
-	@ManyToOne
-	@MapsId("recipientId")
+	@ManyToOne(optional = false)
 	// Even though none of the documentation includes this @JoinColumn, it's necessary
 	// because
 	// Hibernate/Spring ignore the @Column annotation on the RecipientTagId properties
@@ -42,8 +37,7 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 	@JsonBackReference
 	private Recipient recipient;
 
-	@ManyToOne
-	@MapsId("tagName")
+	@ManyToOne(optional = false)
 	// Even though none of the documentation includes this @JoinColumn, it's necessary
 	// because
 	// Hibernate/Spring ignore the @Column annotation on the RecipientTagId properties
@@ -58,18 +52,20 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 		addedAt = Instant.now();
 	}
 
-	public RecipientTagId getId() {
-		return id;
-	}
-
-	public void setId(RecipientTagId id) {
-		this.id = id;
+	public RecipientTag id(Integer id) {
+		this.setId(id);
+		return this;
 	}
 
 	// Mark as @JsonIgnore to avoid having issues with duplicate JSON properties
 	@JsonIgnore
 	public String getTagName() {
-		return id.getTagName();
+		return tag.getTagName();
+	}
+
+	public RecipientTag weight(double weight) {
+		this.weight = weight;
+		return this;
 	}
 
 	@Schema(example = "0.587", description = "relevance weight of the tag for the recipient, 0-1")
@@ -95,6 +91,11 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+
+	public RecipientTag addedAt(Instant addedAt) {
+		this.addedAt = addedAt;
+		return this;
 	}
 
 	@Schema(example = "2025-03-22T18:57:23.571Z", description = "date/time the tag was last linked with the recipient")
@@ -135,61 +136,12 @@ public class RecipientTag implements Comparable<RecipientTag>, Serializable {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		RecipientTag that = (RecipientTag) o;
-		return Objects.equals(id, that.getId());
+		return Objects.equals(tag, that.tag) && Objects.equals(recipient, that.recipient);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
-	}
-
-	/**
-	 * Class used for the composite primary key.
-	 */
-	@Embeddable
-	public static class RecipientTagId implements Serializable {
-
-		private Integer recipientId;
-
-		private String tagName;
-
-		public RecipientTagId() {
-		}
-
-		public RecipientTagId(Integer recipientId, String tagName) {
-			this.recipientId = recipientId;
-			this.tagName = tagName;
-		}
-
-		public Integer getRecipientId() {
-			return recipientId;
-		}
-
-		public void setRecipientId(Integer recipientId) {
-			this.recipientId = recipientId;
-		}
-
-		public String getTagName() {
-			return tagName;
-		}
-
-		public void setTagName(String tagName) {
-			this.tagName = tagName;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (o == null || getClass() != o.getClass())
-				return false;
-			RecipientTagId that = (RecipientTagId) o;
-			return Objects.equals(recipientId, that.recipientId) && Objects.equals(tagName, that.tagName);
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash(recipientId, tagName);
-		}
-
+		return Objects.hash(tag, recipient);
 	}
 
 }
