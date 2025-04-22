@@ -2,12 +2,10 @@ package org.upLift.services;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.upLift.TestObjectMapperConfig;
 
@@ -17,11 +15,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
+// Since these tests don't check any date/time values, and the different @DataJpaTest configuration means
+// it restarts the H2 database, just replace the database used
 @DataJpaTest(includeFilters = @ComponentScan.Filter(classes = FairnessService.class, type = FilterType.ASSIGNABLE_TYPE))
-@ActiveProfiles("ci")
-// Do NOT replace the DataSource with a default H2 database, instead use the one based on
-// the CI config to ensure that time zone is set to UTC
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(TestObjectMapperConfig.class)
 // @formatter:off
 @TestPropertySource(properties = """
