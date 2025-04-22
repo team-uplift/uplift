@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.upLift.configuration.NotUndefined;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
@@ -25,6 +26,9 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "recipients")
 public class Recipient extends AbstractCreatedAt {
+
+	// Number of days that a verification is considered "valid" before it has to be redone
+	private static final int VERIFICATION_VALID_PERIOD = 365;
 
 	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	@MapsId
@@ -308,7 +312,6 @@ public class Recipient extends AbstractCreatedAt {
 	}
 
 	public Recipient incomeVerified(Instant incomeLastVerified) {
-
 		this.incomeLastVerified = incomeLastVerified;
 		return this;
 	}
@@ -322,6 +325,17 @@ public class Recipient extends AbstractCreatedAt {
 
 	public Instant getIncomeLastVerified() {
 		return incomeLastVerified;
+	}
+
+	@JsonIgnore
+	public boolean isIncomeVerified() {
+		if (incomeLastVerified == null) {
+			return false;
+		}
+		Instant oneYearAgo = Instant.now().minus(VERIFICATION_VALID_PERIOD, ChronoUnit.DAYS);
+		// Still considered valid if it's equal to "one year ago" - only invalid if it's
+		// older
+		return !incomeLastVerified.isBefore(oneYearAgo);
 	}
 
 	public void setIncomeLastVerified(Instant incomeLastVerified) {

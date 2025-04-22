@@ -7,7 +7,8 @@ VALUES (1, '550e8400-e29b-41d4-a716-446655440000', 'recipient1@example.com', TRU
        (3, '550e8400-e29b-41d4-a716-446655440002', 'donor1@example.com', FALSE, '2023-10-10 12:30:50.789'),
        (4, '550e8400-e29b-41d4-a716-446655440003', 'donor2@example.com', FALSE, '2023-10-15 13:35:00.321'),
        (5, '550e8400-e29b-41d4-a716-446655440004', 'recipient3@example.com', TRUE, '2023-10-20 14:25:30.123'),
-       (6, '550e8400-e29b-41d4-a716-446655440005', 'recipient4@example.com', TRUE, '2023-10-25 09:15:30.123');
+       (6, '550e8400-e29b-41d4-a716-446655440005', 'recipient4@example.com', TRUE, '2023-10-25 09:15:30.123'),
+       (7, '550e8400-e29b-41d4-a716-446655440007', 'recipient5@example.com', TRUE, '2023-10-27 11:32:57.123');
 
 -- Insert sample data into `recipients`
 INSERT INTO recipients (id, first_name, last_name, street_address1, street_address2, city, state, zip_code,
@@ -15,8 +16,8 @@ INSERT INTO recipients (id, first_name, last_name, street_address1, street_addre
                         income_last_verified, nickname, tags_last_generated_at, last_donation_timestamp, created_at)
 VALUES (1, 'John', 'Doe', '123 Elm St', '', 'Springfield', 'IL', '62701', 'About John', 'Reason 1',
         '[{"question": "question1", "answer": "Answer1"}]', 'http://example.com/image1.jpg', '2023-10-01 11:15:00.123',
-        '2023-10-02 12:45:30.456'
-           , 'Johnny', '2023-10-05 09:10:10.789', '2023-10-23 18:10:50.987', '2023-10-01 10:20:30.123'),
+        DATEADD('DAY', -90, CURRENT_TIMESTAMP),
+           'Johnny', '2023-10-05 09:10:10.789', '2023-10-23 18:10:50.987', '2023-10-01 10:20:30.123'),
        (2, 'Jane', 'Smith', '456 Oak St', '', 'Madison', 'WI', '53703', 'About Jane', 'Reason 2',
         '[{"question":"Tell us about yourself.","answer":"1"},{"question":"What is the biggest reason that you feel like you need help?","answer":"2"},{"question":"What is the most difficult thing you face day to day?","answer":"3"},{"question":"What has been the hardest thing for you financially this year?","answer":"Job loss"},{"question":"Are you currently looking for work?","answer":"Yes, part-time"},{"question":"What barriers are preventing you from working or earning more income?","answer":"Transportation, Disability"},{"question":"What is your biggest challenge related to housing?","answer":"Unsafe conditions"},{"question":"Are you at risk of losing housing in the next 3 months?","answer":"Yes"},{"question":"Do you have a support system of friends, family, or community?","answer":"No"},{"question":"What kind of support do you wish you had more of?","answer":"Financial, Legal"},{"question":"Do you have regular access to mental health support or counseling?","answer":"Yes"},{"question":"What has been the most emotionally difficult part of your current situation?","answer":"12"}]',
         'http://example.com/image2.jpg', '2023-10-02 14:10:00.789',
@@ -25,11 +26,17 @@ VALUES (1, 'John', 'Doe', '123 Elm St', '', 'Springfield', 'IL', '62701', 'About
        (5, 'Sarah', 'Johnson', '789 Pine St', 'Apt 3B', 'Columbus', 'OH', '43215', 'About Sarah', 'Reason 3',
         '[{"question":"Tell us about yourself.","answer":"test"},{"question":"What has been the most emotionally difficult part of your current situation?","answer":"test"}]',
         'http://example.com/image3.jpg', '2023-10-20 15:30:00.123',
-        '2023-10-20 16:45:30.456', 'Sare', '2023-10-21 09:10:10.789', NULL, '2023-10-20 14:25:30.123'),
+        DATEADD('DAY', -90, CURRENT_TIMESTAMP), 'Sare', '2023-10-21 09:10:10.789', NULL, '2023-10-20 14:25:30.123'),
        (6, 'Michael', 'Thompson', '321 Maple Ave', NULL, 'Denver', 'CO', '80202', 'About Michael', 'Seeking assistance',
         '[{"question":"What was your biggest challenge in the past 6 months?","answer":"Getting laid off"}]',
         'http://example.com/image4.jpg', NULL, NULL, 'Mike', '2023-10-25 09:30:10.789', NULL,
-        '2023-10-25 09:15:30.123');
+        '2023-10-25 09:15:30.123'),
+       (7, 'Test', 'User', NULL, NULL, NULL, NULL, NULL,
+        'About test', 'Test reason', '[{"question":"question7","answer":"answer7"}]', NULL,
+        DATEADD('DAY', -10, CURRENT_TIMESTAMP), DATEADD('DAY', -100, CURRENT_TIMESTAMP), 'Purple koala',
+        '2023-10-27 11:31:43.471', NULL,
+            '2023-10-27 11:32:57.123');
+
 
 
 -- Insert sample data into `donors`
@@ -100,7 +107,7 @@ VALUES
     -- tags linked to recipient 5
     ('childcare', 5, 0.65, TRUE, '2023-10-20 15:15:30.123'),
     ('food-banks', 5, 0.85, TRUE, '2023-10-20 15:35:10.456'),
-    ('health', 5, 0.75, TRUE, '2023-10-20 15:00:30.123'),
+    ('health', 5, 0.75, FALSE, '2023-10-20 15:00:30.123'),
     ('housing', 5, 0.85, TRUE, '2023-10-20 15:05:40.456'),
     ('job-training', 5, 0.90, TRUE, '2023-10-20 15:25:50.789'),
     ('legal-aid', 5, 0.60, FALSE, '2023-10-20 15:30:00.123'),
@@ -114,7 +121,11 @@ VALUES
     ('housing', 6, 0.95, TRUE, '2023-10-25 09:40:40.456'),
     ('job-training', 6, 0.90, TRUE, '2023-10-25 09:55:10.456'),
     ('transportation', 6, 0.80, TRUE, '2023-10-25 09:45:50.789'),
-    ('utilities', 6, 0.85, TRUE, '2023-10-25 09:50:00.123');
+    ('utilities', 6, 0.85, TRUE, '2023-10-25 09:50:00.123'),
+
+    -- tags linked to recipient 7
+    ('financial-planning', 7, 0.32, TRUE, '2023-10-27 11:31:43.471'),
+    ('food-banks', 7, 0.48, FALSE, '2023-10-27 11:31:43.471');
 
 
 -- Insert sample data into `donor_shown_tags`
