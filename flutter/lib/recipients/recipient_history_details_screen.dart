@@ -1,44 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:uplift/api/recipient_api.dart';
 import 'package:uplift/models/donation_model.dart';
+import 'package:uplift/models/user_model.dart';
 import 'recipient_send_thank_you_screen.dart';
 
 
 // combo of chatgpt and me
-class HistoryDetailScreen extends StatelessWidget {
+class HistoryDetailScreen extends StatefulWidget {
   // final Map<String, String> item; // Receive history item data
   final Donation item;
-  const HistoryDetailScreen({super.key, required this.item});
+  final User profile;
 
+  const HistoryDetailScreen({super.key, required this.item, required this.profile});
+
+  @override
+  State<HistoryDetailScreen> createState() => _HistoryDetailScreenState();
+}
+
+class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
+  // late Donation donation;
+  late Donation _donation;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _donation = widget.item;
+  }
+
+  Future<void> _refreshDonation() async {
+    setState(() {
+      _loading = true;
+    });
+
+    final updated = await RecipientApi.fetchDonation(_donation.id.toString());
+    if (updated != null) {
+      setState(() {
+        _donation = updated;
+      });
+    }
+
+    setState(() {
+      _loading = false;
+    });
+  }
+  
+  
   @override
   Widget build(BuildContext context) {
 
-    bool hasThankYou = item.thankYouMessage != null && item.thankYouMessage!.isNotEmpty;
+    bool hasThankYou = widget.item.thankYouMessage != null && widget.item.thankYouMessage!.isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Donation from: ${item.donorName}"), 
+        title: Text("Donation from: ${_donation.donorName}"), 
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Date received: ${item.formattedDate}", style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+            Text("Date received: ${_donation.formattedDate}", style: TextStyle(fontSize: 16, color: Colors.grey[700])),
             const SizedBox(height: 16),
-            Text("Amount received: ${item.formattedAmount}", style: const TextStyle(fontSize: 18)),
+            Text("Amount received: ${_donation.formattedAmount}", style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 24),
 
-            if (hasThankYou) 
-              _buildThankYou(item.thankYouMessage!)
-            else 
-              _buildSendThankYou(context),
+            hasThankYou
+              ? _buildThankYou(_donation.thankYouMessage!)
+              : _buildSendThankYou(context),
           ],
         ),
       ),
     );
   }
-
-
 
   Widget _buildThankYou(String message) {
     return Card(
@@ -54,18 +88,25 @@ class HistoryDetailScreen extends StatelessWidget {
     );
   }
 
-
   Widget _buildSendThankYou(BuildContext context) {
     return Center(
       child: ElevatedButton.icon(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SendThankYouScreen(donation: item),
-            )
+              builder: (context) => SendThankYouScreen(
+                donation: _donation,
+                profile: widget.profile,
+              ),
+            ),
           );
-        }, 
+
+          // ✅ If thank you was successfully sent, go back to main history screen
+          if (result == true) {
+            await _refreshDonation();
+          }
+        },
         icon: const Icon(Icons.favorite, color: Colors.white,),
         label: const Text("Send Thank You"),
         style: ElevatedButton.styleFrom(
