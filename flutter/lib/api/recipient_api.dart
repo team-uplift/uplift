@@ -4,8 +4,11 @@ import 'package:http/http.dart' as http;
 
 import '../models/donation_model.dart';
 
+
+
 class RecipientApi {
-  static const String baseUrl = 'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
+  static const String baseUrl =
+      'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
 
   static Future<String?> createRecipientUser(
     Map<String, dynamic> formData,
@@ -19,7 +22,7 @@ class RecipientApi {
       'recipientData': {
         'firstName': formData['firstName'],
         'lastName': formData['lastName'],
-        'streetAddress1': formData['streetAddress1'], 
+        'streetAddress1': formData['streetAddress1'],
         'streetAddress2': formData['streetAddress2'],
         'city': formData['city'],
         'state': formData['state'],
@@ -51,7 +54,8 @@ class RecipientApi {
     }
   }
 
-  static Future<bool> updateTags(String userId, List<String> selectedTags) async {
+  static Future<bool> updateTags(
+      String userId, List<String> selectedTags) async {
     try {
       print("update tags: $selectedTags");
       final response = await http.put(
@@ -68,13 +72,14 @@ class RecipientApi {
     }
   }
 
-  static Future<bool> uploadIncomeVerificationImage(String userId, File imageFile) async {
+  static Future<bool> uploadIncomeVerificationImage(
+      String userId, File imageFile) async {
     try {
       final request = http.MultipartRequest(
         'PUT',
         Uri.parse('$baseUrl/recipients/verification/income/$userId'),
       );
-      
+
       request.files.add(
         await http.MultipartFile.fromPath('file', imageFile.path),
       );
@@ -94,7 +99,8 @@ class RecipientApi {
     }
   }
 
-  static Future<List<Donation>> fetchDonationsForRecipient(String recipientId) async {
+  static Future<List<Donation>> fetchDonationsForRecipient(
+      String recipientId) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/donations/recipient/$recipientId'),
@@ -140,8 +146,6 @@ class RecipientApi {
     required int donationId,
     required String message,
   }) async {
-
-
     final payload = {
       // 'id': userId,
       'donationId': donationId,
@@ -168,7 +172,6 @@ class RecipientApi {
       return false;
     }
   }
-
 }
 
 // TODO
