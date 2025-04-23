@@ -14,13 +14,24 @@ class SendThankYouScreen extends StatefulWidget {
 }
 
 class _SendThankYouScreenState extends State<SendThankYouScreen> {
+  late TextEditingController messageController;
+
+  @override
+  void initState() {
+    super.initState();
+    messageController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    messageController.dispose();
+    super.dispose();
+  }
   
   Future<void> _handleSendThankYou(int donationId, String message) async {
 
     print("thank you sending don id ${donationId}, msg: $message");
     if (message.trim().isEmpty) return;
-
-    
 
     final success = await RecipientApi.sendThankYouMessage(
       // userId: widget.profile.id!,
@@ -40,7 +51,7 @@ class _SendThankYouScreenState extends State<SendThankYouScreen> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController messageController = TextEditingController();
+    
 
     return Scaffold(
       appBar: AppBar(

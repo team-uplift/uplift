@@ -29,7 +29,6 @@ class _SplashRedirectorState extends State<SplashRedirector> {
 
       final cognitoId = attrMap['sub'];
       
-
       print("Cognito ID: $cognitoId");
 
       // Check if user exists in backend

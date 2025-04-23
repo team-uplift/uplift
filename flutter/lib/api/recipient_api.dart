@@ -114,6 +114,27 @@ class RecipientApi {
     }
   }
 
+  static Future<Donation?> fetchDonation(String donationId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/donations/$donationId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        print("get donation: ${response.body}");
+        return Donation.fromJson(data);
+      } else {
+        print("Failed to fetch donations: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching donations: $e");
+      return null;
+    }
+  }
+
   static Future<bool> sendThankYouMessage({
     // required int userId,
     required int donationId,
@@ -150,3 +171,10 @@ class RecipientApi {
 
 }
 
+// TODO
+// Amplify.Auth.getPlugin(AmplifyAuthCognito.pluginKey).fetchAuthSession().then( (value) {
+//       print(value.userPoolTokensResult.value.accessToken.toJson());
+//     });
+// HEADER STUFF
+// Accept:  */*
+// Authorization: Bearer <add token here>
