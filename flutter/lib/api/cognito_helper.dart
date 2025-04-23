@@ -26,15 +26,16 @@ Future<Map<String, dynamic>?> getCognitoAttributes() async {
 
 // https://stackoverflow.com/questions/77218092/how-to-collect-the-jwt-token-and-store-it-in-amplify-flutter/77270880#77270880
 // fetches the current users access token from amplify to pass JWT to api
-Future<String?> fetchCognitoAuthSession() async {
+Future<JsonWebToken?> fetchCognitoAuthSession() async {
   try {
     final cognitoPlugin = Amplify.Auth.getPlugin(AmplifyAuthCognito.pluginKey);
     final result = await cognitoPlugin.fetchAuthSession();
     final identityId = result.identityIdResult.value;
-    final accessToken = result.userPoolTokensResult.value.accessToken.toJson();
-    return accessToken;
+    final accessToken = result.userPoolTokensResult.value.accessToken;
     print("Current user's access token: $accessToken");
     print("Current user's identity ID: $identityId");
+    return accessToken;
+
   } on AuthException catch (e) {
     print('Error retrieving auth session: ${e.message}');
     return null;
