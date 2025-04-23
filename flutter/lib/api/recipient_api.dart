@@ -114,7 +114,7 @@ class RecipientApi {
     }
   }
 
-  static Future<Donation?> fetchDonation(String donationId) async {
+  static Future<Donation?> fetchDonationById(String donationId) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/donations/$donationId'),

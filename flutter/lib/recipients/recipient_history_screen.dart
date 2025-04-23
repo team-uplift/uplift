@@ -82,13 +82,19 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
           title: Text("From ${donation.donorName}", style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text(donation.formattedDate),
           trailing: Text(donation.formattedAmount, style: const TextStyle(fontWeight: FontWeight.bold)),
-          onTap: () {
-            Navigator.push(
+          onTap: () async {
+            final refresh = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => HistoryDetailScreen(item: donation, profile: widget.profile,),
+                builder: (context) => HistoryDetailScreen(
+                  item: donation, 
+                  profile: widget.profile,
+                ),
               ),
             );
+            if (refresh == true) {
+              await _loadDonations();
+            }
           },
         ),
       ),

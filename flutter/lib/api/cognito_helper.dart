@@ -3,17 +3,16 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:http/http.dart' as http;
 
 
-/// Fetches the current user's Cognito ID (`sub` attribute)
-Future<String?> getCognitoId() async {
+// fetches current authenticated users cognitoID from amplify
+Future<Map<String, dynamic>?> getCognitoAttributes() async {
+  // get all of the attributes and pick out the email address
   try {
     final attributes = await Amplify.Auth.fetchUserAttributes();
     final attrMap = {
       for (final attr in attributes) attr.userAttributeKey.key: attr.value,
     };
+    return attrMap;
 
-    final cognitoId = attrMap['sub'];
-    print("Cognito ID: $cognitoId");
-    return cognitoId;
   } catch (e) {
     print("Error fetching Cognito ID: $e");
     return null;
@@ -22,7 +21,7 @@ Future<String?> getCognitoId() async {
 
 
 // https://stackoverflow.com/questions/77218092/how-to-collect-the-jwt-token-and-store-it-in-amplify-flutter/77270880#77270880
-// Fetches the current user's access token (for authenticated requests)
+// fetches the current users access token from amplify to pass JWT to api
 Future<void> fetchCognitoAuthSession() async {
   try {
     final cognitoPlugin = 

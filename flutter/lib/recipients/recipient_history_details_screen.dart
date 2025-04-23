@@ -26,14 +26,15 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
   void initState() {
     super.initState();
     _donation = widget.item;
+    
   }
 
   Future<void> _refreshDonation() async {
     setState(() {
       _loading = true;
     });
-
-    final updated = await RecipientApi.fetchDonation(_donation.id.toString());
+    print("donation id: ${_donation.id}");
+    final updated = await RecipientApi.fetchDonationById(_donation.id.toString());
     if (updated != null) {
       setState(() {
         _donation = updated;
@@ -53,7 +54,13 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Donation from: ${_donation.donorName}"), 
+        title: Text("Donation from: ${_donation.donorName}"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
