@@ -163,6 +163,9 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 
 	public void setThankYouMessage(Message thankYouMessage) {
 		this.thankYouMessage = thankYouMessage;
+		if (thankYouMessage != null) {
+			thankYouMessage.setDonation(this);
+		}
 	}
 
 	@Override
