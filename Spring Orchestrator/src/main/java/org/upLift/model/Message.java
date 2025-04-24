@@ -55,7 +55,7 @@ public class Message extends AbstractCreatedEntity {
 
 	@JsonGetter("donationId")
 	public Integer getDonationId() {
-		return donation.getId();
+		return donation != null ? donation.getId() : null;
 	}
 
 	@JsonSetter("donationId")
