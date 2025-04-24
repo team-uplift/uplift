@@ -14,7 +14,7 @@ public class User extends AbstractCreatedEntity {
 	@JsonProperty("cognitoId")
 	private String cognitoId = null;
 
-	@Column(name = "email", nullable = false)
+	@Column(name = "email")
 	@JsonProperty("email")
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String email = null;
