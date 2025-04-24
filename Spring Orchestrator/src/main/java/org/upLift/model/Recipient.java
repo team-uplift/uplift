@@ -91,7 +91,6 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String lastReasonForHelp;
 
-	@SuppressWarnings("JpaAttributeTypeInspection")
 	@Column(name = "form_questions")
 	@JsonProperty("formQuestions")
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
@@ -398,6 +397,7 @@ public class Recipient extends AbstractCreatedAt {
 		return this;
 	}
 
+	@SuppressWarnings("UnusedReturnValue")
 	public Recipient addTagsItem(RecipientTag tag) {
 		if (this.tags == null) {
 			this.tags = new TreeSet<>();

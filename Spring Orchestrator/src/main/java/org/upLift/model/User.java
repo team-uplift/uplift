@@ -48,7 +48,7 @@ public class User extends AbstractCreatedEntity {
 	 * @return cognitoId
 	 **/
 
-	@Schema(example = "oijwedf-wrefwefr-saedf3rweg-gv", description = "")
+	@Schema(example = "oijwedf-wrefwefr-saedf3rweg-gv", description = "UUID assigned by Cognito when a user registers")
 
 	public String getCognitoId() {
 		return cognitoId;
