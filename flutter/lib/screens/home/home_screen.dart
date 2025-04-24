@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:uplift/components/drawer_widget.dart';
 import 'package:uplift/components/standard_button.dart';
 import 'package:uplift/providers/user_notifier_provider.dart';
+import 'package:uplift/services/badge_service.dart';
+import 'package:uplift/models/badge.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -21,6 +23,28 @@ final List<Image> items = [
 ];
 
 class _HomePageState extends ConsumerState<HomePage> {
+  late final BadgeService _badgeService;
+  late Future<List<DonorBadge>> _badgesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _badgeService = BadgeService(ref);
+    _refreshBadges();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _refreshBadges();
+  }
+
+  void _refreshBadges() {
+    setState(() {
+      _badgesFuture = _badgeService.getBadges();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final userAsync =
@@ -28,13 +52,24 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'uplift',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
           ),
         ),
+        title: Image.asset(
+          'assets/uplift_black.png',
+          height: 32,
+          fit: BoxFit.contain,
+        ),
+        actions: [
+          // Adding a SizedBox with the same width as the leading icon
+          SizedBox(width: 48)
+        ],
+        centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -79,6 +114,62 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                     ],
                   ),
+                ),
+
+                // Badges Section
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: const Text(
+                        "Your Badges",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    FutureBuilder<List<DonorBadge>>(
+                      future: _badgesFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+
+                        if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        }
+
+                        final badges = snapshot.data ?? [];
+                        return SizedBox(
+                          height: 200, // Fixed height for the carousel
+                          child: CarouselSlider.builder(
+                            itemCount: badges.length,
+                            itemBuilder: (context, index, realIndex) {
+                              final badge = badges[index];
+                              return _buildBadgeCard(badge);
+                            },
+                            options: CarouselOptions(
+                              height: 200,
+                              aspectRatio: 1.0,
+                              viewportFraction: 0.4,
+                              initialPage: 0,
+                              enableInfiniteScroll: true,
+                              reverse: false,
+                              autoPlay: false,
+                              enlargeCenterPage: true,
+                              enlargeFactor: 0.2,
+                              scrollDirection: Axis.horizontal,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
 
                 // Statistics Grid
@@ -299,6 +390,63 @@ class _HomePageState extends ConsumerState<HomePage> {
                   ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBadgeCard(DonorBadge badge) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      child: Container(
+        width: 140,
+        height: 140,
+        decoration: BoxDecoration(
+          color: badge.isUnlocked
+              ? Theme.of(context).primaryColor.withOpacity(0.1)
+              : Colors.grey.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: badge.isUnlocked
+                ? Theme.of(context).primaryColor.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.3),
+            width: 2,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              badge.icon,
+              size: 40,
+              color: badge.isUnlocked
+                  ? Theme.of(context).primaryColor
+                  : Colors.grey,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              badge.name,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: badge.isUnlocked
+                    ? Theme.of(context).primaryColor
+                    : Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              badge.description,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

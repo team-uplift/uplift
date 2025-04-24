@@ -2,10 +2,9 @@ package org.upLift.services;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 import org.upLift.exceptions.ModelException;
 import org.upLift.exceptions.TimingException;
 import org.upLift.model.FormQuestion;
@@ -13,7 +12,6 @@ import org.upLift.model.Recipient;
 import org.upLift.model.RecipientTag;
 import org.upLift.model.Tag;
 import org.upLift.repositories.RecipientRepository;
-import org.upLift.repositories.RecipientTagsRepository;
 import org.upLift.repositories.TagRepository;
 
 import java.time.Duration;
@@ -31,14 +29,14 @@ public class RecipientServiceImpl implements RecipientService {
 
 	private final TagRepository tagRepository;
 
-	private final RecipientTagsRepository recipientTagsRepository;
+	private final FairnessService fairnessService;
 
 	public RecipientServiceImpl(RecipientRepository recipientRepository, BedrockService bedrockService,
-			TagRepository tagRepository, RecipientTagsRepository recipientTagsRepository) {
+			TagRepository tagRepository, FairnessService fairnessService) {
 		this.recipientRepository = recipientRepository;
 		this.bedrockService = bedrockService;
 		this.tagRepository = tagRepository;
-		this.recipientTagsRepository = recipientTagsRepository;
+		this.fairnessService = fairnessService;
 	}
 
 	@Override
@@ -58,19 +56,12 @@ public class RecipientServiceImpl implements RecipientService {
 		return recipientRepository.save(recipient);
 	}
 
-	/**
-	 * This method takes in a recipient ID and assumes the FormQuestions have been set for the
-	 *
-	 * @param id
-	 * @param formQuestions
-	 * @return
-	 */
 	@Override
 	public List<RecipientTag> generateRecipientTags(Integer id, List<FormQuestion> formQuestions) {
 		Recipient recipient = recipientRepository.findById(id).orElse(null);
 
 		if (recipient != null) {
-			if(canGenerateTags(recipient)) {
+			if (canGenerateTags(recipient)) {
 				AtomicReference<String> recipient_prompt = new AtomicReference<>("");
 
 				if (formQuestions != null && !formQuestions.isEmpty()) {
@@ -78,74 +69,89 @@ public class RecipientServiceImpl implements RecipientService {
 					recipient.setFormQuestions(formQuestions);
 				}
 
-				// Consolidate all form questions into a single string to invoke the tag generation service.
+				// Consolidate all form questions into a single string to invoke the tag
+				// generation service.
 				recipient.getFormQuestions().forEach(formQuestion -> {
-					recipient_prompt.set(STR."\{recipient_prompt} \{formQuestion.getAnswer()}");
+					recipient_prompt.set(recipient_prompt + " " + formQuestion.getAnswer());
 				});
 
+				Instant tagsUpdated = Instant.now();
+
 				// Only generate tags if there is a valid prompt
-				if(!recipient_prompt.get().isEmpty()) {
+				if (!recipient_prompt.get().isEmpty()) {
 					Map<String, Double> newTags = bedrockService.getTagsFromPrompt(recipient_prompt.get());
 
 					for (Map.Entry<String, Double> entry : newTags.entrySet()) {
 						String tag = entry.getKey();
 						Double weight = entry.getValue();
-						//if tag does not exist, make a new tag
-						List<Tag> knownTags = tagRepository.findByTagName(tag);
-						if (knownTags.isEmpty()) {
-							Tag newTag = new Tag();
-							newTag.setTagName(tag);
+						// if tag does not exist, make a new tag
+						Optional<Tag> knownTagResult = tagRepository.findById(tag);
+						if (knownTagResult.isEmpty()) {
+							Tag newTag = new Tag().tagName(tag);
 							// TODO: newTag.setCategory(??);
-							Instant now = Instant.now();
-							newTag.setCreatedAt(now);
 							tagRepository.save(newTag);
 
-							RecipientTag newRecipientTag = new RecipientTag();
-							newRecipientTag.setRecipient(recipient);
-							RecipientTag.RecipientTagId recipientTagId = new RecipientTag.RecipientTagId();
-							recipientTagId.setRecipientId(recipient.getId());
-							recipientTagId.setTagName(newTag.getTagName());
-							newRecipientTag.setId(recipientTagId);
-							newRecipientTag.setTag(newTag);
-							newRecipientTag.setWeight(weight);
-							newRecipientTag.setAddedAt(now);
-							recipientTagsRepository.save(newRecipientTag);
-
-							recipient.setTagsLastGenerated(Instant.now());
+							addTagToRecipient(recipient, newTag, weight, tagsUpdated);
 						}
-						// If a known tag does exist, check to see if it's unassigned to the recipient, if so, assign it.
+						// If a known tag does exist, check to see if it's linked to the
+						// recipient.
 						else {
-							for (Tag knownTag : knownTags) {
-								List<RecipientTag> knownRecipientTags = recipientTagsRepository.getRecipientTagByRecipientIdAndTagName(recipient.getId(), tag);
-								if (knownRecipientTags.isEmpty()) {
-									RecipientTag newRecipientTag = new RecipientTag();
-									RecipientTag.RecipientTagId recipientTagId = new RecipientTag.RecipientTagId();
-									recipientTagId.setRecipientId(recipient.getId());
-									recipientTagId.setTagName(knownTag.getTagName());
-									newRecipientTag.setId(recipientTagId);
-									newRecipientTag.setRecipient(recipient);
-									newRecipientTag.setTag(knownTag);
-									newRecipientTag.setWeight(weight);
-									newRecipientTag.setAddedAt(Instant.now());
-									recipientTagsRepository.save(newRecipientTag);
-
-									recipient.setTagsLastGenerated(Instant.now());
-								}
+							var knownTag = knownTagResult.get();
+							Optional<RecipientTag> assignedTag = findMatchingTag(recipient, knownTag.getTagName());
+							// If not already linked, link it.
+							if (assignedTag.isEmpty()) {
+								addTagToRecipient(recipient, knownTag, weight, tagsUpdated);
+							}
+							// If it is already linked, update the weight in case it's
+							// changed, as well as the "added at" to indicate that it's
+							// been relinked
+							else {
+								assignedTag.get().setWeight(weight);
+								assignedTag.get().setAddedAt(tagsUpdated);
 							}
 						}
 					}
+					recipient.setTagsLastGenerated(tagsUpdated);
 				}
 
-				recipientRepository.save(recipient);
+				var savedRecipient = recipientRepository.save(recipient);
+				return new ArrayList<>(savedRecipient.getTags());
 			}
 			else {
 				throw new TimingException("Recipient generated tags too recently.");
 			}
-		} else {
+		}
+		else {
 			throw new ModelException("Recipient not found.");
 		}
+	}
 
-		return recipientTagsRepository.getRecipientTagByRecipientId(id);
+	/**
+	 * Finds the matching recipient link entry for the specified tag, if any.
+	 * @param recipient Recipient loaded with linked tags
+	 * @param tagName name of the tag to search for
+	 * @return Optional containing the RecipientTag entry linking the specified tag with
+	 * the specified recipient or an empty Optional if the recipient isn't currently
+	 * linked to that tag
+	 */
+	Optional<RecipientTag> findMatchingTag(Recipient recipient, String tagName) {
+		return recipient.getTags().stream().filter(tag -> tag.getTagName().equals(tagName)).findFirst();
+	}
+
+	/**
+	 * Links the specified tag to the specified recipient with the specified relevance
+	 * weight.
+	 * @param recipient recipient to whom the tag should be linked
+	 * @param tag tag to link to the recipient
+	 * @param weight relevance weight of the tag to the recipient
+	 * @param addedAt date/time this tag is being added to the recipient
+	 */
+	void addTagToRecipient(Recipient recipient, Tag tag, double weight, Instant addedAt) {
+		RecipientTag newRecipientTag = new RecipientTag();
+		newRecipientTag.setTag(tag);
+		newRecipientTag.setWeight(weight);
+		newRecipientTag.setAddedAt(addedAt);
+		recipient.addTagsItem(newRecipientTag);
 	}
 
 	@Override
@@ -165,6 +171,26 @@ public class RecipientServiceImpl implements RecipientService {
 		Pageable pageable = PageRequest.of(0, 5);
 
 		return recipientRepository.findByTags_Tag_TagName(tags, pageable);
+	}
+
+	@Override
+	public List<Recipient> getMatchingRecipientsByDonorPrompt(List<FormQuestion> donorQA) {
+
+		AtomicReference<String> donorPrompt = new AtomicReference<>("");
+
+		// Consolidate all form questions into a single string to invoke the matching
+		// service.
+		donorQA.forEach(formQuestion -> {
+			donorPrompt.set(donorPrompt + " " + formQuestion.getAnswer());
+		});
+
+		// Submit prompt to generate appropriate tags.
+		List<String> tags = bedrockService.matchTagsFromPrompt(donorPrompt.toString());
+
+		// Extract the best matching recipients from the selected
+		List<Recipient> recipients = fairnessService.getRecipientsFromTags(tags);
+
+		return recipients;
 	}
 
 	@Override

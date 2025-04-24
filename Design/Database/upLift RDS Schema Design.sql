@@ -23,7 +23,8 @@ CREATE TABLE `recipients` (
   `income_last_verified` timestamp(3),
   `nickname` nvarchar(64),
   `tags_last_generated_at` timestamp(3),
-  `created_at` timestamp(3) NOT NULL
+  `created_at` timestamp(3) NOT NULL,
+  `last_donation_timestamp` timestamp(3)
 );
 
 CREATE TABLE `donors` (
@@ -68,12 +69,12 @@ CREATE TABLE `donor_prompts` (
 );
 
 CREATE TABLE `recipient_tags` (
-  `tag_name` varchar(64),
-  `recipient_id` integer,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
+  `tag_name` varchar(64) NOT NULL,
+  `recipient_id` integer NOT NULL,
   `weight` double,
   `selected` boolean NOT NULL,
-  `added_at` timestamp(3) NOT NULL,
-  PRIMARY KEY (`tag_name`, `recipient_id`)
+  `added_at` timestamp(3) NOT NULL
 );
 
 CREATE TABLE `donor_shown_tags` (
@@ -95,6 +96,8 @@ CREATE TABLE `favorite_recipients` (
 );
 
 CREATE UNIQUE INDEX `UQ_users_cognito_id` ON `users` (`cognito_id`);
+
+CREATE UNIQUE INDEX `UQ_recipient_tags_recipient_id_tag_name` ON `recipient_tags` (`recipient_id`, `tag_name`);
 
 ALTER TABLE `recipients` ADD CONSTRAINT `FK_recipients_user` FOREIGN KEY (`id`) REFERENCES `users` (`id`);
 

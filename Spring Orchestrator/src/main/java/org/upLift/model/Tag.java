@@ -101,6 +101,10 @@ public class Tag extends AbstractCreatedAt implements Comparable<Tag>, Serializa
 		// @formatter:on
 	}
 
+	public String toPromptString() {
+		return tagName;
+	}
+
 	@Override
 	public int compareTo(Tag o) {
 		return tagName.compareTo(o.tagName);

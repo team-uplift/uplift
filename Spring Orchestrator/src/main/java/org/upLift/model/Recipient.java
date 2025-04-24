@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.upLift.configuration.NotUndefined;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
@@ -26,7 +27,10 @@ import java.util.stream.Collectors;
 @Table(name = "recipients")
 public class Recipient extends AbstractCreatedAt {
 
-	@OneToOne
+	// Number of days that a verification is considered "valid" before it has to be redone
+	private static final int VERIFICATION_VALID_PERIOD = 365;
+
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	@MapsId
 	@JoinColumn(name = "id", referencedColumnName = "id")
 	@JsonIgnore
@@ -105,8 +109,13 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	private Instant tagsLastGenerated;
 
+	@Column(name = "last_donation_timestamp")
+	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
+	@JsonProperty("lastDonationTimestamp")
+	private Instant lastDonationTimestamp;
+
 	@Valid
-	@OneToMany(mappedBy = "recipient", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	// Only want to send the set of "selected" tags to the front end,
 	// since only the back end cares about tracking the "unselected" tags
 	@JsonIgnore
@@ -303,7 +312,6 @@ public class Recipient extends AbstractCreatedAt {
 	}
 
 	public Recipient incomeVerified(Instant incomeLastVerified) {
-
 		this.incomeLastVerified = incomeLastVerified;
 		return this;
 	}
@@ -317,6 +325,17 @@ public class Recipient extends AbstractCreatedAt {
 
 	public Instant getIncomeLastVerified() {
 		return incomeLastVerified;
+	}
+
+	@JsonIgnore
+	public boolean isIncomeVerified() {
+		if (incomeLastVerified == null) {
+			return false;
+		}
+		Instant oneYearAgo = Instant.now().minus(VERIFICATION_VALID_PERIOD, ChronoUnit.DAYS);
+		// Still considered valid if it's equal to "one year ago" - only invalid if it's
+		// older
+		return !incomeLastVerified.isBefore(oneYearAgo);
 	}
 
 	public void setIncomeLastVerified(Instant incomeLastVerified) {
@@ -333,7 +352,6 @@ public class Recipient extends AbstractCreatedAt {
 	 * Get nickname
 	 * @return nickname
 	 **/
-
 	@Schema(example = "PotatoKing", description = "nickname for the recipient, assigned when profile is created")
 
 	public String getNickname() {
@@ -365,11 +383,13 @@ public class Recipient extends AbstractCreatedAt {
 		return this;
 	}
 
-	public Recipient addTagsItem(RecipientTag tagsItem) {
+	public Recipient addTagsItem(RecipientTag tag) {
 		if (this.tags == null) {
 			this.tags = new TreeSet<>();
 		}
-		this.tags.add(tagsItem);
+		tag.setRecipient(this);
+		this.tags.add(tag);
+
 		return this;
 	}
 
@@ -377,6 +397,8 @@ public class Recipient extends AbstractCreatedAt {
 	 * Get tags
 	 * @return tags
 	 **/
+
+	@Schema(implementation = RecipientTag.class, description = "tags linked to the recipient, ordered by tag name")
 
 	@Valid
 	@JsonIgnore
@@ -387,6 +409,11 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonIgnore
 	public void setTags(SortedSet<RecipientTag> tags) {
 		this.tags = tags;
+		if (tags != null) {
+			for (RecipientTag tag : tags) {
+				tag.setRecipient(this);
+			}
+		}
 	}
 
 	@Schema(implementation = RecipientTag.class, description = "tags linked to the recipient")
@@ -399,6 +426,16 @@ public class Recipient extends AbstractCreatedAt {
 		else {
 			return null;
 		}
+	}
+
+	@Schema(example = "2025-03-22T18:57:23.571Z", description = "date/time the recipient's last received a donation.")
+
+	public Instant getLastDonationTimestamp() {
+		return lastDonationTimestamp;
+	}
+
+	public void setLastDonationTimestamp(Instant lastDonationTimestamp) {
+		this.lastDonationTimestamp = lastDonationTimestamp;
 	}
 
 	// @formatter:off
