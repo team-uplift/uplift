@@ -1,0 +1,28 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:uplift/models/donor_tag_model.dart';
+
+void main() {
+  group('DonorTag Model', () {
+    test('fromJson parses correctly with all fields', () {
+      final json = {
+        'tagName': 'Food Security',
+        'createdAt': '2025-04-20T12:00:00Z',
+      };
+
+      final tag = DonorTag.fromJson(json);
+
+      expect(tag.tagName, 'Food Security');
+      expect(tag.createdAt, '2025-04-20T12:00:00Z');
+    });
+
+    test('fromJson defaults tagName when missing', () {
+      final json = {
+        'createdAt': '2025-04-20T12:00:00Z',
+      };
+
+      final tag = DonorTag.fromJson(json);
+
+      expect(tag.tagName, 'Untitled');
+    });
+  });
+}

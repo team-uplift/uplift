@@ -60,7 +60,7 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
       
       if (pickedFile != null) {
         final success = await RecipientApi.uploadIncomeVerificationImage(
-          widget.recipient.id.toString(),
+          widget.recipient.id,
           File(pickedFile.path),
         );
 

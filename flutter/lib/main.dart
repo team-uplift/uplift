@@ -3,12 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/components/recipient_list_card.dart';
-// import 'package:uplift/models/transaction_model.dart';
 import 'package:uplift/screens/auth/donor_or_recipient.dart';
 import 'package:uplift/screens/auth/login_screen.dart';
 import 'package:uplift/screens/auth/donor_registration_screen.dart';
 import 'package:uplift/screens/auth/splash_redirect.dart';
-// import 'package:uplift/screens/auth/recipient_registration_screen.dart';
 import 'package:uplift/screens/home/dashboard_screen.dart';
 import 'package:uplift/screens/home/donate_screen.dart';
 import 'package:uplift/screens/home/donor_questionnaire_screen.dart';
@@ -24,6 +22,7 @@ import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:uplift/utils/logger.dart';
 
 import 'amplifyconfiguration.dart';
 import 'models/ModelProvider.dart';
@@ -31,6 +30,7 @@ import 'models/ModelProvider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _configureAmplify();
+  setupLogging();
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -77,7 +77,12 @@ final GoRouter _router = GoRouter(
         path: '/recipient_registration',
         name: '/recipient_registration',
         builder: (BuildContext context, GoRouterState state) {
-          return const RegistrationController();
+          final extras = state.extra as Map<String, dynamic>?;
+
+          return RegistrationController(
+            initialFormData: extras?['formData'],
+            isEditing: extras?['isEditing'] ?? false,
+          );
         }),
     GoRoute(
       path: '/home',
@@ -181,21 +186,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Authenticator(
-      signUpForm: SignUpForm.custom(
-        fields: [
-          // SignUpFormField.givenName(),
-          // SignUpFormField.familyName(),
-          SignUpFormField.username(),
-          SignUpFormField.email(required: true),
-          SignUpFormField.password(),
-        ]
+      signUpForm: SignUpForm.custom(fields: [
+        // SignUpFormField.givenName(),
+        // SignUpFormField.familyName(),
+        SignUpFormField.username(),
+        SignUpFormField.email(required: true),
+        SignUpFormField.password(),
+      ]),
+      child: MaterialApp.router(
+        routerConfig: _router,
+        debugShowCheckedModeBanner: false,
+        builder: Authenticator.builder(),
       ),
-           child: MaterialApp.router(
-             routerConfig: _router,
-             debugShowCheckedModeBanner: false,
-             builder: Authenticator.builder(),
-       ),
-     );
+    );
     // return MaterialApp.router(
     //   routerConfig: _router,
     //   debugShowCheckedModeBanner: false,

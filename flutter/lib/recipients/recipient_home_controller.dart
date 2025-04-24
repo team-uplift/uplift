@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:uplift/api/cognito_helper.dart';
 import 'package:uplift/components/bottom_nav_bar.dart';
 import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/models/user_model.dart';
+import 'package:uplift/screens/recipient_reg_screens/registration_questions.dart';
 import 'recipient_history_screen.dart';
 import 'recipient_profile_screen.dart';
 import 'recipient_settings_screen.dart';
@@ -42,35 +44,52 @@ class _RecipientHomeState extends State<RecipientHome> {
     ];
   }
 
+  
+
 
 
   Future<void> _loadProfile() async {
 
-    try {
-      final attributes = await Amplify.Auth.fetchUserAttributes();
-      final attrMap = {
-        for (final attr in attributes) attr.userAttributeKey.key: attr.value,
-      };
+    final attrMap = await getCognitoAttributes();
+    final cognitoId = attrMap?['sub'];
+    final user = await UserApi.fetchUserById(cognitoId!);
 
-      final cognitoId = attrMap['sub'];
-      print('cognitoId: $cognitoId');
-
-      final user = await UserApi.fetchUserById(cognitoId!);
-
-
-      if (user != null) {
-        setState(() {
-          userProfile = user;
-          recipientProfile = user.recipientData!;
-          _isLoading = false;
-          _loadScreens();
-        });
-      } else {
-        print("Profile not found with cognito id: $cognitoId}");
-      }
-    } catch (e) {
-      print("Failed to load profile: $e");
+    if (user != null) {
+      setState(() {
+        userProfile = user;
+        recipientProfile = user.recipientData!;
+        _isLoading = false;
+        _loadScreens();
+      });
+    } else {
+      print("Profile not found with cognito id: $cognitoId}");
     }
+
+    // try {
+    //   final attributes = await Amplify.Auth.fetchUserAttributes();
+    //   final attrMap = {
+    //     for (final attr in attributes) attr.userAttributeKey.key: attr.value,
+    //   };
+
+      
+    //   print('cognitoId: $cognitoId');
+
+    //   final user = await UserApi.fetchUserById(cognitoId!);
+
+
+    //   if (user != null) {
+    //     setState(() {
+    //       userProfile = user;
+    //       recipientProfile = user.recipientData!;
+    //       _isLoading = false;
+    //       _loadScreens();
+    //     });
+    //   } else {
+    //     print("Profile not found with cognito id: $cognitoId}");
+    //   }
+    // } catch (e) {
+    //   print("Failed to load profile: $e");
+    // }
   }
 
 

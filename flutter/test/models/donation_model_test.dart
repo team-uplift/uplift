@@ -1,0 +1,38 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:uplift/models/donation_model.dart';
+
+void main() {
+  group('Donation Model', () {
+    test('fromJson parses correctly with thankYouMessage', () {
+      final json = {
+        'id': 1,
+        'createdAt': '2025-04-21T10:00:00Z',
+        'amount': 1500,
+        'donor': {'nickname': 'Generous Donor'},
+        'thankYouMessage': {'message': 'Thank you for your gift!'},
+      };
+
+      final donation = Donation.fromJson(json);
+
+      expect(donation.id, 1);
+      expect(donation.amount, 1500);
+      expect(donation.donorName, 'Generous Donor');
+      expect(donation.thankYouMessage, 'Thank you for your gift!');
+      expect(donation.formattedAmount, '\$1500.00');
+      expect(donation.formattedDate, '2025-04-21');
+    });
+
+    test('fromJson uses defaults for missing values', () {
+      final json = {
+        'id': 2,
+        'createdAt': '2025-01-01T00:00:00Z',
+      };
+
+      final donation = Donation.fromJson(json);
+
+      expect(donation.donorName, 'Anonymous');
+      expect(donation.amount, 0);
+      expect(donation.thankYouMessage, isNull);
+    });
+  });
+}

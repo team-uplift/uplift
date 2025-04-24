@@ -217,7 +217,7 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
                         key: const ValueKey('zipCode'),
                         name: 'zipCode',
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(labelText: 'zipCode'),
+                        decoration: const InputDecoration(labelText: 'Zip Code'),
                         validator: FormBuilderValidators.compose([
                           FormBuilderValidators.required(),
                           FormBuilderValidators.minLength(5, errorText: 'ZIP must be 5 digits'),

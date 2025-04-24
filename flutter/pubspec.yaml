@@ -53,10 +53,12 @@ dependencies:
   form_builder_validators: ^11.1.2
   image_picker: ^1.0.4 
   share_plus: ^10.0.0
+  logging: ^1.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  test: ^1.24.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

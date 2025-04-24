@@ -32,21 +32,3 @@ class Tag {
   };
 }
 
-
-// TODO remove comments
-// class Duck {
-//   final String url;
-//   final String msg;
-
-//   const Duck({required this.url, required this.msg});
-
-//   factory Duck.fromJson(Map<String, dynamic> json) {
-//     return switch (json) {
-//       {'url': String url, 'message': String msg} => Duck(
-//         url: url,
-//         msg: msg,
-//       ),
-//       _ => throw const FormatException('Not a duck'),
-//     };
-//   }
-// }
