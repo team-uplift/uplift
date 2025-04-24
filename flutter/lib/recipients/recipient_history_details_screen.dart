@@ -34,7 +34,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
       _loading = true;
     });
     print("donation id: ${_donation.id}");
-    final updated = await RecipientApi.fetchDonationById(_donation.id.toString());
+    final updated = await RecipientApi.fetchDonationById(_donation.id);
     if (updated != null) {
       setState(() {
         _donation = updated;

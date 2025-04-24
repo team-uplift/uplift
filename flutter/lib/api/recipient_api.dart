@@ -1,15 +1,30 @@
+/// recipient_api.dart
+///
+/// API methods for recipient related actions
+/// Includes:
+/// - creating a recipient
+/// - updating selected tags for recipient
+/// - uploading income verification images
+/// - fetching all donations tied to a recipient
+/// - fetching a specific donation
+/// - sending a thank you message to a donor
+///
+library;
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:uplift/utils/logger.dart';
 
 import '../models/donation_model.dart';
-
-
 
 class RecipientApi {
   static const String baseUrl =
       'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
 
+  /// create a recipient user from formdata and amplify auth information
+  ///
+  /// returns the user id on success, null on failure
   static Future<String?> createRecipientUser(
     Map<String, dynamic> formData,
     List<Map<String, dynamic>> formQuestions,
@@ -33,7 +48,6 @@ class RecipientApi {
       },
     };
 
-    print("Recipient api payload: $payload");
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/users'),
@@ -43,37 +57,41 @@ class RecipientApi {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
+        log.info("Successfully created recipient user.");
         return data['id'].toString();
       } else {
-        print("Recipient creation failed: ${response.statusCode}");
+        log.severe("Recipient creation failed: ${response.statusCode}");
         return null;
       }
     } catch (e) {
-      print("Error creating recipient: $e");
+      log.severe("Error creating recipient: $e");
       return null;
     }
   }
 
-  static Future<bool> updateTags(
-      String userId, List<String> selectedTags) async {
+  /// updates a recipients selected tags associated with their profile
+  ///
+  /// returns 'true' on success, 'false' on failure
+  static Future<bool> updateTags(int userId, List<String> selectedTags) async {
     try {
-      print("update tags: $selectedTags");
       final response = await http.put(
         Uri.parse('$baseUrl/recipients/tagSelection/$userId'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(selectedTags),
       );
-      print("update recipient: ${response.body}");
-
+      log.info("Successfully updated recipient tags.");
       return response.statusCode == 204;
     } catch (e) {
-      print("Error updating recipient: $e");
+      log.severe("Error updating recipient: $e");
       return false;
     }
   }
 
+  /// uploads income image to api for verification
+  ///
+  /// returns 'true' if verified, 'false' otherwise
   static Future<bool> uploadIncomeVerificationImage(
-      String userId, File imageFile) async {
+      int userId, File imageFile) async {
     try {
       final request = http.MultipartRequest(
         'PUT',
@@ -88,19 +106,23 @@ class RecipientApi {
       final responseBody = await response.stream.bytesToString();
 
       if (response.statusCode == 200 && responseBody.trim() == 'true') {
+        log.info("Recipient income verification successful.");
         return true;
       } else {
-        print("Verification failed: $responseBody");
+        log.severe("Verification failed: $responseBody");
         return false;
       }
     } catch (e) {
-      print("Error verifying income: $e");
+      log.severe("Error verifying income: $e");
       return false;
     }
   }
 
+  /// retrieves list of all donations associated with recipient
+  ///
+  /// returns list of donation objects on success, null on failure
   static Future<List<Donation>> fetchDonationsForRecipient(
-      String recipientId) async {
+      int recipientId) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/donations/recipient/$recipientId'),
@@ -109,18 +131,22 @@ class RecipientApi {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
+        log.info("Successfully fetched recipient donations.");
         return data.map((json) => Donation.fromJson(json)).toList();
       } else {
-        print("Failed to fetch donations: ${response.statusCode}");
+        log.severe("Failed to fetch donations: ${response.statusCode}");
         return [];
       }
     } catch (e) {
-      print("Error fetching donations: $e");
+      log.severe("Error fetching donations: $e");
       return [];
     }
   }
 
-  static Future<Donation?> fetchDonationById(String donationId) async {
+  /// fetches a specific donation by donation id
+  ///
+  /// returns donation object on success, null on failure
+  static Future<Donation?> fetchDonationById(int donationId) async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/donations/$donationId'),
@@ -129,28 +155,29 @@ class RecipientApi {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
-        print("get donation: ${response.body}");
+        log.info("Successfully fetched donation.");
         return Donation.fromJson(data);
       } else {
-        print("Failed to fetch donations: ${response.statusCode}");
+        log.severe("Failed to fetch donations: ${response.statusCode}");
         return null;
       }
     } catch (e) {
-      print("Error fetching donations: $e");
+      log.severe("Error fetching donations: $e");
       return null;
     }
   }
 
+  /// sends thank you message from recipient to donor
+  ///
+  /// returns 'true' on success, 'false' on failure
   static Future<bool> sendThankYouMessage({
     // required int userId,
     required int donationId,
     required String message,
   }) async {
     final payload = {
-      // 'id': userId,
       'donationId': donationId,
       'message': message,
-      // 'donorRead': false,
     };
 
     try {
@@ -161,14 +188,56 @@ class RecipientApi {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("Message sent successfully.");
+        log.info("Message sent successfully.");
         return true;
       } else {
-        print("Failed to send message: ${response.statusCode}");
+        log.warning("Failed to send message: ${response.statusCode}");
         return false;
       }
     } catch (e) {
-      print("Error sending thank you message: $e");
+      log.severe("Error sending thank you message: $e");
+      return false;
+    }
+  }
+
+  /// updates a recipient with new information from edited form
+  ///
+  /// returns 'true' on succes, 'false' on failure
+  static Future<bool> updateRecipientUserProfile(
+    Map<String, dynamic> formData,
+    List<Map<String, dynamic>> formQuestions,
+    Map<String, dynamic> attrMap,
+  ) async {
+    final payload = {
+      'id': formData['userId'],
+      'cognitoId': attrMap['sub'],
+      'email': attrMap['email'],
+      'recipient': true,
+      'recipientData': {
+        'id': formData['userId'],
+        'firstName': formData['firstName'],
+        'lastName': formData['lastName'],
+        'streetAddress1': formData['streetAddress1'],
+        'streetAddress2': formData['streetAddress2'],
+        'city': formData['city'],
+        'state': formData['state'],
+        'zipCode': formData['zipCode'],
+        'lastAboutMe': formData['lastAboutMe'],
+        'lastReasonForHelp': formData['lastReasonForHelp'],
+        'formQuestions': formQuestions,
+      },
+    };
+
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/users'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(payload),
+      );
+      log.info("Successfully updated recipient user.");
+      return response.statusCode == 200;
+    } catch (e) {
+      log.severe("Error updating recipient: $e");
       return false;
     }
   }

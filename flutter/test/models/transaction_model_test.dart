@@ -1,0 +1,43 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:uplift/models/transaction_model.dart';
+import 'package:uplift/models/recipient_model.dart';
+
+void main() {
+  group('Transaction Model', () {
+    test('create factory generates default id and date', () {
+      final recipient = Recipient(
+        id: 1,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        city: 'Test City',
+        formQuestions: [],
+      );
+
+      final transaction = Transaction.create(
+        recipient: recipient,
+        amount: 25.0,
+      );
+
+      expect(transaction.amount, 25.0);
+      expect(transaction.recipient.firstName, 'Jane');
+      expect(transaction.id, isNotNull);
+      expect(transaction.date, isA<DateTime>());
+    });
+
+    test('toString includes recipient and amount', () {
+      final recipient = Recipient(
+        id: 2,
+        firstName: 'Testy',
+        lastName: 'Tester',
+        formQuestions: [],
+      );
+
+      final tx = Transaction.create(recipient: recipient, amount: 50.0);
+      final str = tx.toString();
+
+      expect(str, contains('Transaction('));
+      expect(str, contains('Testy'));
+      expect(str, contains('\$50.0'));
+    });
+  });
+}

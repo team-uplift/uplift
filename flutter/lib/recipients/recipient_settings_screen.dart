@@ -4,11 +4,11 @@ import 'dart:convert';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
+import 'package:uplift/api/cognito_helper.dart';
 import 'package:uplift/api/user_api.dart';
 import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/models/user_model.dart';
-
+import 'package:uplift/screens/recipient_reg_screens/registration_questions.dart';
 
 class RecipientSettingsScreen extends StatefulWidget {
   final VoidCallback? editProfile;
@@ -27,7 +27,8 @@ class RecipientSettingsScreen extends StatefulWidget {
   });
 
   @override
-  State<RecipientSettingsScreen> createState() => _RecipientSettingsScreenState();
+  State<RecipientSettingsScreen> createState() =>
+      _RecipientSettingsScreenState();
 }
 
 class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
@@ -41,6 +42,51 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     _startCooldown();
   }
 
+  Map<String, dynamic> rebuildFormDataFromRecipient(
+      User profile, Recipient recipient) {
+    final formData = <String, dynamic>{};
+
+    // Basic profile fields
+    formData['userId'] = profile.id;
+    formData['firstName'] = recipient.firstName;
+    formData['lastName'] = recipient.lastName;
+    formData['streetAddress1'] = recipient.streetAddress1;
+    formData['streetAddress2'] = recipient.streetAddress2;
+    formData['city'] = recipient.city;
+    formData['state'] = recipient.state;
+    formData['zipCode'] = recipient.zipCode?.toString() ?? '';
+    formData['lastAboutMe'] = recipient.lastAboutMe;
+    formData['lastReasonForHelp'] = recipient.lastReasonForHelp;
+
+    // Custom form questions
+    if (recipient.formQuestions != null) {
+      for (final q in recipient.formQuestions!) {
+        final match = registrationQuestions.firstWhere(
+          (rq) => rq['q'] == q['question'],
+          orElse: () => {},
+        );
+
+        final key = match['key'];
+        final type = match['type'];
+
+        if (key != null && key is String) {
+          if (type == 'checkbox') {
+            formData[key] = (q['answer'] as String)
+                .split(', ')
+                .map((s) => s.trim())
+                .toList();
+          } else {
+            formData[key] = q['answer'];
+          }
+        } else {
+          debugPrint("⚠️ No matching key for question '${q['question']}'");
+        }
+      }
+    }
+
+    return formData;
+  }
+
   // PROFILE EDIT LOGIC WITH CLOCK
   void _startCooldown() {
     // TODO chatgpt clock logic
@@ -48,7 +94,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
 
     print("lasttime: $tagsLastGenerated");
 
-    final editTime = tagsLastGenerated?.add(const Duration(hours: 24));
+    final editTime = tagsLastGenerated?.add(const Duration(seconds: 24));
     final currentTime = DateTime.now();
 
     if (currentTime.isAfter(editTime!)) {
@@ -92,13 +138,68 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     final minutes = d.inMinutes.remainder(60);
     final seconds = d.inSeconds.remainder(60);
     return "${hours.toString().padLeft(2, '0')}h "
-           "${minutes.toString().padLeft(2, '0')}m "
-           "${seconds.toString().padLeft(2, '0')}s";
+        "${minutes.toString().padLeft(2, '0')}m "
+        "${seconds.toString().padLeft(2, '0')}s";
   }
 
-  
-  void _goToEditProfile() {}
+  void _goToEditProfile() {
+    final formData =
+        rebuildFormDataFromRecipient(widget.profile, widget.recipient);
+    print("formdata from settings: $formData");
+    print("userid type: ${widget.profile.id} ${widget.profile.id.runtimeType}");
+    context.goNamed(
+      '/recipient_registration',
+      extra: {
+        'profile': widget.profile,
+        'formData': formData,
+        'isEditing': true,
+      },
+    );
+  }
 
+  Future<void> updateUserEmail({
+    required BuildContext context,
+    required String newEmail,
+    required VoidCallback onSuccess,
+  }) async {
+    try {
+      // 1. Update in Cognito
+      await Amplify.Auth.updateUserAttribute(
+        userAttributeKey: CognitoUserAttributeKey.email,
+        value: newEmail,
+      );
+
+      // 2. Update in Backend
+      final attrMap = await getCognitoAttributes();
+      final cognitoId = attrMap?['sub'];
+
+      final success = await UserApi.updateEmail(
+        userId: widget.profile.id!,
+        attrMap: attrMap!,
+      );
+
+      Navigator.pop(context);
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('✅ Email updated in backend')),
+        );
+        onSuccess(); // e.g. show confirmation prompt
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('⚠️ Backend update failed.')),
+        );
+      }
+    } on AuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ Cognito error: ${e.message}')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ Unexpected error: $e')),
+      );
+    }
+  }
 
   // UPDATING EMAIL LOGIC --> chatgpt
   void _showEmailUpdateDialog(BuildContext context) {
@@ -125,59 +226,12 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
             ElevatedButton(
               onPressed: () async {
                 final newEmail = emailController.text.trim();
-                
-
-                try {
-                  // 1. Update email in Cognito
-                  await Amplify.Auth.updateUserAttribute(
-                    userAttributeKey: CognitoUserAttributeKey.email,
-                    value: newEmail,
-                  );
-
-                  // 2. Fetch Cognito ID to identify the user in your DB
-                  final attributes = await Amplify.Auth.fetchUserAttributes();
-                  final attrMap = {
-                    for (final attr in attributes) attr.userAttributeKey.key: attr.value,
-                  };
-                  final cognitoId = attrMap['sub'];
-
-                  // 3. Update the email in your backend
-                  final response = await http.put(
-                    Uri.parse('http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift/users/$cognitoId'),
-                    headers: {'Content-Type': 'application/json'},
-                    body: jsonEncode({
-                      'email': newEmail,
-                    }),
-                  );
-
-                  if (!mounted) return;
-
-                  Navigator.pop(context); // Close dialog
-
-                  if (response.statusCode == 200 || response.statusCode == 204) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('✅ Email updated in backend')),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('⚠️ Backend update failed: ${response.statusCode}')),
-                    );
-                  }
-
-                  // 4. Optionally ask for confirmation code
-                  _showEmailConfirmationDialog(context);
-
-                } on AuthException catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('❌ Cognito error: ${e.message}')),
-                  );
-                } catch (e) {
-                  
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('❌ Unexpected error: $e')),
-                  );
-                }
-
+                updateUserEmail(
+                    context: context,
+                    newEmail: newEmail,
+                    onSuccess: () {
+                      _showEmailConfirmationDialog(context);
+                    });
               },
               child: const Text("Update"),
             ),
@@ -202,10 +256,11 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
           keyboardType: TextInputType.number,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel")),
           ElevatedButton(
             onPressed: () async {
-              
               try {
                 await Amplify.Auth.confirmUserAttribute(
                   userAttributeKey: CognitoUserAttributeKey.email,
@@ -231,44 +286,12 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     );
   }
 
-
-
-
-  // // DELETING ACCOUNT LOGIC
-  // Future<void> _deleteAccount() async {
-  //   final userId = widget.profile.id;
-  //   print("userid: $userId");
-
-  //   try {
-  //     final response = await http.delete(
-  //       Uri.parse('http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift/users/$userId'),
-  //       headers: {'Content-Type': 'application/json'},
-  //     );
-
-  //     print("get donation response: ${response.body}");
-
-  //     if (response.statusCode == 400) {
-  //       print("delete unsuccessful");
-  //     } else {
-  //       await Amplify.Auth.deleteUser();
-  //     }
-  //   } catch (e) {
-  //     print('error with delete request: $e');
-  //   }
-  // }
-
-  
-  
-   
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
-      body: SafeArea(
-        child: ListView(
+        appBar: AppBar(title: const Text('Settings')),
+        body: SafeArea(
+            child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
             ListTile(
@@ -302,10 +325,10 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
                   await Amplify.Auth.signOut(
                     options: const SignOutOptions(globalSignOut: true),
                   );
-                  
+
                   // Clear GoRouter navigation history and force redirect to Authenticator root
                   if (context.mounted) {
-                    context.go('/redirect');
+                    context.goNamed('/redirect');
                   }
                 } on AuthException catch (e) {
                   print("Sign out error: ${e.message}");
@@ -314,68 +337,75 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
             ),
             const Divider(),
 
-
             ListTile(
-              leading: const Icon(Icons.redo, color: Colors.orange,),
-              title: const Text("Convert Account", style: TextStyle(color: Colors.orange)),
-              subtitle: const Text("Convert account from recipient to donor"),
-              onTap: widget.convertAccount ?? () {
-                // Show a confirmation dialog
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text("Are you sure?"),
-                    content: const Text("This will convert your account from recipient to donor. You will no longer have access to your profile information."),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
-                      ElevatedButton(
-                        onPressed: () {
-                          UserApi.convertToDonor(widget.profile);
-                          Navigator.pop(context);
-                          context.goNamed('/login');
-                        },
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                        child: Text("Convert Account"),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            ),
+                leading: const Icon(
+                  Icons.redo,
+                  color: Colors.orange,
+                ),
+                title: const Text("Convert Account",
+                    style: TextStyle(color: Colors.orange)),
+                subtitle: const Text("Convert account from recipient to donor"),
+                onTap: widget.convertAccount ??
+                    () {
+                      // Show a confirmation dialog
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text("Are you sure?"),
+                          content: const Text(
+                              "This will convert your account from recipient to donor. You will no longer have access to your profile information."),
+                          actions: [
+                            TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text("Cancel")),
+                            ElevatedButton(
+                              onPressed: () {
+                                UserApi.convertToDonor(widget.profile);
+                                Navigator.pop(context);
+                                context.goNamed('/redirect');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red),
+                              child: Text("Convert Account"),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
             const Divider(),
 
             // TODO section below GPT generated
             ListTile(
-              leading: const Icon(Icons.delete_forever, color: Colors.red),
-              title: const Text("Delete Account", style: TextStyle(color: Colors.red)),
-              subtitle: const Text("Permanently remove your account"),
-              onTap: () => {
-                // Show a confirmation dialog
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text("Are you sure?"),
-                    content: const Text("This will permanently delete your account."),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
-                      ElevatedButton(
-                        onPressed: () {
-                          // TODO implement account deletion and route to home
-                          UserApi.deleteAccount(widget.profile);
-                        },
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                        child: Text("Delete"),
-                      ),
-                    ],
-                  ),
-                )
-              }
-            )
+                leading: const Icon(Icons.delete_forever, color: Colors.red),
+                title: const Text("Delete Account",
+                    style: TextStyle(color: Colors.red)),
+                subtitle: const Text("Permanently remove your account"),
+                onTap: () => {
+                      // Show a confirmation dialog
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text("Are you sure?"),
+                          content: const Text(
+                              "This will permanently delete your account."),
+                          actions: [
+                            TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text("Cancel")),
+                            ElevatedButton(
+                              onPressed: () {
+                                UserApi.deleteAccount(widget.profile);
+                                context.goNamed('/redirect');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red),
+                              child: Text("Delete"),
+                            ),
+                          ],
+                        ),
+                      )
+                    })
           ],
-        )
-      )
-    );
+        )));
   }
 }
-
-// TODO add conversion button from donor to recipient
