@@ -71,6 +71,11 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonProperty("state")
 	private String state;
 
+	@Column(name = "zip_code")
+	@JsonInclude(JsonInclude.Include.NON_ABSENT)
+	@JsonProperty("zipCode")
+	private String zipCode;
+
 	@Column(name = "image_url")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonProperty("imageUrl")
@@ -235,6 +240,16 @@ public class Recipient extends AbstractCreatedAt {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	@Schema(example = "02138", description = "US postal zip code")
+
+	public String getZipCode() {
+		return zipCode;
+	}
+
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
 	}
 
 	@Schema(example = "https://image.com/image", description = "URL of the image linked to this recipient, if any")
