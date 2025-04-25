@@ -1,11 +1,10 @@
 package org.upLift.services;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.upLift.exceptions.ModelException;
+import org.upLift.exceptions.EntityNotFoundException;
 import org.upLift.exceptions.TimingException;
 import org.upLift.model.FormQuestion;
 import org.upLift.model.Recipient;
@@ -122,7 +121,7 @@ public class RecipientServiceImpl implements RecipientService {
 			}
 		}
 		else {
-			throw new ModelException("Recipient not found.");
+			throw new EntityNotFoundException(id, "Recipient", "Recipient not found.");
 		}
 	}
 
@@ -194,7 +193,7 @@ public class RecipientServiceImpl implements RecipientService {
 	}
 
 	@Override
-	public Recipient updateSelectedTags(Integer recipientId, @Valid Set<String> selectedTags) {
+	public Recipient updateSelectedTags(Integer recipientId, Set<String> selectedTags) {
 		Optional<Recipient> recipientResult = recipientRepository.findById(recipientId);
 		if (recipientResult.isPresent()) {
 			var recipient = recipientResult.get();
@@ -204,7 +203,7 @@ public class RecipientServiceImpl implements RecipientService {
 			return recipientRepository.save(recipient);
 		}
 		else {
-			throw new ModelException("Recipient not found.");
+			throw new EntityNotFoundException(recipientId, "Recipient", "Recipient not found");
 		}
 	}
 
