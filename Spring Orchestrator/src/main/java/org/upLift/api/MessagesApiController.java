@@ -1,6 +1,6 @@
 package org.upLift.api;
 
-import jakarta.validation.Valid;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.upLift.exceptions.EntityNotFoundException;
+import org.upLift.model.Donation;
 import org.upLift.model.Message;
+import org.upLift.model.UpliftJsonViews;
+import org.upLift.services.DonationService;
 import org.upLift.services.MessageService;
 import org.upLift.services.UserService;
 
@@ -24,11 +28,15 @@ public class MessagesApiController implements MessagesApi {
 
 	private final MessageService messageService;
 
+	private final DonationService donationService;
+
 	private final UserService userService;
 
 	@Autowired
-	public MessagesApiController(MessageService messageService, UserService userService) {
+	public MessagesApiController(MessageService messageService, DonationService donationService,
+			UserService userService) {
 		this.messageService = messageService;
+		this.donationService = donationService;
 		this.userService = userService;
 	}
 
@@ -61,29 +69,20 @@ public class MessagesApiController implements MessagesApi {
 	}
 
 	@Override
-	public ResponseEntity<Message> messagesPost(@Valid @RequestBody Message body) {
+	@JsonView(UpliftJsonViews.FullDonor.class)
+	public Donation messagesPost(@RequestBody Message body) {
 		LOG.info("Saving message linked to donation {}", body.getDonationId());
-		LOG.debug("Saving message: {}", body.getMessage());
-		var savedMessage = messageService.sendMessage(body);
-		LOG.debug("Saved message: {}", savedMessage);
-		return new ResponseEntity<>(savedMessage, HttpStatus.CREATED);
+		var savedMessage = messageService.sendNewMessage(body);
+		LOG.debug("Saved new message {}", savedMessage.getMessage());
+		return donationService.getDonationWithDonorById(savedMessage.getDonationId())
+			.orElseThrow(
+					() -> new EntityNotFoundException(savedMessage.getDonationId(), "Donation", "Donation not found"));
 	}
 
 	@Override
-	public ResponseEntity<Message> messagesMarkRead(@PathVariable("messageId") Integer messageId) {
+	public Message messagesMarkRead(@PathVariable("messageId") Integer messageId) {
 		LOG.info("Marking message {} as read", messageId);
-		var messageResult = messageService.getMessageById(messageId);
-		if (messageResult.isPresent()) {
-			LOG.debug("Found message with id {}", messageId);
-			var message = messageResult.get();
-			message.setDonorRead(true);
-			var savedMessage = messageService.sendMessage(message);
-			LOG.debug("Saved message: {}", savedMessage);
-			return new ResponseEntity<>(savedMessage, HttpStatus.OK);
-		}
-		else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		return messageService.markMessageRead(messageId);
 	}
 
 }
