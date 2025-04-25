@@ -24,6 +24,19 @@ public interface DonationRepository extends JpaRepository<Donation, Integer> {
 	Optional<Donation> findWithDonorbyId(int donationId);
 
 	/**
+	 * Finds the donation with the specified id (if any), eagerly loading the recipient
+	 * associated with the donation.
+	 * @param donationId persistence index of the donation to load
+	 * @return Optional containing the donation with the specified id with recipient
+	 * eagerly loaded, or an empty Optional if there's no such donation
+	 */
+	@Query("""
+				SELECT donation FROM Donation donation JOIN FETCH donation.recipient
+							WHERE donation.id = :donationId
+			""")
+	Optional<Donation> findWithRecipientbyId(int donationId);
+
+	/**
 	 * Finds all donations made by the specified donor, eagerly loading the recipients
 	 * associated with each donation.
 	 * @param donorId persistence index of the donor who gave the donations to load
