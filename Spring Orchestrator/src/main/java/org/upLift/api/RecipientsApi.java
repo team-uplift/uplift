@@ -66,9 +66,12 @@ public interface RecipientsApi {
 					schema = @Schema()) @Valid @RequestParam(value = "tag", required = false) List<String> tags);
 
 	@Operation(summary = "Updates a recipient's tags with form data", description = "", tags = { "Recipient" })
-	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Created"),
-
-			@ApiResponse(responseCode = "400", description = "Invalid input") })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "Tags generated",
+					content = @Content(mediaType = "application/json",
+							array = @ArraySchema(schema = @Schema(implementation = RecipientTag.class)))),
+			@ApiResponse(responseCode = "400", description = "Invalid input"),
+			@ApiResponse(responseCode = "404", description = "Recipient not found") })
 	@RequestMapping(value = "/recipients/tagGeneration/{recipientId}", method = RequestMethod.POST)
 	ResponseEntity<List<RecipientTag>> updateRecipientTags(
 			@Parameter(in = ParameterIn.PATH, description = "Recipient id to generate tags for", required = true,
@@ -108,7 +111,10 @@ public interface RecipientsApi {
 
 	@Operation(summary = "Gathers a list of recipients with a series of donor questions", description = "",
 			tags = { "Recipient" })
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK",
+					content = @Content(mediaType = "application/json",
+							array = @ArraySchema(schema = @Schema(implementation = Recipient.class)))),
 
 			@ApiResponse(responseCode = "400", description = "Invalid input") })
 	@RequestMapping(value = "/recipients/matching", method = RequestMethod.GET)
