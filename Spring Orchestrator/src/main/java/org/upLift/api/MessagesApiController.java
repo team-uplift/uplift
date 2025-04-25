@@ -41,15 +41,15 @@ public class MessagesApiController implements MessagesApi {
 	}
 
 	@Override
-	public ResponseEntity<Message> messagesIdGet(@PathVariable("id") Integer id) {
+	public Message messagesIdGet(@PathVariable("id") Integer id) {
 		LOG.info("Getting message {}", id);
 		var message = messageService.getMessageById(id);
 		if (message.isPresent()) {
 			LOG.debug("Found message with id {}", id);
-			return new ResponseEntity<>(message.get(), HttpStatus.OK);
+			return message.get();
 		}
 		else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new EntityNotFoundException(id, "Message", "Message not found");
 		}
 	}
 
@@ -64,7 +64,7 @@ public class MessagesApiController implements MessagesApi {
 		}
 		else {
 			LOG.info("Donor {} does not exist", donorId);
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new EntityNotFoundException(donorId, "Donor", "Donor not found");
 		}
 	}
 

@@ -36,18 +36,22 @@ public interface MessagesApi {
 					content = @Content(mediaType = "application/json",
 							schema = @Schema(implementation = Message.class))),
 
-			@ApiResponse(responseCode = "404", description = "Message not found"),
+			@ApiResponse(responseCode = "404", description = "Message not found",
+					content = @Content(schema = @Schema(implementation = ErrorResults.EntityNotFoundError.class))),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@GetMapping(value = "/messages/{id}", produces = { "application/json" })
-	ResponseEntity<Message> messagesIdGet(
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	Message messagesIdGet(
 			@Parameter(in = ParameterIn.PATH, description = "persistence index of the message to retrieve",
 					required = true, schema = @Schema()) @PathVariable("id") Integer id);
 
 	@Operation(summary = "Get messages sent to a specific donor",
 			description = "Retrieves messages sent to a specific donor.", tags = { "Messages" })
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200",
+			@ApiResponse(
+					responseCode = "200",
 					description = "List of messages sent to a specific donor, "
 							+ "returns an empty array if the donor hasn't received any messages",
 					content = @Content(mediaType = "application/json",
@@ -55,7 +59,8 @@ public interface MessagesApi {
 
 			@ApiResponse(responseCode = "400", description = "Invalid request data"),
 
-			@ApiResponse(responseCode = "404", description = "No such donor exists"),
+			@ApiResponse(responseCode = "404", description = "No such donor exists",
+					content = @Content(schema = @Schema(implementation = ErrorResults.EntityNotFoundError.class))),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@GetMapping(value = "/messages/donor/{donorId}", produces = { "application/json" })
