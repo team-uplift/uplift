@@ -1,11 +1,11 @@
 package org.upLift.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.upLift.model.Donation;
 
 import static org.hamcrest.Matchers.*;
@@ -22,11 +22,10 @@ class DonationsApiControllerIntegrationTest extends BaseControllerIntegrationTes
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	@Disabled
 	@Test
-	void donationsIdGet() throws Exception {
+	void donationsIdGetForDonor() throws Exception {
 		// Test getting existing donation
-		mockMvc.perform(get("/donations/1"))
+		var result = mockMvc.perform(get("/donations/1?userType=donor"))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.id", is(1)))
@@ -34,7 +33,9 @@ class DonationsApiControllerIntegrationTest extends BaseControllerIntegrationTes
 			.andExpect(jsonPath("$.recipientId", is(1)))
 			.andExpect(jsonPath("$.amount", is(50)))
 			.andExpect(jsonPath("$.createdAt", is("2023-10-21T16:00:30.321Z")))
-			.andExpect(jsonPath("$.donor.nickname", is("KindDonor1")));
+			// Check that donor isn't included
+			.andExpect(jsonPath("$.donor").doesNotExist());
+		checkPublicRecipientData(result, "$");
 
 		// Test getting non-existent donation
 		mockMvc.perform(get("/donations/999"))
@@ -48,42 +49,94 @@ class DonationsApiControllerIntegrationTest extends BaseControllerIntegrationTes
 			.andExpect(jsonPath("$.notFoundEntityType", is("Donation")));
 	}
 
+	void checkPublicRecipientData(ResultActions actions, String prefix) throws Exception {
+		// Check that recipient data is included
+		actions.andExpect(jsonPath(prefix + ".recipient.id", is(1)))
+			.andExpect(jsonPath(prefix + ".recipient.nickname", is("Johnny")))
+			.andExpect(jsonPath(prefix + ".recipient.lastAboutMe", is("About John")))
+			.andExpect(jsonPath(prefix + ".recipient.lastReasonForHelp", is("Reason 1")))
+			.andExpect(jsonPath(prefix + ".recipient.tags", hasSize(7)))
+			.andExpect(jsonPath(prefix + ".recipient.tags[*].selected",
+					contains(true, true, true, true, true, true, true)))
+			.andExpect(jsonPath(prefix + ".recipient.tags[0].tagName", is("childcare")))
+			.andExpect(jsonPath(prefix + ".recipient.tags[1].tagName", is("clothing")))
+			.andExpect(jsonPath(prefix + ".recipient.tags[2].tagName", is("food")))
+			.andExpect(jsonPath(prefix + ".recipient.tags[3].tagName", is("health")))
+			.andExpect(jsonPath(prefix + ".recipient.tags[4].tagName", is("housing")))
+			.andExpect(jsonPath(prefix + ".recipient.tags[5].tagName", is("mental-health")))
+			.andExpect(jsonPath(prefix + ".recipient.tags[6].tagName", is("utilities")))
+			// Check that private properties are not included
+			.andExpect(jsonPath(prefix + ".recipient.user").doesNotExist())
+			.andExpect(jsonPath(prefix + ".recipient.firstName").doesNotExist())
+			.andExpect(jsonPath(prefix + ".recipient.lastName").doesNotExist())
+			.andExpect(jsonPath(prefix + ".recipient.streetAddress1").doesNotExist())
+			.andExpect(jsonPath(prefix + ".recipient.streetAddress2").doesNotExist())
+			.andExpect(jsonPath(prefix + ".recipient.city").doesNotExist())
+			.andExpect(jsonPath(prefix + ".recipient.state").doesNotExist())
+			.andExpect(jsonPath(prefix + ".recipient.zipCode").doesNotExist())
+			.andExpect(jsonPath(prefix + ".recipient.identityLastVerified").doesNotExist())
+			.andExpect(jsonPath(prefix + ".recipient.incomeLastVerified").doesNotExist())
+			.andExpect(jsonPath(prefix + ".recipient.formQuestions").doesNotExist());
+	}
+
+	@Test
+	void donationsIdGetForRecipient() throws Exception {
+		// Test getting existing donation with no query parameter
+		checkDonationForRecipient(mockMvc.perform(get("/donations/1")));
+
+		// Test getting existing donation with recipient query parameter
+		checkDonationForRecipient(mockMvc.perform(get("/donations/1?userType=recipient")));
+
+		// Test getting existing donation with unrecognized query parameter
+		mockMvc.perform(get("/donations/1?userType=admin"))
+			.andExpect(status().isBadRequest())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.errorMessage", is("Incorrect userType query parameter provided: admin")))
+			.andExpect(jsonPath("$.status", is(400)))
+			.andExpect(jsonPath("$.errorType", is("Bad Request")))
+			.andExpect(jsonPath("$.path", is("/donations/1")));
+
+		// Test getting non-existent donation
+		mockMvc.perform(get("/donations/999"))
+			.andExpect(status().isNotFound())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.errorMessage", is("Donation not found")))
+			.andExpect(jsonPath("$.status", is(404)))
+			.andExpect(jsonPath("$.errorType", is("Not Found")))
+			.andExpect(jsonPath("$.path", is("/donations/999")))
+			.andExpect(jsonPath("$.notFoundEntityId", is(999)))
+			.andExpect(jsonPath("$.notFoundEntityType", is("Donation")));
+	}
+
+	void checkDonationForRecipient(ResultActions result) throws Exception {
+		result.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.id", is(1)))
+			.andExpect(jsonPath("$.donorId", is(3)))
+			.andExpect(jsonPath("$.recipientId", is(1)))
+			.andExpect(jsonPath("$.amount", is(50)))
+			.andExpect(jsonPath("$.createdAt", is("2023-10-21T16:00:30.321Z")))
+			// Check that donor data is loaded
+			.andExpect(jsonPath("$.donor.id", is(3)))
+			.andExpect(jsonPath("$.donor.nickname", is("KindDonor1")))
+			.andExpect(jsonPath("$.donor.createdAt", is("2023-10-10T12:30:50.789Z")))
+			// Check that private donor data and recipient data isn't loaded
+			.andExpect(jsonPath("$.donor.user").doesNotExist())
+			.andExpect(jsonPath("$.recipient").doesNotExist());
+	}
+
 	@Test
 	void donationsGetByDonor() throws Exception {
 		// Test getting donations for existing donor
-		mockMvc.perform(get("/donations/donor/3"))
+		var result = mockMvc.perform(get("/donations/donor/3"))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$", hasSize(2)))
-			// First donation - check public properties
+			// First donation - check donation properties - full public recipient data
+			// will be checked below
 			.andExpect(jsonPath("$[0].id", is(1)))
 			.andExpect(jsonPath("$[0].amount", is(50)))
 			.andExpect(jsonPath("$[0].createdAt", is("2023-10-21T16:00:30.321Z")))
-			.andExpect(jsonPath("$[0].recipient.id", is(1)))
-			.andExpect(jsonPath("$[0].recipient.nickname", is("Johnny")))
-			.andExpect(jsonPath("$[0].recipient.lastAboutMe", is("About John")))
-			.andExpect(jsonPath("$[0].recipient.lastReasonForHelp", is("Reason 1")))
-			.andExpect(jsonPath("$[0].recipient.tags", hasSize(7)))
-			.andExpect(jsonPath("$[0].recipient.tags[*].selected", contains(true, true, true, true, true, true, true)))
-			.andExpect(jsonPath("$[0].recipient.tags[0].tagName", is("childcare")))
-			.andExpect(jsonPath("$[0].recipient.tags[1].tagName", is("clothing")))
-			.andExpect(jsonPath("$[0].recipient.tags[2].tagName", is("food")))
-			.andExpect(jsonPath("$[0].recipient.tags[3].tagName", is("health")))
-			.andExpect(jsonPath("$[0].recipient.tags[4].tagName", is("housing")))
-			.andExpect(jsonPath("$[0].recipient.tags[5].tagName", is("mental-health")))
-			.andExpect(jsonPath("$[0].recipient.tags[6].tagName", is("utilities")))
-			// First donation - verify private properties are not included
-			.andExpect(jsonPath("$[0].recipient.user").doesNotExist())
-			.andExpect(jsonPath("$[0].recipient.firstName").doesNotExist())
-			.andExpect(jsonPath("$[0].recipient.lastName").doesNotExist())
-			.andExpect(jsonPath("$[0].recipient.streetAddress1").doesNotExist())
-			.andExpect(jsonPath("$[0].recipient.streetAddress2").doesNotExist())
-			.andExpect(jsonPath("$[0].recipient.city").doesNotExist())
-			.andExpect(jsonPath("$[0].recipient.state").doesNotExist())
-			.andExpect(jsonPath("$[0].recipient.zipCode").doesNotExist())
-			.andExpect(jsonPath("$[0].recipient.identityLastVerified").doesNotExist())
-			.andExpect(jsonPath("$[0].recipient.incomeLastVerified").doesNotExist())
-			.andExpect(jsonPath("$[0].recipient.formQuestions").doesNotExist())
 			// Second donation - check public properties
 			.andExpect(jsonPath("$[1].id", is(2)))
 			.andExpect(jsonPath("$[1].amount", is(75)))
@@ -95,6 +148,7 @@ class DonationsApiControllerIntegrationTest extends BaseControllerIntegrationTes
 			.andExpect(jsonPath("$[1].recipient.tags", hasSize(5)))
 			.andExpect(jsonPath("$[1].recipient.tags[?(@.tagName=='housing')].selected", hasItem(true)))
 			.andExpect(jsonPath("$[1].recipient.tags[?(@.tagName=='utilities')].selected", hasItem(true)));
+		checkPublicRecipientData(result, "$[0]");
 
 		// Test getting donations for non-existent donor
 		mockMvc.perform(get("/donations/donor/999"))

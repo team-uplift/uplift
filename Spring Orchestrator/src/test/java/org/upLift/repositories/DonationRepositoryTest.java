@@ -17,25 +17,31 @@ class DonationRepositoryTest extends BaseRepositoryTest {
 	private DonationRepository donationRepository;
 
 	@Test
-	void findById() {
-		var donation = donationRepository.findById(1);
+	void findWithDonorbyId() {
+		var result = donationRepository.findWithDonorbyId(2);
 
-		assertThat(donation.isPresent(), is(true));
-		assertThat(donation.get().getAmount(), is(50));
-		assertThat(donation.get().getDonor().getId(), is(3));
-		assertThat(donation.get().getRecipient().getId(), is(1));
-		assertThat(donation.get().getCreatedAt(), is(Instant.parse("2023-10-21T16:00:30.321Z")));
+		assertThat(result.isPresent(), is(true));
+		checkDonation(result.get());
 	}
 
 	@Test
-	void findWithDonorbyId() {
-		var donation = donationRepository.findWithDonorbyId(2);
+	void findWithRecipientById() {
+		var result = donationRepository.findWithRecipientbyId(2);
 
-		assertThat(donation.isPresent(), is(true));
-		assertThat(donation.get().getAmount(), is(75));
-		assertThat(donation.get().getDonor(), notNullValue());
-		assertThat(donation.get().getDonor().getNickname(), is("KindDonor1"));
-		assertThat(donation.get().getCreatedAt(), is(Instant.parse("2023-10-22T17:05:40.654Z")));
+		assertThat(result.isPresent(), is(true));
+		checkDonation(result.get());
+	}
+
+	void checkDonation(Donation donation) {
+		assertThat(donation.getId(), is(2));
+		assertThat(donation.getAmount(), is(75));
+		assertThat(donation.getDonor(), notNullValue());
+		assertThat(donation.getDonor().getId(), is(3));
+		assertThat(donation.getDonor().getNickname(), is("KindDonor1"));
+		assertThat(donation.getRecipient(), is(notNullValue()));
+		assertThat(donation.getRecipient().getId(), is(2));
+		assertThat(donation.getRecipient().getNickname(), is("Janie"));
+		assertThat(donation.getCreatedAt(), is(Instant.parse("2023-10-22T17:05:40.654Z")));
 	}
 
 	@Test
