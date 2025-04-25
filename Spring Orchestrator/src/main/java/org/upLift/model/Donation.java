@@ -68,7 +68,6 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	@Schema(example = "101", requiredMode = Schema.RequiredMode.REQUIRED,
 			description = "persistence index of the donor who gave this donation")
 
-	@JsonView(UpliftJsonViews.PublicRecipient.class)
 	@JsonGetter("donorId")
 	public Integer getDonorId() {
 		return donor.getId();
@@ -106,7 +105,6 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	@Schema(example = "202", requiredMode = Schema.RequiredMode.REQUIRED,
 			description = "persistence index of the recipient who received this donation")
 
-	@JsonView(UpliftJsonViews.PublicDonor.class)
 	@JsonGetter("recipientId")
 	public Integer getRecipientId() {
 		return recipient.getId();
