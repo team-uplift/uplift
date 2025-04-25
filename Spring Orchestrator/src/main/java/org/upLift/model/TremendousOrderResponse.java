@@ -5,6 +5,14 @@ import java.util.List;
 
 public class TremendousOrderResponse {
 
+	public TremendousOrderResponse() {
+	}
+
+	public TremendousOrderResponse(String orderId) {
+		order = new Order();
+		order.setId(orderId);
+	}
+
 	private Order order;
 
 	public Order getOrder() {
