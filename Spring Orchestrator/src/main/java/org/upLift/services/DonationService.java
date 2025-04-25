@@ -9,9 +9,9 @@ import java.util.Optional;
 @Validated
 public interface DonationService {
 
-	Optional<Donation> getDonationById(int id);
-
 	Optional<Donation> getDonationWithDonorById(int id);
+
+	Optional<Donation> getDonationWithRecipientById(int id);
 
 	List<Donation> getDonationsByDonorId(Integer donorId);
 
