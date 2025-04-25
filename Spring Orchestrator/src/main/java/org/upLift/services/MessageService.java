@@ -17,7 +17,8 @@ public interface MessageService {
 	 * Saves the specified new message, returning the donation to which it's attached.
 	 * Method returns the parent Donation to facilitate use by the front end, since
 	 * recipient-sent messages are only displayed in the context of a donation.
-	 * @param message new thank-you message to be saved, must include the parent donation id
+	 * @param message new thank-you message to be saved, must include the parent donation
+	 * id
 	 * @return new saved Message entry
 	 */
 	Message sendNewMessage(Message message);
