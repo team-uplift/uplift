@@ -24,8 +24,8 @@ public class DonationServiceImpl implements DonationService {
 	}
 
 	@Override
-	public List<Donation> getAllDonations() {
-		return donationRepository.findAll();
+	public Optional<Donation> getDonationWithDonorById(int id) {
+		return donationRepository.findWithDonorbyId(id);
 	}
 
 	@Override
