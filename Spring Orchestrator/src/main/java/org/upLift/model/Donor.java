@@ -72,7 +72,7 @@ public class Donor extends AbstractCreatedAt {
 	 * @return nickname
 	 **/
 
-	@Schema(example = "PotatoKing", description = "")
+	@Schema(example = "PotatoKing", description = "nickname for the donor")
 
 	public String getNickname() {
 		return nickname;

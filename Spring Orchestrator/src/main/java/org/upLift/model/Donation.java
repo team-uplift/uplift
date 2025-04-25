@@ -190,12 +190,11 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	public String toString() {
 
 		// @formatter:off
-		String sb = "class Donation {\n"
+		return "class Donation {\n"
 				+ "    id: " + toIndentedString(getId()) + "\n"
 				+ "    donorId: " + toIndentedString(donor.getId()) + "\n"
 				+ "    recipientId: " + toIndentedString(recipient.getId()) + "\n"
 				+ "    amount: " + toIndentedString(amount) + "\n" + "}";
-		return sb;
 		// @formatter:on
 	}
 

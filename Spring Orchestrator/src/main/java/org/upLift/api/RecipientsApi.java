@@ -64,7 +64,10 @@ public interface RecipientsApi {
 			@Parameter(in = ParameterIn.QUERY, description = "Tags to filter by",
 					schema = @Schema()) @Valid @RequestParam(value = "tag", required = false) List<String> tags);
 
-	@Operation(summary = "Updates a recipient's tags with form data", description = "", tags = { "Recipient" })
+	@Operation(summary = "Updates a recipient's tags with form data",
+			description = "Generates a new set of recipient tags based on recipient profile, "
+					+ "replacing any previously-stored form questions with the new values if provided",
+			tags = { "Recipient" })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "Tags generated",
 					content = @Content(mediaType = "application/json",
@@ -77,7 +80,7 @@ public interface RecipientsApi {
 					schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
 			@Parameter(in = ParameterIn.DEFAULT, description = "A new set of form questions if needed. "
 					+ "If not provided, the system will attempt to used the recipient's last stored form questions.",
-					required = false, schema = @Schema()) @Valid @RequestBody List<FormQuestion> formQuestions);
+					schema = @Schema()) @Valid @RequestBody List<FormQuestion> formQuestions);
 
 	@Operation(summary = "Updates recipient's selected tags to be the provided tags",
 			description = "Updates recipient linked tags to mark only the specified tags as being selected, "
@@ -109,8 +112,8 @@ public interface RecipientsApi {
 					schema = @Schema()) @RequestParam("incomeVerificationFile") MultipartFile file);
 
 	@Operation(summary = "Gathers a list of recipients with a series of donor questions",
-			description = "Finds recipients that match the specified donor question responses.  " +
-					"Note that the response only includes 'public' recipient attributes.",
+			description = "Finds recipients that match the specified donor question responses.  "
+					+ "Note that the response only includes 'public' recipient attributes.",
 			tags = { "Recipient" })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK",
