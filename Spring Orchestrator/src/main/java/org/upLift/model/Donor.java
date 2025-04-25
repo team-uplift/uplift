@@ -21,7 +21,7 @@ import java.util.Objects;
 @Table(name = "donors")
 public class Donor extends AbstractCreatedAt {
 
-	@OneToOne
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	@MapsId
 	@JoinColumn(name = "id", referencedColumnName = "id")
 	@JsonIgnore

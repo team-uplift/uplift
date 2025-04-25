@@ -23,7 +23,7 @@ public class Message extends AbstractCreatedEntity {
 
 	@JsonIgnore
 	@NotNull
-	@OneToOne
+	@OneToOne(optional = false)
 	@JoinColumn(name = "donation_id", referencedColumnName = "id", nullable = false)
 	private Donation donation;
 

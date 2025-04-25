@@ -28,12 +28,12 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	// Recipient, so
 	// just mark the properties as @JsonIgnore and set up getters/setters as needed
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "donor_id", referencedColumnName = "id", nullable = false)
 	@JsonIgnore
 	private Donor donor;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "recipient_id", referencedColumnName = "id", nullable = false)
 	@JsonIgnore
 	private Recipient recipient;
