@@ -5,6 +5,7 @@
  */
 package org.upLift.api;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -19,10 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.upLift.model.FormQuestion;
-import org.upLift.model.Recipient;
-import org.upLift.model.RecipientTag;
-import org.upLift.model.Tag;
+import org.upLift.model.*;
 
 import java.util.List;
 import java.util.Set;
@@ -61,6 +59,7 @@ public interface RecipientsApi {
 
 			@ApiResponse(responseCode = "400", description = "Invalid tag value") })
 	@GetMapping(value = "/recipients/findByTags", produces = { "application/json" })
+	@JsonView(UpliftJsonViews.PublicRecipient.class)
 	ResponseEntity<List<Recipient>> findRecipientsByTags(
 			@Parameter(in = ParameterIn.QUERY, description = "Tags to filter by",
 					schema = @Schema()) @Valid @RequestParam(value = "tag", required = false) List<String> tags);
@@ -109,7 +108,9 @@ public interface RecipientsApi {
 					description = "File representing the recipient's 1040. Should be pdf, jpg, or png", required = true,
 					schema = @Schema()) @RequestParam("incomeVerificationFile") MultipartFile file);
 
-	@Operation(summary = "Gathers a list of recipients with a series of donor questions", description = "",
+	@Operation(summary = "Gathers a list of recipients with a series of donor questions",
+			description = "Finds recipients that match the specified donor question responses.  " +
+					"Note that the response only includes 'public' recipient attributes.",
 			tags = { "Recipient" })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK",
@@ -117,6 +118,7 @@ public interface RecipientsApi {
 							array = @ArraySchema(schema = @Schema(implementation = Recipient.class)))),
 
 			@ApiResponse(responseCode = "400", description = "Invalid input") })
+	@JsonView(UpliftJsonViews.PublicRecipient.class)
 	@RequestMapping(value = "/recipients/matching", method = RequestMethod.GET)
 	ResponseEntity<List<Recipient>> getMatchedRecipient(
 			@Parameter(in = ParameterIn.DEFAULT, description = "A new set of form questions from the donor.",
