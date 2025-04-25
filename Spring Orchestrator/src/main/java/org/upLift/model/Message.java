@@ -58,6 +58,11 @@ public class Message extends AbstractCreatedEntity {
 		return donation != null ? donation.getId() : null;
 	}
 
+	public Message donationId(int donationId) {
+		this.setDonationId(donationId);
+		return this;
+	}
+
 	@JsonSetter("donationId")
 	public void setDonationId(Integer donationId) {
 		this.donation = new Donation().id(donationId);
