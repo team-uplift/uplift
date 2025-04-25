@@ -57,8 +57,9 @@ public class DonationsApiController implements DonationsApi {
 		}
 	}
 
+	// Marked as public recipient so that donor doesn't get access to full recipient info
 	@Override
-	@JsonView(UpliftJsonViews.FullRecipient.class)
+	@JsonView(UpliftJsonViews.PublicRecipient.class)
 	public ResponseEntity<List<Donation>> donationsGetByDonor(@PathVariable("donorId") Integer id) {
 		if (userService.donorExists(id)) {
 			var donations = donationService.getDonationsByDonorId(id);
@@ -69,8 +70,9 @@ public class DonationsApiController implements DonationsApi {
 		}
 	}
 
+	// Marked as public donor so that recipient doesn't get access to full donor info
 	@Override
-	@JsonView(UpliftJsonViews.FullDonor.class)
+	@JsonView(UpliftJsonViews.PublicDonor.class)
 	public ResponseEntity<List<Donation>> donationsGetByRecipient(@PathVariable("recipientId") Integer id) {
 		if (userService.recipientExists(id)) {
 			var donations = donationService.getDonationsByRecipientId(id);
@@ -81,7 +83,9 @@ public class DonationsApiController implements DonationsApi {
 		}
 	}
 
+	// Marked as public recipient so that donor doesn't get access to full recipient info
 	@Override
+	@JsonView(UpliftJsonViews.PublicRecipient.class)
 	public ResponseEntity<Donation> donationsPost(@Valid @RequestBody Donation body) {
 		LOG.info("Donation from donor {} to recipient {}", body.getDonorId(), body.getRecipientId());
 		LOG.debug("Donation body: {}", body);

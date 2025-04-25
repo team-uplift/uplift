@@ -69,7 +69,7 @@ public class MessagesApiController implements MessagesApi {
 	}
 
 	@Override
-	@JsonView(UpliftJsonViews.FullDonor.class)
+	@JsonView(UpliftJsonViews.PublicDonor.class)
 	public Donation messagesPost(@RequestBody Message body) {
 		LOG.info("Saving message linked to donation {}", body.getDonationId());
 		var savedMessage = messageService.sendNewMessage(body);

@@ -2,20 +2,16 @@ package org.upLift.model;
 
 public class UpliftJsonViews {
 
-	public static class FullDonor {
+	public static class PublicDonor {
 
 	}
 
-	public static class FullRecipient {
+	public static class PrivateDonor extends PublicDonor {}
+
+	public static class PublicRecipient {
 
 	}
 
-	public static class DonorId {
-
-	}
-
-	public static class RecipientId {
-
-	}
+	public static class PrivateRecipient extends PublicRecipient {}
 
 }
