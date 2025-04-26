@@ -11,8 +11,6 @@ public interface DonationService {
 
 	Optional<Donation> getDonationById(int id);
 
-	List<Donation> getAllDonations();
-
 	List<Donation> getDonationsByDonorId(Integer donorId);
 
 	List<Donation> getDonationsByRecipientId(Integer recipientId);

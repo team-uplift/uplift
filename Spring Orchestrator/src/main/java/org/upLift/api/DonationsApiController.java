@@ -1,6 +1,5 @@
 package org.upLift.api;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.upLift.exceptions.EntityNotFoundException;
 import org.upLift.model.Donation;
 import org.upLift.model.Recipient;
 import org.upLift.model.TremendousOrderResponse;
-import org.upLift.model.UpliftJsonViews;
 import org.upLift.services.DonationService;
 import org.upLift.services.RecipientService;
 import org.upLift.services.TremendousService;
@@ -47,40 +46,42 @@ public class DonationsApiController implements DonationsApi {
 	}
 
 	@Override
-	public ResponseEntity<Donation> donationsIdGet(@PathVariable("id") Integer id) {
+	public Donation donationsIdGet(Integer id) {
+		LOG.info("Getting donation {}", id);
 		var donation = donationService.getDonationById(id);
 		if (donation.isPresent()) {
-			return new ResponseEntity<>(donation.get(), HttpStatus.OK);
+			return donation.get();
 		}
 		else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new EntityNotFoundException(id, "Donation", "Donation not found");
 		}
 	}
 
+	// Marked as public recipient so that donor doesn't get access to full recipient info
 	@Override
-	@JsonView(UpliftJsonViews.FullRecipient.class)
-	public ResponseEntity<List<Donation>> donationsGetByDonor(@PathVariable("donorId") Integer id) {
+	public List<Donation> donationsGetByDonor(@PathVariable("donorId") Integer id) {
+		LOG.info("Getting donations by donor {}", id);
 		if (userService.donorExists(id)) {
-			var donations = donationService.getDonationsByDonorId(id);
-			return new ResponseEntity<>(donations, HttpStatus.OK);
+			return donationService.getDonationsByDonorId(id);
 		}
 		else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new EntityNotFoundException(id, "Donor", "Donor not found");
 		}
 	}
 
+	// Marked as public donor so that recipient doesn't get access to full donor info
 	@Override
-	@JsonView(UpliftJsonViews.FullDonor.class)
-	public ResponseEntity<List<Donation>> donationsGetByRecipient(@PathVariable("recipientId") Integer id) {
+	public List<Donation> donationsGetByRecipient(@PathVariable("recipientId") Integer id) {
+		LOG.info("Getting donations by recipient {}", id);
 		if (userService.recipientExists(id)) {
-			var donations = donationService.getDonationsByRecipientId(id);
-			return new ResponseEntity<>(donations, HttpStatus.OK);
+			return donationService.getDonationsByRecipientId(id);
 		}
 		else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new EntityNotFoundException(id, "Recipient", "Recipient not found");
 		}
 	}
 
+	// Marked as public recipient so that donor doesn't get access to full recipient info
 	@Override
 	public ResponseEntity<Donation> donationsPost(@Valid @RequestBody Donation body) {
 		LOG.info("Donation from donor {} to recipient {}", body.getDonorId(), body.getRecipientId());
@@ -93,6 +94,7 @@ public class DonationsApiController implements DonationsApi {
 				TremendousOrderResponse response = tremendousService.submitDonationOrder(recipient.get(), donor.get(),
 						body.getAmount());
 				LOG.debug("Donation order response: {}", response);
+				LOG.debug("Donation order: {}", response.getOrder() != null ? response.getOrder().getId() : "NO ORDER");
 
 				Donation newDonation = donationService.saveDonation(body);
 				LOG.info("Donation submitted successfully");
@@ -101,6 +103,7 @@ public class DonationsApiController implements DonationsApi {
 				Recipient recipientObject = recipientService.getRecipientById(body.getRecipientId());
 				recipientObject.setLastDonationTimestamp(Instant.now());
 				recipientService.saveRecipient(recipientObject);
+				newDonation.setRecipient(recipientObject);
 
 				return new ResponseEntity<>(newDonation, HttpStatus.CREATED);
 			}

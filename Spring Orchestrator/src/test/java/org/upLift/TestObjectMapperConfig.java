@@ -1,8 +1,8 @@
 package org.upLift;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * Configuration class that provides a default Jackson ObjectMapper, intended for use with
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * questions) and some service integration tests. Should NOT be used for any REST
  * controller tests or other more complex JSON mapping!
  */
-@Configuration
+@TestConfiguration
 public class TestObjectMapperConfig {
 
 	@Bean

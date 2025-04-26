@@ -28,12 +28,12 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	// Recipient, so
 	// just mark the properties as @JsonIgnore and set up getters/setters as needed
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "donor_id", referencedColumnName = "id", nullable = false)
 	@JsonIgnore
 	private Donor donor;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "recipient_id", referencedColumnName = "id", nullable = false)
 	@JsonIgnore
 	private Recipient recipient;
@@ -68,7 +68,6 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	@Schema(example = "101", requiredMode = Schema.RequiredMode.REQUIRED,
 			description = "persistence index of the donor who gave this donation")
 
-	@JsonView(UpliftJsonViews.FullRecipient.class)
 	@JsonGetter("donorId")
 	public Integer getDonorId() {
 		return donor.getId();
@@ -81,7 +80,7 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 
 	@Schema(implementation = Donor.class, description = "full object for the donor who gave this donation")
 
-	@JsonView(UpliftJsonViews.FullDonor.class)
+	@JsonView({ UpliftJsonViews.PublicDonor.class, UpliftJsonViews.PublicBothUsers.class })
 	@JsonGetter("donor")
 	public Donor getDonor() {
 		return donor;
@@ -106,7 +105,6 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	@Schema(example = "202", requiredMode = Schema.RequiredMode.REQUIRED,
 			description = "persistence index of the recipient who received this donation")
 
-	@JsonView(UpliftJsonViews.FullDonor.class)
 	@JsonGetter("recipientId")
 	public Integer getRecipientId() {
 		return recipient.getId();
@@ -119,7 +117,7 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 
 	@Schema(implementation = Recipient.class, description = "full object for the recipient who received this donation")
 
-	@JsonView(UpliftJsonViews.FullRecipient.class)
+	@JsonView({ UpliftJsonViews.PublicRecipient.class, UpliftJsonViews.PublicBothUsers.class })
 	@JsonGetter("recipient")
 	public Recipient getRecipient() {
 		return recipient;
@@ -163,6 +161,9 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 
 	public void setThankYouMessage(Message thankYouMessage) {
 		this.thankYouMessage = thankYouMessage;
+		if (thankYouMessage != null) {
+			thankYouMessage.setDonation(this);
+		}
 	}
 
 	@Override
@@ -187,12 +188,11 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 	public String toString() {
 
 		// @formatter:off
-		String sb = "class Donation {\n"
+		return "class Donation {\n"
 				+ "    id: " + toIndentedString(getId()) + "\n"
 				+ "    donorId: " + toIndentedString(donor.getId()) + "\n"
 				+ "    recipientId: " + toIndentedString(recipient.getId()) + "\n"
 				+ "    amount: " + toIndentedString(amount) + "\n" + "}";
-		return sb;
 		// @formatter:on
 	}
 
