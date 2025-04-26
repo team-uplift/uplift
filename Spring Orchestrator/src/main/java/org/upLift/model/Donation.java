@@ -80,7 +80,7 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 
 	@Schema(implementation = Donor.class, description = "full object for the donor who gave this donation")
 
-	@JsonView(UpliftJsonViews.PublicDonor.class)
+	@JsonView({ UpliftJsonViews.PublicDonor.class, UpliftJsonViews.PublicBothUsers.class })
 	@JsonGetter("donor")
 	public Donor getDonor() {
 		return donor;
@@ -117,7 +117,7 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 
 	@Schema(implementation = Recipient.class, description = "full object for the recipient who received this donation")
 
-	@JsonView(UpliftJsonViews.PublicRecipient.class)
+	@JsonView({ UpliftJsonViews.PublicRecipient.class, UpliftJsonViews.PublicBothUsers.class })
 	@JsonGetter("recipient")
 	public Recipient getRecipient() {
 		return recipient;
