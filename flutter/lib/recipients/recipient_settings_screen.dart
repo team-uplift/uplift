@@ -399,8 +399,8 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: const Icon(Icons.redo, color: Colors.orange),
-        title: const Text("Convert Account", style: TextStyle(color: Colors.orange)),
+        leading: const Icon(Icons.redo, color: AppColors.baseOrange),
+        title: const Text("Convert Account", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.baseOrange)),
         subtitle: const Text("Convert account from recipient to donor"),
         onTap: widget.convertAccount ?? () {
           showDialog(
@@ -436,8 +436,8 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: const Icon(Icons.delete_forever, color: Colors.red),
-        title: const Text("Delete Account", style: TextStyle(color: Colors.red)),
+        leading: const Icon(Icons.delete_forever, color: AppColors.baseRed),
+        title: const Text("Delete Account", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.baseRed)),
         subtitle: const Text("Permanently remove your account"),
         onTap: () {
           showDialog(
@@ -455,7 +455,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
                     context.goNamed('/redirect');
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red),
+                      backgroundColor: AppColors.baseRed),
                   child: const Text("Delete"),
                 ),
               ],
