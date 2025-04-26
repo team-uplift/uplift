@@ -60,6 +60,7 @@ public class DonationsApiController implements DonationsApi {
 	// Marked as public recipient so that donor doesn't get access to full recipient info
 	@Override
 	public List<Donation> donationsGetByDonor(@PathVariable("donorId") Integer id) {
+		LOG.info("Getting donations by donor {}", id);
 		if (userService.donorExists(id)) {
 			return donationService.getDonationsByDonorId(id);
 		}
@@ -71,6 +72,7 @@ public class DonationsApiController implements DonationsApi {
 	// Marked as public donor so that recipient doesn't get access to full donor info
 	@Override
 	public List<Donation> donationsGetByRecipient(@PathVariable("recipientId") Integer id) {
+		LOG.info("Getting donations by recipient {}", id);
 		if (userService.recipientExists(id)) {
 			return donationService.getDonationsByRecipientId(id);
 		}
