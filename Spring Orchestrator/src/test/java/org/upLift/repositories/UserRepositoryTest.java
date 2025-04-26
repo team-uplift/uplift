@@ -71,6 +71,7 @@ class UserRepositoryTest extends BaseRepositoryTest {
 		assertThat(recipientData.getStreetAddress2(), is(emptyOrNullString()));
 		assertThat(recipientData.getCity(), is("Madison"));
 		assertThat(recipientData.getState(), is("WI"));
+		assertThat(recipientData.getZipCode(), is("53703"));
 		assertThat(recipientData.getImageUrl(), is("http://example.com/image2.jpg"));
 		assertThat(recipientData.getLastAboutMe(), is("About Jane"));
 		assertThat(recipientData.getLastReasonForHelp(), is("Reason 2"));

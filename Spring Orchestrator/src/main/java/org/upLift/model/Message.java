@@ -23,7 +23,7 @@ public class Message extends AbstractCreatedEntity {
 
 	@JsonIgnore
 	@NotNull
-	@OneToOne
+	@OneToOne(optional = false)
 	@JoinColumn(name = "donation_id", referencedColumnName = "id", nullable = false)
 	private Donation donation;
 
@@ -55,7 +55,12 @@ public class Message extends AbstractCreatedEntity {
 
 	@JsonGetter("donationId")
 	public Integer getDonationId() {
-		return donation.getId();
+		return donation != null ? donation.getId() : null;
+	}
+
+	public Message donationId(int donationId) {
+		this.setDonationId(donationId);
+		return this;
 	}
 
 	@JsonSetter("donationId")

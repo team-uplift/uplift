@@ -5,6 +5,7 @@
  */
 package org.upLift.api;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -14,10 +15,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.upLift.model.Donation;
+import org.upLift.model.ErrorResults;
 import org.upLift.model.Message;
+import org.upLift.model.UpliftJsonViews;
 
 import java.util.List;
 
@@ -33,18 +38,22 @@ public interface MessagesApi {
 					content = @Content(mediaType = "application/json",
 							schema = @Schema(implementation = Message.class))),
 
-			@ApiResponse(responseCode = "404", description = "Message not found"),
+			@ApiResponse(responseCode = "404", description = "Message not found",
+					content = @Content(schema = @Schema(implementation = ErrorResults.EntityNotFoundError.class))),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@GetMapping(value = "/messages/{id}", produces = { "application/json" })
-	ResponseEntity<Message> messagesIdGet(
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	Message messagesIdGet(
 			@Parameter(in = ParameterIn.PATH, description = "persistence index of the message to retrieve",
 					required = true, schema = @Schema()) @PathVariable("id") Integer id);
 
 	@Operation(summary = "Get messages sent to a specific donor",
 			description = "Retrieves messages sent to a specific donor.", tags = { "Messages" })
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200",
+			@ApiResponse(
+					responseCode = "200",
 					description = "List of messages sent to a specific donor, "
 							+ "returns an empty array if the donor hasn't received any messages",
 					content = @Content(mediaType = "application/json",
@@ -52,7 +61,8 @@ public interface MessagesApi {
 
 			@ApiResponse(responseCode = "400", description = "Invalid request data"),
 
-			@ApiResponse(responseCode = "404", description = "No such donor exists"),
+			@ApiResponse(responseCode = "404", description = "No such donor exists",
+					content = @Content(schema = @Schema(implementation = ErrorResults.EntityNotFoundError.class))),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@GetMapping(value = "/messages/donor/{donorId}", produces = { "application/json" })
@@ -60,20 +70,40 @@ public interface MessagesApi {
 			description = "persistence index of the donor whose messages should be retrieved", required = true,
 			schema = @Schema()) @PathVariable("donorId") Integer donorId);
 
-	@Operation(summary = "Send a message", description = "Allows a donor or recipient to send a message.",
-			tags = { "Messages" })
+	/**
+	 * Saves the specified new thank-you message, returning the donation to which it's
+	 * attached. Endpoint returns the message parent Donation to facilitate use by the
+	 * front end, since recipient-sent messages are only displayed in the context of a
+	 * donation.
+	 * @param body new thank-you message linked to a specific donation
+	 * @return updated donation with the new thank-you message attached
+	 */
+	@Operation(summary = "Send a message",
+			description = "Allows a recipient to send a thank-you message linked to a donation.", tags = { "Messages" })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "Message sent successfully",
 					content = @Content(mediaType = "application/json",
-							schema = @Schema(implementation = Message.class))),
-
-			@ApiResponse(responseCode = "400", description = "Invalid request data"),
-
+							schema = @Schema(implementation = Donation.class))),
+			@ApiResponse(responseCode = "400",
+					description = "Invalid request data, such as attempting to send a message linked to a donation that already has a thank-you message",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = ErrorResults.GeneralError.class))),
+			@ApiResponse(responseCode = "404", description = "Donation linked to message not found",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = ErrorResults.EntityNotFoundError.class))),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@PostMapping(value = "/messages", produces = { "application/json" }, consumes = { "application/json" })
-	ResponseEntity<Message> messagesPost(@Parameter(in = ParameterIn.DEFAULT, description = "new message to be saved",
-			required = true, schema = @Schema(implementation = Message.class)) @Valid @RequestBody Message body);
+	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseBody
+	@JsonView(UpliftJsonViews.PublicDonor.class)
+	Donation messagesPost(@Parameter(in = ParameterIn.DEFAULT, description = "new message to be saved", required = true,
+			schema = @Schema(implementation = Message.class)) @Valid @RequestBody Message body);
 
+	/**
+	 * Marks the specified message has having been read by the donor to whom it was sent.
+	 * @param messageId persistence id of the message to mark as read
+	 * @return updated Message entry
+	 */
 	@Operation(summary = "Mark the message as read",
 			description = "Marks the specified message as having been read by the donor to whom it was sent.",
 			tags = { "Messages" })
@@ -82,11 +112,15 @@ public interface MessagesApi {
 					content = @Content(mediaType = "application/json",
 							schema = @Schema(implementation = Message.class))),
 
-			@ApiResponse(responseCode = "404", description = "Message not found"),
+			@ApiResponse(responseCode = "404", description = "Message not found",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = ErrorResults.EntityNotFoundError.class))),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
 	@PutMapping(value = "/messages/read/{messageId}", produces = { "application/json" })
-	ResponseEntity<Message> messagesMarkRead(@Parameter(in = ParameterIn.PATH,
+	Message messagesMarkRead(@Parameter(in = ParameterIn.PATH,
 			description = "persistence index of the message to mark as having been read", required = true,
 			schema = @Schema()) @PathVariable("messageId") Integer messageId);
 

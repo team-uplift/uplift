@@ -20,12 +20,7 @@ public class DonationServiceImpl implements DonationService {
 
 	@Override
 	public Optional<Donation> getDonationById(int id) {
-		return donationRepository.findById(id);
-	}
-
-	@Override
-	public List<Donation> getAllDonations() {
-		return donationRepository.findAll();
+		return donationRepository.findForPublicById(id);
 	}
 
 	@Override

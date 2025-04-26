@@ -44,32 +44,44 @@ public class Recipient extends AbstractCreatedAt {
 	@Column(name = "first_name")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonProperty("firstName")
+	@JsonView(UpliftJsonViews.PrivateRecipient.class)
 	private String firstName;
 
 	@Column(name = "last_name")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonProperty("lastName")
+	@JsonView(UpliftJsonViews.PrivateRecipient.class)
 	private String lastName;
 
 	@Column(name = "street_address1")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonProperty("streetAddress1")
+	@JsonView(UpliftJsonViews.PrivateRecipient.class)
 	private String streetAddress1;
 
 	@Column(name = "street_address2")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonProperty("streetAddress2")
+	@JsonView(UpliftJsonViews.PrivateRecipient.class)
 	private String streetAddress2;
 
 	@Column(name = "city")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonProperty("city")
+	@JsonView(UpliftJsonViews.PrivateRecipient.class)
 	private String city;
 
 	@Column(name = "state")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonProperty("state")
+	@JsonView(UpliftJsonViews.PrivateRecipient.class)
 	private String state;
+
+	@Column(name = "zip_code")
+	@JsonInclude(JsonInclude.Include.NON_ABSENT)
+	@JsonProperty("zipCode")
+	@JsonView(UpliftJsonViews.PrivateRecipient.class)
+	private String zipCode;
 
 	@Column(name = "image_url")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
@@ -86,18 +98,20 @@ public class Recipient extends AbstractCreatedAt {
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private String lastReasonForHelp;
 
-	@SuppressWarnings("JpaAttributeTypeInspection")
 	@Column(name = "form_questions")
 	@JsonProperty("formQuestions")
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
+	@JsonView(UpliftJsonViews.PrivateRecipient.class)
 	private List<FormQuestion> formQuestions;
 
 	@Column(name = "identity_last_verified")
 	@JsonProperty("identityLastVerified")
+	@JsonView(UpliftJsonViews.PrivateRecipient.class)
 	private Instant identityLastVerified;
 
 	@Column(name = "income_last_verified")
 	@JsonProperty("incomeLastVerified")
+	@JsonView(UpliftJsonViews.PrivateRecipient.class)
 	private Instant incomeLastVerified;
 
 	@JsonProperty("nickname")
@@ -107,6 +121,7 @@ public class Recipient extends AbstractCreatedAt {
 	@Column(name = "tags_last_generated_at")
 	@JsonProperty("tagsLastGenerated")
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
+	@JsonView(UpliftJsonViews.PrivateRecipient.class)
 	private Instant tagsLastGenerated;
 
 	@Column(name = "last_donation_timestamp")
@@ -235,6 +250,16 @@ public class Recipient extends AbstractCreatedAt {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	@Schema(example = "02138", description = "US postal zip code")
+
+	public String getZipCode() {
+		return zipCode;
+	}
+
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
 	}
 
 	@Schema(example = "https://image.com/image", description = "URL of the image linked to this recipient, if any")
@@ -383,6 +408,7 @@ public class Recipient extends AbstractCreatedAt {
 		return this;
 	}
 
+	@SuppressWarnings("UnusedReturnValue")
 	public Recipient addTagsItem(RecipientTag tag) {
 		if (this.tags == null) {
 			this.tags = new TreeSet<>();

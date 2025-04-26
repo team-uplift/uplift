@@ -17,7 +17,7 @@ class RecipientTagsRepositoryTest extends BaseRepositoryTest {
 
 	@Test
 	void findById() {
-		var result = repository.findById(5);
+		var result = repository.findById(4);
 		assertThat(result.isPresent(), is(true));
 		checkTag(result.get());
 	}
@@ -43,7 +43,7 @@ class RecipientTagsRepositoryTest extends BaseRepositoryTest {
 	}
 
 	void checkTag(RecipientTag tag) {
-		assertThat(tag.getId(), is(5));
+		assertThat(tag.getId(), is(4));
 		assertThat(tag.getTag(), is(notNullValue()));
 		assertThat(tag.getTagName(), is("health"));
 		assertThat(tag.getRecipient(), is(notNullValue()));

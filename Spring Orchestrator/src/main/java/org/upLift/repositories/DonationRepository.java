@@ -6,15 +6,31 @@ import org.springframework.data.repository.query.Param;
 import org.upLift.model.Donation;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DonationRepository extends JpaRepository<Donation, Integer> {
+
+	/**
+	 * Finds the donation with the specified id (if any), eagerly loading both donor and
+	 * recipient associated with the donation.
+	 * @param donationId persistence index of the donation to load
+	 * @return Optional containing the donation with the specified id with both donor and
+	 * recipient eagerly loaded, or an empty Optional if there's no such donation
+	 */
+	@Query("""
+				SELECT donation FROM Donation donation JOIN FETCH donation.donor
+							JOIN FETCH donation.recipient
+							WHERE donation.id = :donationId
+			""")
+	Optional<Donation> findForPublicById(int donationId);
 
 	/**
 	 * Finds all donations made by the specified donor, eagerly loading the recipients
 	 * associated with each donation.
 	 * @param donorId persistence index of the donor who gave the donations to load
-	 * @return List of all donations given by the specified donor, with recipients eagerly
-	 * loaded
+	 * @return List of all donations given by the specified donor with recipients eagerly
+	 * loaded, or an empty List if the donor hasn't donated anything or there's no such
+	 * donor
 	 */
 	@Query("""
 				SELECT donation FROM Donation donation JOIN FETCH donation.recipient
@@ -27,8 +43,9 @@ public interface DonationRepository extends JpaRepository<Donation, Integer> {
 	 * associated with each donation.
 	 * @param recipientId persistence index of the recipient whose received donations
 	 * should be loaded
-	 * @return List of all donations received by the specified recipient, with donors
-	 * eagerly loaded
+	 * @return List of all donations received by the specified recipient with donors
+	 * eagerly loaded, or an empty List if the recipient hasn't received any donations or
+	 * there's no such recipient
 	 */
 	@Query("""
 				SELECT donation FROM Donation donation JOIN FETCH donation.donor

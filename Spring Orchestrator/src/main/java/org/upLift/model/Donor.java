@@ -21,7 +21,7 @@ import java.util.Objects;
 @Table(name = "donors")
 public class Donor extends AbstractCreatedAt {
 
-	@OneToOne
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	@MapsId
 	@JoinColumn(name = "id", referencedColumnName = "id")
 	@JsonIgnore
@@ -72,7 +72,7 @@ public class Donor extends AbstractCreatedAt {
 	 * @return nickname
 	 **/
 
-	@Schema(example = "PotatoKing", description = "")
+	@Schema(example = "PotatoKing", description = "nickname for the donor")
 
 	public String getNickname() {
 		return nickname;
