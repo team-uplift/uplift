@@ -74,7 +74,7 @@ public class MessagesApiController implements MessagesApi {
 		LOG.info("Saving message linked to donation {}", body.getDonationId());
 		var savedMessage = messageService.sendNewMessage(body);
 		LOG.debug("Saved new message {}", savedMessage.getMessage());
-		return donationService.getDonationWithDonorById(savedMessage.getDonationId())
+		return donationService.getDonationById(savedMessage.getDonationId())
 			.orElseThrow(
 					() -> new EntityNotFoundException(savedMessage.getDonationId(), "Donation", "Donation not found"));
 	}
