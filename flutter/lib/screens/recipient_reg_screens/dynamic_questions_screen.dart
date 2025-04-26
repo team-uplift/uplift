@@ -222,9 +222,3 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
   }
 }
 
-
-
-
-
-// TODO design logo
-// TODO comment code

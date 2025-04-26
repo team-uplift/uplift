@@ -9,14 +9,10 @@
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
 import 'package:uplift/api/cognito_helper.dart';
 import 'package:uplift/api/user_api.dart';
 import 'package:uplift/utils/logger.dart';
 
-// TODO chatgpt thank you for this boilerplate to edit down
 class SplashRedirector extends StatefulWidget {
   const SplashRedirector({super.key});
 
@@ -76,4 +72,3 @@ class _SplashRedirectorState extends State<SplashRedirector> {
     );
   }
 }
-

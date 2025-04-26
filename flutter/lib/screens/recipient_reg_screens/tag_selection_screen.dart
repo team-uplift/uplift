@@ -3,8 +3,6 @@ import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/tag_model.dart';
 import 'package:uplift/components/tag_card.dart'; 
 
-// TODO sort all tags by heat
-
 class TagSelection extends StatefulWidget {
   final Map<String, dynamic> formData;
   final VoidCallback onSubmit;
