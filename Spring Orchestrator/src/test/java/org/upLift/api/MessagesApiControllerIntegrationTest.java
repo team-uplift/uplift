@@ -2,8 +2,6 @@ package org.upLift.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,8 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 // Tests largely built by JetBrains AI Assistant with some manual tweaks
 class MessagesApiControllerIntegrationTest extends BaseControllerIntegrationTest {
-
-	private static final Logger log = LoggerFactory.getLogger(MessagesApiControllerIntegrationTest.class);
 
 	@Autowired
 	private MockMvc mockMvc;
