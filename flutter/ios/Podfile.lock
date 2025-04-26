@@ -12,6 +12,8 @@ PODS:
   - flutter_paypal_native (2.0.0):
     - Flutter
     - PayPalCheckout
+  - image_picker_ios (0.0.1):
+    - Flutter
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -36,6 +38,7 @@ DEPENDENCIES:
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_paypal_native (from `.symlinks/plugins/flutter_paypal_native/ios`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
@@ -60,6 +63,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_paypal_native:
     :path: ".symlinks/plugins/flutter_paypal_native/ios"
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
@@ -80,6 +85,7 @@ SPEC CHECKSUMS:
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_paypal_native: ca6fb0bd644593c7489008b87b27ec8a983e587b
+  image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   PayPalCheckout: 06cb1e4f5bfdca33b8eb6052d04ac4e4a4ab512c

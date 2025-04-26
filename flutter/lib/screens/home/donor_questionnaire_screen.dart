@@ -8,6 +8,8 @@ class DonorQuestionnaire extends StatefulWidget {
   State<DonorQuestionnaire> createState() => _DonorQuestionnaireState();
 }
 
+// /uplift/recipients/matching
+
 class _DonorQuestionnaireState extends State<DonorQuestionnaire> {
   int _currentQuestionIndex = 0;
   final List<Map<String, dynamic>> _questions = [
@@ -43,15 +45,39 @@ class _DonorQuestionnaireState extends State<DonorQuestionnaire> {
 
   final List<String> _answers = [];
 
+  final List<Map<String, dynamic>> questions_answers = [
+    {
+      'question': 'What motivates you to help others?',
+      'answer': '',
+    },
+    {
+      'question': 'How often would you like to donate?',
+      'answer': '',
+    },
+    {
+      'question': 'Which causes are you most passionate about?',
+      'answer': '',
+    },
+    {
+      'question': 'What is your preferred donation method?',
+      'answer': '',
+    },
+    {
+      'question': 'list of tags',
+      'answer': '',
+    },
+  ];
+
   void _selectAnswer(String answer) {
     setState(() {
       _answers.add(answer);
       if (_currentQuestionIndex < _questions.length - 1) {
         _currentQuestionIndex++;
       } else {
-        context.pushNamed('/donor_tag');
+        context.pushNamed('/donor_tag', extra: questions_answers);
       }
     });
+    questions_answers[_currentQuestionIndex]['answer'] = answer;
   }
 
   @override

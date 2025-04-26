@@ -8,7 +8,12 @@ import 'package:uplift/models/donor_tag_model.dart';
 import 'package:uplift/models/recipient_model.dart';
 
 class DonorTagPage extends StatefulWidget {
-  const DonorTagPage({super.key});
+  final List<Map<String, dynamic>> questionsAnswers;
+
+  const DonorTagPage({
+    super.key,
+    required this.questionsAnswers,
+  });
 
   static const baseUrl =
       'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
@@ -26,6 +31,7 @@ class _DonorTagPageState extends State<DonorTagPage> {
   void initState() {
     super.initState();
     fetchDonorTags();
+    print('Received questions answers: ${widget.questionsAnswers}');
   }
 
   Future<void> fetchDonorTags() async {
@@ -68,24 +74,30 @@ class _DonorTagPageState extends State<DonorTagPage> {
       return;
     }
 
+    // Add selected tags to the last dictionary in questions_answers
+    final lastIndex = widget.questionsAnswers.length - 1;
+    widget.questionsAnswers[lastIndex]['answer'] = selectedTags.join(', ');
+
     setState(() => isLoading = true);
 
     try {
-      final tagsString = selectedTags.join(',');
+      // final tagsString = selectedTags.join(',');
       final url =
-          Uri.parse('${DonorTagPage.baseUrl}/recipients/findByTags').replace(
-        queryParameters: {
-          'tag': tagsString,
-        },
-      );
+          Uri.parse('${DonorTagPage.baseUrl}/recipients/matching').replace(
+              // queryParameters: {
+              //   'tag': tagsString,
+              // },
+              );
 
       debugPrint('Requesting URL: $url');
 
-      final response = await http.get(
+      final response = await http.post(
         url,
         headers: {
           'Accept': 'application/json',
+          'Content-Type': 'application/json',
         },
+        body: jsonEncode(widget.questionsAnswers),
       );
 
       debugPrint('Response status: ${response.statusCode}');
