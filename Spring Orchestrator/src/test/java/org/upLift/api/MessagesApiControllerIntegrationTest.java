@@ -2,6 +2,8 @@ package org.upLift.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -15,6 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 // Tests largely built by JetBrains AI Assistant with some manual tweaks
 class MessagesApiControllerIntegrationTest extends BaseControllerIntegrationTest {
+
+	private static final Logger log = LoggerFactory.getLogger(MessagesApiControllerIntegrationTest.class);
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -99,7 +103,18 @@ class MessagesApiControllerIntegrationTest extends BaseControllerIntegrationTest
 			.andExpect(jsonPath("$.id", is(4)))
 			.andExpect(jsonPath("$.thankYouMessage.donationId", is(4)))
 			.andExpect(jsonPath("$.thankYouMessage.message", is("Thank you so much!")))
-			.andExpect(jsonPath("$.thankYouMessage.donorRead", is(false)));
+			.andExpect(jsonPath("$.thankYouMessage.donorRead", is(false)))
+			// Check donation properties are correct based on JSON view
+			.andExpect(jsonPath("$.donorId", is(4)))
+			.andExpect(jsonPath("$.recipientId", is(5)))
+			.andExpect(jsonPath("$.amount", is(25)))
+			.andExpect(jsonPath("$.createdAt", is("2023-10-25T09:48:57.023Z")))
+			.andExpect(jsonPath("$.donor").exists())
+			.andExpect(jsonPath("$.donor.id", is(4)))
+			.andExpect(jsonPath("$.donor.nickname", is("HelpfulDonor2")))
+			.andExpect(jsonPath("$.donor.createdAt", is("2023-10-15T13:35:00.321Z")))
+			// Check recipient data not included
+			.andExpect(jsonPath("$.recipient").doesNotExist());
 
 		// Test posting message for non-existent donation
 		newMessage.setDonationId(999);
@@ -129,7 +144,6 @@ class MessagesApiControllerIntegrationTest extends BaseControllerIntegrationTest
 			.andExpect(jsonPath("$.errorType", is("Bad Request")))
 			.andExpect(jsonPath("$.timestamp", not(emptyString())))
 			.andExpect(jsonPath("$.path", is("/messages")));
-
 	}
 
 	@Test
