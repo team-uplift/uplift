@@ -1,8 +1,14 @@
+/// recipient_profile_display.dart
+///
+/// Creates cards to display profile information. The individual cards are
+/// generated from maps of string pairs and tag objects
+///
+
 import 'package:flutter/material.dart';
+import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/models/tag_model.dart';
 import 'package:uplift/components/tag_card.dart';
-import 'package:uplift/components/address_block.dart';
 
 class RecipientProfileDisplay extends StatelessWidget {
   final Map<String, String> profileFields;
@@ -20,21 +26,29 @@ class RecipientProfileDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entries = profileFields.entries.toList();
+    final entries = profileFields.entries.toList(); //all profile info here
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         ...entries.map((entry) {
+          // set bool and val to allow for verification if not verified
           final isVerification = entry.key == "Income Verification";
-          final isVerified = entry.value == "✅ Verified";
+          final isVerified = entry.value ==
+              "✅ Verified";
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+          // cards for all profile iteams aside from tags
+          return Card(
+            color: AppColors.warmWhite,
+            elevation: 5,
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Column(
@@ -42,45 +56,68 @@ class RecipientProfileDisplay extends StatelessWidget {
                       children: [
                         Text(
                           entry.key,
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 8),
                         Text(
                           entry.value,
-                          style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey[800],
+                          ),
                         ),
                       ],
                     ),
                   ),
+                  // display camera icon and link if user not verified and verification is available
                   if (isVerification && !isVerified)
                     IconButton(
-                      icon: const Icon(Icons.camera_alt, color: Color.fromRGBO(244, 67, 54, 1)),
-                      // TODO add camera verification
+                      icon: const Icon(Icons.camera_alt,
+                          color: AppColors.baseRed),
                       onPressed: onVerifyPressed ?? () {},
                     ),
                 ],
               ),
-              const Divider(thickness: 1),
-            ],
+            ),
           );
         }),
 
-
-        // TODO sort out tagging colors, etc here
-        const SizedBox(height: 16),
-        const Text(
-          "Your Tags",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
         const SizedBox(height: 8),
-        Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 12,
-          runSpacing: 12,
-          children: tags.map((tag) => TagCard(tag: tag)).toList(),
-        ),
+
+        // card to hold all tag cards
+        SizedBox(
+          width: double.infinity,
+          child: Card(
+            elevation: 5,
+            color: AppColors.warmWhite,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Your Tags",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    alignment: WrapAlignment.start,
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: tags.map((tag) => TagCard(tag: tag)).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
       ],
     );
   }
 }
-

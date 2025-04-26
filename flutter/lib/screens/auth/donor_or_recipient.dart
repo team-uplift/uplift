@@ -1,3 +1,10 @@
+/// donor_or_recipient.dart
+///
+/// used to direct new user to appropriate registration form
+/// includes:
+/// - _storeDonor
+///
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -6,6 +13,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:uplift/api/cognito_helper.dart';
 import 'package:uplift/components/standard_button.dart';
 import 'package:uplift/constants/constants.dart';
 
@@ -19,21 +27,19 @@ class DonorOrRecipient extends StatefulWidget {
 }
 
 class _DonorOrRecipientState extends State<DonorOrRecipient> {
+  
+  /// stores a donor when a donor is created
   Future<void> storeDonor() async {
     setState(() {
       _isLoading = true;
     });
-    // get amplify user info
-    final attributes = await Amplify.Auth.fetchUserAttributes();
-
     // map to easier to parse dict
-    final attrMap = {
-      for (final attr in attributes) attr.userAttributeKey.key: attr.value,
-    };
+    final attrMap = await getCognitoAttributes();
 
+    // TODO abstract all of this into an api file to register user
     final payload = {
-      'cognitoId': attrMap['sub'],
-      'email': attrMap['email'],
+      'cognitoId': attrMap?['sub'],
+      'email': attrMap?['email'],
       'recipient': false,
     };
 
@@ -48,9 +54,7 @@ class _DonorOrRecipientState extends State<DonorOrRecipient> {
             'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift/users'),
         headers: {
           'Content-Type': 'application/json',
-          // 'Accept': 'application/json',
         },
-        // build this out
         body: jsonEncode(payload),
       );
       debugPrint('Got response with code: ${storeUserResponse.statusCode}');
@@ -75,42 +79,42 @@ class _DonorOrRecipientState extends State<DonorOrRecipient> {
       backgroundColor: AppColors.baseYellow,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Card(
+            color: AppColors.warmWhite,
+            elevation: 5,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text("Register As A...",
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Register As A...",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
-                    )),
-                const SizedBox(
-                  height: 20,
-                ),
-                StandardButton(
-                    title: 'DONOR',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  StandardButton(
+                    title: 'Donor',
                     onPressed: () {
                       storeDonor();
                       context.goNamed('/home');
-                    }),
-                const SizedBox(
-                  height: 10,
-                ),
-                StandardButton(
-                  title: 'RECIPIENT',
-                  onPressed: () => context.goNamed('/recipient_registration'),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-              ],
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  StandardButton(
+                    title: 'RECIPIENT',
+                    onPressed: () => context.goNamed('/recipient_registration'),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
           ),
         ),

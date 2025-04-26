@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uplift/constants/constants.dart';
 import 'registration_questions.dart';
 
 class Confirmation extends StatelessWidget {
@@ -17,7 +18,6 @@ class Confirmation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 👇 Define which keys are grouped
     final groupedFields = {
       'Name & Address': [
         'firstName',
@@ -41,7 +41,7 @@ class Confirmation extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 children: [
 
-                  // ✅ Render the grouped fields first
+                  // ✅ Render grouped fields
                   ...groupedFields.entries.map((entry) {
                     final title = entry.key;
                     final keys = entry.value;
@@ -60,13 +60,19 @@ class Confirmation extends StatelessWidget {
                       "$city, $state $zip",
                     ].join('\n');
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: () => onJumpToQuestion("basicAddressInfo"), // Jump to first of group
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Card(
+                        elevation: 5,
+                        color: AppColors.lightBeige,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: InkWell(
+                          onTap: () => onJumpToQuestion("basicAddressInfo"),
+                          borderRadius: BorderRadius.circular(16),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            padding: const EdgeInsets.all(16),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -82,29 +88,28 @@ class Confirmation extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    const Icon(Icons.edit, size: 18, color: Colors.grey),
+                                    const Icon(Icons.edit, size: 18, color: AppColors.baseBlue),
                                   ],
                                 ),
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 8),
                                 Text(
                                   content.isNotEmpty ? content : "Not provided",
                                   style: const TextStyle(fontSize: 16),
                                 ),
-                                const SizedBox(height: 2),
+                                const SizedBox(height: 8),
                                 const Text(
                                   "Tap to edit",
-                                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                                  style: TextStyle(fontSize: 12, color: AppColors.baseBlue),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        const Divider(thickness: 1),
-                      ],
+                      ),
                     );
                   }),
 
-                  // ✅ Then render all the other questions, skipping grouped ones
+                  // ✅ Then render all other questions
                   ...registrationQuestions
                       .where((q) =>
                           q['type'] != 'confirmation' &&
@@ -116,13 +121,19 @@ class Confirmation extends StatelessWidget {
                       answer = answer.join(", ");
                     }
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        InkWell(
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Card(
+                        elevation: 5,
+                        color: AppColors.lightBeige,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: InkWell(
                           onTap: () => onJumpToQuestion(q['key']),
+                          borderRadius: BorderRadius.circular(16),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            padding: const EdgeInsets.all(16),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -138,25 +149,24 @@ class Confirmation extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    const Icon(Icons.edit, size: 18, color: Colors.grey),
+                                    const Icon(Icons.edit, size: 18, color: AppColors.baseBlue),
                                   ],
                                 ),
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 8),
                                 Text(
                                   answer.toString().isNotEmpty ? answer.toString() : "Not provided",
                                   style: const TextStyle(fontSize: 16),
                                 ),
-                                const SizedBox(height: 2),
+                                const SizedBox(height: 8),
                                 const Text(
                                   "Tap to edit",
-                                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                                  style: TextStyle(fontSize: 12, color: AppColors.baseBlue),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        const Divider(thickness: 1),
-                      ],
+                      ),
                     );
                   }).toList(),
                 ],
@@ -172,8 +182,10 @@ class Confirmation extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       showDialog(
+                        
                         context: context,
                         builder: (context) => AlertDialog(
+                          backgroundColor: AppColors.warmWhite,
                           title: const Text("Generate Tags?"),
                           content: const Text(
                             "Are you sure you want to generate tags? You will not be able to edit your profile or regenerate tags for 24 hours.",
@@ -184,6 +196,10 @@ class Confirmation extends StatelessWidget {
                               child: const Text("Cancel"),
                             ),
                             ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.baseRed,
+                                foregroundColor: AppColors.warmWhite,
+                              ),
                               onPressed: () {
                                 Navigator.pop(context);
                                 onGenerate();
