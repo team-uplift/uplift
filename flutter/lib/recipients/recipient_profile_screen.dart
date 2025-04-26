@@ -41,56 +41,6 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
   }
 
 
-  // TODO remove after testing new functions
-  // /// opens camera or gallery based on users choice and upload photo of 1040
-  // /// to backend in order to verify income status.
-  // Future<void> _verifyIncome() async {
-  //   // building pop up elements for ui so user can select cam or gallery
-  //   final ImageSource? source = await showModalBottomSheet<ImageSource>(
-  //     context: context,
-  //     builder: (context) => SafeArea(
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           ListTile(
-  //             leading: const Icon(Icons.camera_alt),
-  //             title: const Text("Take Photo"),
-  //             onTap: () => Navigator.pop(context, ImageSource.camera),
-  //           ),
-  //           ListTile(
-  //             leading: const Icon(Icons.photo_library),
-  //             title: const Text("Choose from Gallery"),
-  //             onTap: () => Navigator.pop(context, ImageSource.gallery),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-
-  //   if (source != null) { // if cam or gallery works
-  //     final pickedFile = await ImagePicker().pickImage(source: source);
-
-  //     if (pickedFile != null) { // if file exists
-  //       final success = await RecipientApi.uploadIncomeVerificationImage(
-  //         widget.recipient.id,
-  //         File(pickedFile.path),
-  //       );
-
-  //       if (success) { // if income status is verified
-  //         if (context.mounted) {
-  //           context.goNamed('/redirect');
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //               const SnackBar(content: Text("Verification Successful")));
-  //         }
-  //       } else {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           const SnackBar(content: Text("Verification failed")),
-  //         );
-  //       }
-  //     }
-  //   }
-  // }
-
   /// displays a fraud warning when a user goes to verify their income
   ///
   /// returns true if they continue to camera, false if they cancel
