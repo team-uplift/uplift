@@ -30,57 +30,22 @@ import java.util.List;
 @Validated
 public interface DonationsApi {
 
-	// Two separate API methods are defined to retrieve a single donation by id to
-	// facilitate using different JsonView for requests from different user types, such
-	// that they include different data in the responses
-
-	@Operation(summary = "Get a donation by ID, for use by donors",
-			description = "Retrieves a specific donation transaction by its ID, for use by a donor "
-					+ "such that the returned donation includes recipient info",
+	@Operation(summary = "Get a donation by ID",
+			description = "Retrieves a specific donation transaction by its ID, "
+					+ "including public info for both the associated donor and recipient",
 			tags = { "Donations" })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Donation details",
 					content = @Content(mediaType = "application/json",
 							schema = @Schema(implementation = Donation.class))),
-			@ApiResponse(responseCode = "400", description = "Incorrect query parameter",
-					content = @Content(schema = @Schema(implementation = ErrorResults.GeneralError.class))),
 			@ApiResponse(responseCode = "404", description = "Donation not found",
 					content = @Content(schema = @Schema(implementation = ErrorResults.EntityNotFoundError.class))),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@GetMapping(path = "/donations/{id}", params = "userType=donor", produces = { "application/json" })
+	@GetMapping(value = "/donations/{id}", produces = { "application/json" })
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	@JsonView(UpliftJsonViews.PublicRecipient.class)
-	Donation donationsIdGetForDonor(
-			@Parameter(in = ParameterIn.QUERY, name = "userType",
-					description = "indicates the type of user making the request, must be 'donor'",
-					example = "userType=donor", required = true) @RequestParam(name = "userType") String userType,
-			@Parameter(in = ParameterIn.PATH, description = "persistence index of the donation to retrieve",
-					required = true, schema = @Schema()) @PathVariable("id") Integer id);
-
-	@Operation(summary = "Get a donation by ID, for use by recipients",
-			description = "Retrieves a specific donation transaction by its ID, for use either by a recipient "
-					+ "such that the returned donation includes donor info",
-			tags = { "Donations" })
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Donation details",
-					content = @Content(mediaType = "application/json",
-							schema = @Schema(implementation = Donation.class))),
-			@ApiResponse(responseCode = "400", description = "Incorrect query parameter",
-					content = @Content(schema = @Schema(implementation = ErrorResults.GeneralError.class))),
-			@ApiResponse(responseCode = "404", description = "Donation not found",
-					content = @Content(schema = @Schema(implementation = ErrorResults.EntityNotFoundError.class))),
-			@ApiResponse(responseCode = "500", description = "Server error") })
-	@GetMapping(path = "/donations/{id}", produces = { "application/json" })
-	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
-	@JsonView(UpliftJsonViews.PublicDonor.class)
-	Donation donationsIdGetForRecipient(
-			@Parameter(in = ParameterIn.QUERY, name = "userType",
-					description = "indicates the type of user making the request, not required, "
-							+ "but if included the value must be 'recipient'",
-					example = "userType=recipient") @RequestParam(required = false, name = "userType",
-							defaultValue = "recipient") String userType,
+	@JsonView(UpliftJsonViews.PublicBothUsers.class)
+	Donation donationsIdGet(
 			@Parameter(in = ParameterIn.PATH, description = "persistence index of the donation to retrieve",
 					required = true, schema = @Schema()) @PathVariable("id") Integer id);
 

@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.upLift.exceptions.BadRequestException;
 import org.upLift.exceptions.EntityNotFoundException;
 import org.upLift.model.Donation;
 import org.upLift.model.Recipient;
@@ -21,7 +20,6 @@ import org.upLift.services.UserService;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen",
 		date = "2025-03-16T14:18:35.909799305Z[GMT]")
@@ -48,28 +46,9 @@ public class DonationsApiController implements DonationsApi {
 	}
 
 	@Override
-	public Donation donationsIdGetForDonor(String userType, Integer id) {
-		LOG.info("Getting donation {} for donor user", id);
-		return getDonationById(userType, id);
-	}
-
-	@Override
-	public Donation donationsIdGetForRecipient(String userType, Integer id) {
-		LOG.info("Getting donation {} for recipient user with userType {}", id, userType);
-		return getDonationById(userType, id);
-	}
-
-	Donation getDonationById(String userType, Integer id) {
-		Optional<Donation> donation;
-		if (userType == null || userType.equalsIgnoreCase("recipient")) {
-			donation = donationService.getDonationWithDonorById(id);
-		}
-		else if (userType.equalsIgnoreCase("donor")) {
-			donation = donationService.getDonationWithRecipientById(id);
-		}
-		else {
-			throw new BadRequestException("Incorrect userType query parameter provided: " + userType);
-		}
+	public Donation donationsIdGet(Integer id) {
+		LOG.info("Getting donation {}", id);
+		var donation = donationService.getDonationById(id);
 		if (donation.isPresent()) {
 			return donation.get();
 		}
