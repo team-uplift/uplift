@@ -60,7 +60,7 @@ INSERT INTO donations (id, donor_id, recipient_id, amount, created_at)
 VALUES (1, 3, 1, 50, '2023-10-21 16:00:30.321'),
        (2, 3, 2, 75, '2023-10-22 17:05:40.654'),
        (3, 4, 1, 100, '2023-10-23 18:10:50.987'),
-       (4, 4, 6, 25, '2023-10-25 09:48:57.023');
+       (4, 4, 5, 25, '2023-10-25 09:48:57.023');
 
 -- Insert sample data into `tags`
 INSERT INTO tags (tag_name, category, created_at)
