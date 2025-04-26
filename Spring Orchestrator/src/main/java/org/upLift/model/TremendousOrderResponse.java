@@ -3,7 +3,16 @@ package org.upLift.model;
 import java.time.Instant;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class TremendousOrderResponse {
+
+	public TremendousOrderResponse() {
+	}
+
+	public TremendousOrderResponse(String orderId) {
+		order = new Order();
+		order.setId(orderId);
+	}
 
 	private Order order;
 

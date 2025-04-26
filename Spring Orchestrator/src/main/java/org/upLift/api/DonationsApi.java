@@ -5,6 +5,7 @@
  */
 package org.upLift.api;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -14,13 +15,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.upLift.model.Donation;
+import org.upLift.model.ErrorResults;
+import org.upLift.model.UpliftJsonViews;
 
 import java.util.List;
 
@@ -29,58 +30,66 @@ import java.util.List;
 @Validated
 public interface DonationsApi {
 
-	@Operation(summary = "Get a donation by ID", description = "Retrieves a specific donation transaction by its ID.",
+	@Operation(summary = "Get a donation by ID",
+			description = "Retrieves a specific donation transaction by its ID, "
+					+ "including public info for both the associated donor and recipient",
 			tags = { "Donations" })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Donation details",
 					content = @Content(mediaType = "application/json",
 							schema = @Schema(implementation = Donation.class))),
-
-			@ApiResponse(responseCode = "404", description = "Donation not found"),
-
+			@ApiResponse(responseCode = "404", description = "Donation not found",
+					content = @Content(schema = @Schema(implementation = ErrorResults.EntityNotFoundError.class))),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@GetMapping(value = "/donations/{id}", produces = { "application/json" })
-	ResponseEntity<Donation> donationsIdGet(
-	// @formatter:off
-//			@Parameter(in = ParameterIn.HEADER, description = "Tracks the session for the given set of requests.",
-//					required = true,
-//					schema = @Schema()) @RequestHeader(value = "session_id", required = true) String sessionId,
-			// @formatter:on
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	@JsonView(UpliftJsonViews.PublicBothUsers.class)
+	Donation donationsIdGet(
 			@Parameter(in = ParameterIn.PATH, description = "persistence index of the donation to retrieve",
 					required = true, schema = @Schema()) @PathVariable("id") Integer id);
 
 	@Operation(summary = "Get donations by donor",
 			description = "Retrieves all donations made a donor specified by donor ID.", tags = { "Donations" })
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200",
+			@ApiResponse(
+					responseCode = "200",
 					description = "Array of donations sent by the specified donor, "
 							+ "will be an empty array if donor has not made any donations",
 					content = @Content(mediaType = "application/json",
 							array = @ArraySchema(schema = @Schema(implementation = Donation.class)))),
 
-			@ApiResponse(responseCode = "404", description = "No donor exists with the specified id"),
+			@ApiResponse(responseCode = "404", description = "No donor exists with the specified id",
+					content = @Content(schema = @Schema(implementation = ErrorResults.EntityNotFoundError.class))),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@GetMapping(value = "/donations/donor/{donorId}", produces = { "application/json" })
-	ResponseEntity<List<Donation>> donationsGetByDonor(
-			@Parameter(in = ParameterIn.PATH, description = "persistence index of the donor", required = true,
-					schema = @Schema()) @PathVariable("donorId") Integer id);
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	@JsonView(UpliftJsonViews.PublicRecipient.class)
+	List<Donation> donationsGetByDonor(@Parameter(in = ParameterIn.PATH, description = "persistence index of the donor",
+			required = true, schema = @Schema()) @PathVariable("donorId") Integer id);
 
 	@Operation(summary = "Get donations by recipient",
 			description = "Retrieves all donations that went to a recipient specified by recipient ID.",
 			tags = { "Donations" })
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200",
+			@ApiResponse(
+					responseCode = "200",
 					description = "Array of donations received by the specified recipient, "
 							+ "will be an empty array if recipient has not received anything",
 					content = @Content(mediaType = "application/json",
 							array = @ArraySchema(schema = @Schema(implementation = Donation.class)))),
 
-			@ApiResponse(responseCode = "404", description = "No recipient exists with the specified id"),
+			@ApiResponse(responseCode = "404", description = "No recipient exists with the specified id",
+					content = @Content(schema = @Schema(implementation = ErrorResults.EntityNotFoundError.class))),
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@GetMapping(value = "/donations/recipient/{recipientId}", produces = { "application/json" })
-	ResponseEntity<List<Donation>> donationsGetByRecipient(@Parameter(in = ParameterIn.PATH,
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	@JsonView(UpliftJsonViews.PublicDonor.class)
+	List<Donation> donationsGetByRecipient(@Parameter(in = ParameterIn.PATH,
 			description = "persistence index of the recipient", required = true, schema = @Schema(name = "recipientId",
 					description = "persistence index of the recipient")) @PathVariable("recipientId") Integer id);
 
@@ -95,6 +104,7 @@ public interface DonationsApi {
 
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@PostMapping(value = "/donations", produces = { "application/json" }, consumes = { "application/json" })
+	@JsonView(UpliftJsonViews.PublicRecipient.class)
 	ResponseEntity<Donation> donationsPost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "new donation to be saved", required = true,
 					schema = @Schema()) @Valid @RequestBody Donation body);

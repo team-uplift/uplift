@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface MessageRepository extends JpaRepository<Message, Integer> {
 
+	boolean existsByDonation_Id(int donationId);
+
 	List<Message> findAllByDonation_Donor_Id(int donorId);
 
 }
