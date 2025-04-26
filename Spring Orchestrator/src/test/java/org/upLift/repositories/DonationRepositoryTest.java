@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.upLift.model.Donation;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,16 +18,8 @@ class DonationRepositoryTest extends BaseRepositoryTest {
 	private DonationRepository donationRepository;
 
 	@Test
-	void findWithDonorbyId() {
-		var result = donationRepository.findWithDonorbyId(2);
-
-		assertThat(result.isPresent(), is(true));
-		checkDonation(result.get());
-	}
-
-	@Test
-	void findWithRecipientById() {
-		var result = donationRepository.findWithRecipientbyId(2);
+	void findForPublicById() {
+		var result = donationRepository.findForPublicById(2);
 
 		assertThat(result.isPresent(), is(true));
 		checkDonation(result.get());
@@ -51,8 +44,10 @@ class DonationRepositoryTest extends BaseRepositoryTest {
 		assertThat(donations, hasSize(2));
 		assertThat(donations, everyItem(hasProperty("donor", hasProperty("id", is(3)))));
 		assertThat(donations, everyItem(hasProperty("recipient", notNullValue())));
-
 		assertThat(donations, hasItems(hasProperty("amount", is(50)), hasProperty("amount", is(75))));
+
+		donations.sort(Comparator.comparingInt(Donation::getId));
+		checkDonation(donations.get(1));
 	}
 
 	@Test
