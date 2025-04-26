@@ -122,7 +122,7 @@ public interface RecipientsApi {
 
 			@ApiResponse(responseCode = "400", description = "Invalid input") })
 	@JsonView(UpliftJsonViews.PublicRecipient.class)
-	@RequestMapping(value = "/recipients/matching", method = RequestMethod.GET)
+	@RequestMapping(value = "/recipients/matching", method = RequestMethod.POST)
 	ResponseEntity<List<Recipient>> getMatchedRecipient(
 			@Parameter(in = ParameterIn.DEFAULT, description = "A new set of form questions from the donor.",
 					required = true, schema = @Schema()) @Valid @RequestBody List<FormQuestion> formQuestions);
