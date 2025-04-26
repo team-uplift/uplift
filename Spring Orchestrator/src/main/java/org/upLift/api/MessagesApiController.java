@@ -1,18 +1,14 @@
 package org.upLift.api;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.upLift.exceptions.EntityNotFoundException;
 import org.upLift.model.Donation;
 import org.upLift.model.Message;
-import org.upLift.model.UpliftJsonViews;
 import org.upLift.services.DonationService;
 import org.upLift.services.MessageService;
 import org.upLift.services.UserService;
@@ -41,7 +37,7 @@ public class MessagesApiController implements MessagesApi {
 	}
 
 	@Override
-	public Message messagesIdGet(@PathVariable("id") Integer id) {
+	public Message messagesIdGet(Integer id) {
 		LOG.info("Getting message {}", id);
 		var message = messageService.getMessageById(id);
 		if (message.isPresent()) {
@@ -54,7 +50,7 @@ public class MessagesApiController implements MessagesApi {
 	}
 
 	@Override
-	public ResponseEntity<List<Message>> messagesGetByDonor(@PathVariable("donorId") Integer donorId) {
+	public ResponseEntity<List<Message>> messagesGetByDonor(Integer donorId) {
 		LOG.info("Getting messages linked to donor {}", donorId);
 		if (userService.donorExists(donorId)) {
 			LOG.debug("Found donor {}", donorId);
@@ -69,8 +65,7 @@ public class MessagesApiController implements MessagesApi {
 	}
 
 	@Override
-	@JsonView(UpliftJsonViews.PublicDonor.class)
-	public Donation messagesPost(@RequestBody Message body) {
+	public Donation messagesPost(Message body) {
 		LOG.info("Saving message linked to donation {}", body.getDonationId());
 		var savedMessage = messageService.sendNewMessage(body);
 		LOG.debug("Saved new message {}", savedMessage.getMessage());
@@ -80,7 +75,7 @@ public class MessagesApiController implements MessagesApi {
 	}
 
 	@Override
-	public Message messagesMarkRead(@PathVariable("messageId") Integer messageId) {
+	public Message messagesMarkRead(Integer messageId) {
 		LOG.info("Marking message {} as read", messageId);
 		return messageService.markMessageRead(messageId);
 	}

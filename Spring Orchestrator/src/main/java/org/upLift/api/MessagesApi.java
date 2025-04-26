@@ -5,6 +5,7 @@
  */
 package org.upLift.api;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.upLift.model.Donation;
 import org.upLift.model.ErrorResults;
 import org.upLift.model.Message;
+import org.upLift.model.UpliftJsonViews;
 
 import java.util.List;
 
@@ -93,6 +95,7 @@ public interface MessagesApi {
 	@PostMapping(value = "/messages", produces = { "application/json" }, consumes = { "application/json" })
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
+	@JsonView(UpliftJsonViews.PublicDonor.class)
 	Donation messagesPost(@Parameter(in = ParameterIn.DEFAULT, description = "new message to be saved", required = true,
 			schema = @Schema(implementation = Message.class)) @Valid @RequestBody Message body);
 
