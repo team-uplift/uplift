@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/tag_model.dart';
 import 'package:uplift/components/tag_card.dart'; 
-
-// TODO sort all tags by heat
 
 class TagSelection extends StatefulWidget {
   final Map<String, dynamic> formData;
@@ -69,7 +68,7 @@ class _TagSelectionState extends State<TagSelection> {
 
   void _sortTagsByWeight() {
     setState(() {
-      widget.availableTags.sort((a, b) => a.weight.compareTo(b.weight));
+      widget.availableTags.sort((a, b) => b.weight.compareTo(a.weight));
     });
   }
 
@@ -104,7 +103,11 @@ class _TagSelectionState extends State<TagSelection> {
           children: [
             // OutlinedButton(onPressed: widget.onBack, child: const Text("Back")),
             ElevatedButton(
-              // TODO implement submit logic here
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.baseGreen,
+                foregroundColor: Colors.black,
+              ),
+
               onPressed: selectedTags.isNotEmpty ? _submit : null,
               child: const Text("Submit"),
             ),

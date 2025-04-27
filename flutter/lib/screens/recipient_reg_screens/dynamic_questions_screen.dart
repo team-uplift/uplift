@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:uplift/constants/constants.dart';
 
 class DynamicQuestionScreen extends StatefulWidget {
   final Map<String, dynamic> formData;
@@ -41,67 +42,6 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
   ];
 
 
-
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _initializeQuestion();
-  // }
-
-  // @override
-  // void didUpdateWidget(covariant DynamicQuestionScreen oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-
-  //   // ✅ Reset state when switching to a new question
-  //   if (oldWidget.questionIndex != widget.questionIndex) {
-  //     _formKey.currentState?.reset();
-  //   }
-  // }
-
-  // void _initializeQuestion() {
-  //   final question = widget.questions[widget.questionIndex];
-
-  //   // ✅ Load saved answer if available, otherwise start empty
-  //   selectedAnswer = widget.formData.containsKey(question['key']) ? widget.formData[question['key']] : null;
-
-  //   // ✅ Initialize text field if it's a text input question
-  //   _textController = TextEditingController(text: selectedAnswer is String ? selectedAnswer : "");
-  // }
-
-  // @override
-  // void dispose() {
-  //   _textController.dispose(); // ✅ Prevent memory leaks
-  //   super.dispose();
-  // }
-
-  // void _saveAnswer() {
-  //   final question = widget.questions[widget.questionIndex];
-
-  //   if (question['type'] == 'text') {
-  //     widget.formData[question['key']] = _textController.text.trim();
-  //   } else {
-  //     widget.formData[question['key']] = selectedAnswer;
-  //   }
-  // }
-
-  // // validation function from chatgpt
-  // bool isAnswerValid(Map<String, dynamic> question, dynamic answer) {
-  //   if (question['required'] != true) return true;
-
-  //   switch (question['type']) {
-  //     case 'text':
-  //       return answer?.toString().trim().isNotEmpty ?? false;
-  //     case 'multipleChoice':
-  //       return answer != null;
-  //     case 'checkbox':
-  //       return answer is List && answer.isNotEmpty;
-  //     default:
-  //       return true;
-  //   }
-  // }
-
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -114,7 +54,9 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(question['q']),
+                Text(question['q'],
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
                 const SizedBox(height: 16),
                 // ✅ TEXT INPUT (Ensures fresh controller per question)
                 if (question['type'] == 'text')
@@ -166,18 +108,26 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
                 if (question['type'] == 'compositeAddress')
                   Column(
                     children: [
-                      FormBuilderTextField(
-                        key: const ValueKey('firstName'),
-                        name: 'firstName',
-                        decoration: const InputDecoration(labelText: 'First Name'),
-                        validator: FormBuilderValidators.required(),
-                      ),
-                      const SizedBox(height: 8),
-                      FormBuilderTextField(
-                        key: const ValueKey('lastName'),
-                        name: 'lastName',
-                        decoration: const InputDecoration(labelText: 'Last Name'),
-                        validator: FormBuilderValidators.required(),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: FormBuilderTextField(
+                              key: const ValueKey('firstName'),
+                              name: 'firstName',
+                              decoration: const InputDecoration(labelText: 'First Name'),
+                              validator: FormBuilderValidators.required(),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: FormBuilderTextField(
+                              key: const ValueKey('lastName'),
+                              name: 'lastName',
+                              decoration: const InputDecoration(labelText: 'Last Name'),
+                              validator: FormBuilderValidators.required(),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 8),
                       FormBuilderTextField(
@@ -193,25 +143,35 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
                         decoration: const InputDecoration(labelText: 'Street Address 2 (optional)'),
                       ),
                       const SizedBox(height: 8),
-                      FormBuilderTextField(
-                        key: const ValueKey('city'),
-                        name: 'city',
-                        decoration: const InputDecoration(labelText: 'City'),
-                        validator: FormBuilderValidators.required(),
-                      ),
-                      const SizedBox(height: 8),
-                      FormBuilderDropdown<String>(
-                        key: const ValueKey('state'),
-                        name: 'state',
-                        decoration: InputDecoration(labelText: 'State'),
-                        items: usStates
-                            .map((state) => DropdownMenuItem(
-                                  value: state,
-                                  child: Text(state),
-                                ))
-                            .toList(),
-                        validator: FormBuilderValidators.required(),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: FormBuilderTextField(
+                            key: const ValueKey('city'),
+                            name: 'city',
+                            decoration: const InputDecoration(labelText: 'City'),
+                            validator: FormBuilderValidators.required(),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          flex: 1,
+                          child: FormBuilderDropdown<String>(
+                            key: const ValueKey('state'),
+                            name: 'state',
+                            decoration: const InputDecoration(labelText: 'State'),
+                            items: usStates
+                                .map((state) => DropdownMenuItem(
+                                      value: state,
+                                      child: Text(state),
+                                    ))
+                                .toList(),
+                            validator: FormBuilderValidators.required(),
+                          ),
+                        ),
+                      ],
+                    ),
                       const SizedBox(height: 8),
                       FormBuilderTextField(
                         key: const ValueKey('zipCode'),
@@ -241,6 +201,10 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.baseGreen,
+                  foregroundColor: Colors.black,
+                ),
                 onPressed: () {
                   final isValid = _formKey.currentState?.saveAndValidate() ?? false;
                   if (isValid) {
@@ -258,9 +222,3 @@ class _DynamicQuestionScreenState extends State<DynamicQuestionScreen> {
   }
 }
 
-
-
-
-
-// TODO design logo
-// TODO comment code

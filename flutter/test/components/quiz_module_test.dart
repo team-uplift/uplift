@@ -1,0 +1,54 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:uplift/components/quiz_module.dart'; // Adjust the import to your actual path
+
+void main() {
+  group('QuizModule Widget', () {
+    testWidgets('displays question and choices', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: QuizModule(
+              question: 'What is your favorite color?',
+              choices: ['Red', 'Blue', 'Green'],
+              onPress: () {},
+            ),
+          ),
+        ),
+      );
+
+      // Verify the question appears
+      expect(find.text('What is your favorite color?'), findsOneWidget);
+
+      // Verify all choices appear
+      expect(find.text('Red'), findsOneWidget);
+      expect(find.text('Blue'), findsOneWidget);
+      expect(find.text('Green'), findsOneWidget);
+    });
+
+    testWidgets('calls onPress when a choice is tapped', (WidgetTester tester) async {
+      bool tapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: QuizModule(
+              question: 'Pick one:',
+              choices: ['Option A', 'Option B'],
+              onPress: () {
+                tapped = true;
+              },
+            ),
+          ),
+        ),
+      );
+
+      // Tap on the first choice
+      await tester.tap(find.text('Option A'));
+      await tester.pumpAndSettle();
+
+      // Verify the callback was triggered
+      expect(tapped, isTrue);
+    });
+  });
+}

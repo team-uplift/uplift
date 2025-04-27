@@ -25,7 +25,7 @@ class RecipientApi {
   /// create a recipient user from formdata and amplify auth information
   ///
   /// returns the user id on success, null on failure
-  static Future<String?> createRecipientUser(
+  static Future<int?> createRecipientUser(
     Map<String, dynamic> formData,
     List<Map<String, dynamic>> formQuestions,
     Map<String, dynamic> attrMap,
@@ -58,7 +58,7 @@ class RecipientApi {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         log.info("Successfully created recipient user.");
-        return data['id'].toString();
+        return data['id'];
       } else {
         log.severe("Recipient creation failed: ${response.statusCode}");
         return null;
@@ -92,6 +92,7 @@ class RecipientApi {
   /// returns 'true' if verified, 'false' otherwise
   static Future<bool> uploadIncomeVerificationImage(
       int userId, File imageFile) async {
+    // print("start of income verification api call");
     try {
       final request = http.MultipartRequest(
         'PUT',
@@ -99,11 +100,16 @@ class RecipientApi {
       );
 
       request.files.add(
-        await http.MultipartFile.fromPath('file', imageFile.path),
+        await http.MultipartFile.fromPath(
+            'incomeVerificationFile', imageFile.path),
       );
+
+      // print("request: ${request.files.isEmpty}");
 
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
+
+      // print("response: $responseBody");
 
       if (response.statusCode == 200 && responseBody.trim() == 'true') {
         log.info("Recipient income verification successful.");
@@ -169,8 +175,8 @@ class RecipientApi {
 
   /// sends thank you message from recipient to donor
   ///
-  /// returns 'true' on success, 'false' on failure
-  static Future<bool> sendThankYouMessage({
+  /// returns donation object on success, null on failure
+  static Future<Donation?> sendThankYouMessage({
     // required int userId,
     required int donationId,
     required String message,
@@ -189,14 +195,15 @@ class RecipientApi {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         log.info("Message sent successfully.");
-        return true;
+        final data = jsonDecode(response.body);
+        return Donation.fromJson(data);
       } else {
         log.warning("Failed to send message: ${response.statusCode}");
-        return false;
+        return null;
       }
     } catch (e) {
       log.severe("Error sending thank you message: $e");
-      return false;
+      return null;
     }
   }
 

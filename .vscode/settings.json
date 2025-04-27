@@ -1,4 +1,4 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
-    "todo-tree.tree.scanMode": "open files"
+    "todo-tree.tree.scanMode": "workspace"
 }

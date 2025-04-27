@@ -70,11 +70,18 @@ class UserApi {
   static Future<User?> convertToDonor(User user) async {
     final url = Uri.parse('$baseUrl/users/switch/donor');
 
+    final payload = {
+      'createdAt': user.createdAt?.toIso8601String(),
+      'id': user.id,
+      'nickname': user.recipientData?.nickname,
+    };
+    print("convert to donor payload: $payload");
+
     try {
       final response = await http.put(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(user.toJson()),
+        body: jsonEncode(payload),
       );
 
       if (response.statusCode == 200) {

@@ -7,4 +7,11 @@ class AppColors {
   static const Color baseBlue = Color(0xFF56768F);
   static const Color baseOrange = Color(0xFFF3712B);
 
+  static const Color softBlue = Color(0xFFA9D6E5);
+  static const Color lavender = Color(0xFFCABBE9);
+  static const Color warmWhite = Color(0xFFFFF8F0);
+  static const Color mutedTeal = Color(0xFF5CB8A7);
+  static const Color lightBeige = Color(0xFFFFF3E0);
+
+
 }
