@@ -173,7 +173,8 @@ final GoRouter _router = GoRouter(
       path: '/donor_tag',
       name: '/donor_tag',
       builder: (BuildContext context, GoRouterState state) {
-        return const DonorTagPage();
+        final questionsAnswers = state.extra as List<Map<String, dynamic>>;
+        return DonorTagPage(questionsAnswers: questionsAnswers);
       },
     ),
   ],
