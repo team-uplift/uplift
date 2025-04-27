@@ -493,7 +493,7 @@ public class Recipient extends AbstractCreatedAt {
 		// @formatter:off
 		return "class Recipient {\n" +
 				"    id: " + toIndentedString(getId()) + "\n" +
-				"    user: " + toIndentedString(user.toString()) + "\n" +
+				"    user: " + toIndentedString(user) + "\n" +
 				"    first name: " + toIndentedString(firstName) + "\n" +
 				"    last name: " + toIndentedString(lastName) + "\n" +
 				"    street address 1: " + toIndentedString(streetAddress1) + "\n" +

@@ -19,7 +19,7 @@ INSERT INTO recipients (id, first_name, last_name, street_address1, street_addre
                         last_about_me, last_reason_for_help, form_questions, image_url, identity_last_verified,
                         income_last_verified, nickname, tags_last_generated_at, last_donation_timestamp, created_at)
 VALUES (1, 'John', 'Doe', '123 Elm St', '', 'Springfield', 'IL', '62701', 'About John', 'Reason 1',
-        '[{"question": "question1", "answer": "Answer1"}]', 'http://example.com/image1.jpg', '2023-10-01 11:15:00.123',
+        '[{"question": "question1","answer": "Answer1"},{"question":"question2","answer":"Answer2"}]', 'http://example.com/image1.jpg', '2023-10-01 11:15:00.123',
         DATEADD('DAY', -90, CURRENT_TIMESTAMP),
            'Johnny', '2023-10-05 09:10:10.789', '2023-10-23 18:10:50.987', '2023-10-01 10:20:30.123'),
        (2, 'Jane', 'Smith', '456 Oak St', '', 'Madison', 'WI', '53703', 'About Jane', 'Reason 2',
@@ -36,7 +36,7 @@ VALUES (1, 'John', 'Doe', '123 Elm St', '', 'Springfield', 'IL', '62701', 'About
         'http://example.com/image4.jpg', NULL, NULL, 'Mike', '2023-10-25 09:30:10.789', NULL,
         '2023-10-25 09:15:30.123'),
        (7, 'Test', 'User', NULL, NULL, NULL, NULL, NULL,
-        'About test', 'Test reason', '[{"question":"question7","answer":"answer7"}]', NULL,
+        'About test', 'Test reason', '[{"question":"question7","answer":"answer7"}]', 'https://example.com/image7.jpg',
         DATEADD('DAY', -10, CURRENT_TIMESTAMP), DATEADD('DAY', -100, CURRENT_TIMESTAMP), 'Purple koala',
         '2023-10-27 11:31:43.471', NULL,
             '2023-10-27 11:32:57.123');

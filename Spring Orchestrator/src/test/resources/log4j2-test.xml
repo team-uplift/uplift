@@ -2,9 +2,16 @@
 
 <Configuration status="WARN">
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
+        <Console name="Console1" target="SYSTEM_OUT">
             <PatternLayout>
                 <Pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}.%method (%line): %msg%n</Pattern>
+            </PatternLayout>
+        </Console>
+        <Console name="Console2" target="SYSTEM_OUT">
+            <PatternLayout>
+                <!-- Skip the exception stack trace for this logger, only output the first line of the exception -->
+                <alwaysWriteExceptions>false</alwaysWriteExceptions>
+                <Pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}.%method (%line): %msg%n%ex{short}%n</Pattern>
             </PatternLayout>
         </Console>
         <RollingFile name="UpliftAppender" fileName="logs/uplift.log"
@@ -21,11 +28,17 @@
     </Appenders>
     <Loggers>
         <Root level="info">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Console1"/>
             <AppenderRef ref="UpliftAppender"/>
         </Root>
 
         <Logger name="org.upLift" level="debug"/>
+        <Logger name="org.upLift.api.GlobalExceptionHandler" level="debug" additivity="false">
+            <!-- Use separate Console out for GlobalExceptionHandler errors to reduce the output in CI/CD tests, etc -->
+            <!-- Switch to Console1 appender or check the log if full stacktraces are needed for debugging -->
+            <AppenderRef ref="Console2" />
+            <AppenderRef ref="UpliftAppender" />
+        </Logger>
         <!--<Logger name="org.springframework" level="info" />-->
         <!--Logs Waffle security filter actions-->
         <!--<Logger name="waffle.servlet" level="debug" />-->

@@ -143,9 +143,15 @@ public class User extends AbstractCreatedEntity {
 
 	@Override
 	public String toString() {
-		return "class User {\n" + "    id: " + toIndentedString(getId()) + "\n" + "    cognitoId: "
-				+ toIndentedString(cognitoId) + "\n" + "    email: " + toIndentedString(email) + "\n"
-				+ "    createdAt: " + toIndentedString(getCreatedAt()) + "\n" + "}";
+		// @formatter:off
+		return "class User {\n"
+				+ "    id: " + toIndentedString(getId()) + "\n"
+				+ "    cognitoId: " + toIndentedString(cognitoId) + "\n"
+				+ "    email: " + toIndentedString(email) + "\n"
+				+ "    recipient flag: " + toIndentedString(recipient) + "\n"
+				+ "    createdAt: " + toIndentedString(getCreatedAt()) + "\n"
+				+ "}";
+		// @formatter:on
 	}
 
 }
