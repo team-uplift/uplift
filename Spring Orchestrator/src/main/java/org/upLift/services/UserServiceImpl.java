@@ -1,20 +1,26 @@
 package org.upLift.services;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.upLift.exceptions.BadRequestException;
+import org.upLift.exceptions.EntityNotFoundException;
 import org.upLift.exceptions.ModelException;
 import org.upLift.model.Donor;
 import org.upLift.model.Recipient;
 import org.upLift.model.User;
 import org.upLift.repositories.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.List;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
+
+	private static final Logger LOG = LogManager.getLogger();
 
 	private final UserRepository userRepository;
 
@@ -51,6 +57,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User addUser(User user) {
+		LOG.debug("Adding new user: {}", user);
 		// Donor entries may not come with any associated donor data, in which case it
 		// must be added manually
 		if (user.isDonor()) {
@@ -92,7 +99,110 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User updateUser(User user) {
+	public User updateUserProfile(User user) {
+		LOG.debug("Updated user info: {}", user);
+		var existingEntry = userRepository.findById(user.getId());
+		if (existingEntry.isEmpty()) {
+			throw new EntityNotFoundException(user.getId(), "User",
+					"User with id " + user.getId() + " not found, can't update entry");
+		}
+
+		var existingUser = existingEntry.get();
+		// Check that this method is only called to update existing user/donor/recipient
+		// data,
+		// not to switch user type
+		if (user.isRecipient() != existingUser.isRecipient()) {
+			throw new BadRequestException(
+					"Can't switch user type with this method, please use the appropriate 'switch' endpoint");
+		}
+
+		existingUser.setCognitoId(user.getCognitoId());
+		existingUser.setEmail(user.getEmail());
+
+		// Only update data for the current user type
+		if (existingUser.isDonor()) {
+			var existingDonor = existingUser.getDonorData();
+			var updatedDonor = user.getDonorData();
+			// Only update the nickname if present
+			if (updatedDonor.getNickname() != null && !updatedDonor.getNickname().isEmpty()) {
+				existingDonor.setNickname(updatedDonor.getNickname());
+			}
+		}
+		else {
+			var existingRecipient = existingUser.getRecipientData();
+			var updatedRecipient = user.getRecipientData();
+			// Only update the profile data, not the values set by the back end like
+			// last verification or donation date/times
+			existingRecipient.setFirstName(updatedRecipient.getFirstName());
+			existingRecipient.setLastName(updatedRecipient.getLastName());
+			existingRecipient.setStreetAddress1(updatedRecipient.getStreetAddress1());
+			existingRecipient.setStreetAddress2(updatedRecipient.getStreetAddress2());
+			existingRecipient.setCity(updatedRecipient.getCity());
+			existingRecipient.setState(updatedRecipient.getState());
+			existingRecipient.setZipCode(updatedRecipient.getZipCode());
+			existingRecipient.setLastAboutMe(updatedRecipient.getLastAboutMe());
+			existingRecipient.setLastReasonForHelp(updatedRecipient.getLastReasonForHelp());
+			// Only update the nickname and image URL if present
+			if (updatedRecipient.getNickname() != null && !updatedRecipient.getNickname().isEmpty()) {
+				existingRecipient.setNickname(updatedRecipient.getNickname());
+			}
+			if (updatedRecipient.getImageUrl() != null && !updatedRecipient.getImageUrl().isEmpty()) {
+				existingRecipient.setImageUrl(updatedRecipient.getImageUrl());
+			}
+		}
+
+		// No need to load child data, since it's already present
+		return userRepository.save(existingUser);
+	}
+
+	@Override
+	public User addDonor(int id, Donor donor) {
+		LOG.debug("Adding donor: {}", donor);
+		// Get existing user with provided id
+		var userResult = userRepository.findById(id);
+		if (userResult.isEmpty()) {
+			throw new EntityNotFoundException(id, "User", "User with id " + id + " not found, can't switch to donor");
+		}
+
+		var user = userResult.get();
+		if (!user.isRecipient()) {
+			LOG.error("User {} is already a donor", id);
+			throw new BadRequestException("User " + id + " is already a donor");
+		}
+
+		user.setRecipient(false);
+		user.setDonorData(donor);
+
+		// No need to load child data, since it's already present
+		return userRepository.save(user);
+	}
+
+	@Override
+	public User addRecipient(int id, Recipient recipient) {
+		LOG.debug("Adding recipient: {}", recipient);
+		// Get existing user with provided id
+		var userResult = userRepository.findById(id);
+		if (userResult.isEmpty()) {
+			throw new EntityNotFoundException(id, "User",
+					"User with id " + id + " not found, can't switch to recipient");
+		}
+
+		var user = userResult.get();
+		if (user.isRecipient()) {
+			LOG.error("User {} is already a recipient", id);
+			throw new BadRequestException("User " + id + " is already a recipient");
+		}
+
+		if (recipient.getNickname() == null || recipient.getNickname().isEmpty()) {
+			// If nickname isn't specified, use the donor nickname
+			recipient.setNickname(user.getDonorData().getNickname());
+			recipient.setImageUrl(generateIconUrl(recipient.getNickname()));
+		}
+
+		user.setRecipient(true);
+		user.setRecipientData(recipient);
+
+		// No need to load child data, since it's already present
 		return userRepository.save(user);
 	}
 
@@ -101,25 +211,29 @@ public class UserServiceImpl implements UserService {
 		userRepository.deleteById(id);
 	}
 
-	Optional<User> loadChildData(Optional<User> result) {
+	User loadChildData(User user) {
 		// TODO: Clear out the other child data object here? or leave that for controller?
+		if (user.isRecipient()) {
+			// If the user is created before the recipient this creates a null
+			// exception.
+			if (user.getRecipientData() != null) {
+				user.getRecipientData().getCreatedAt();
+			}
+		}
+		else {
+			// If the user is created before the recipient this creates a null
+			// exception.
+			if (user.getDonorData() != null) {
+				user.getDonorData().getCreatedAt();
+			}
+		}
+		return user;
+	}
+
+	Optional<User> loadChildData(Optional<User> result) {
 		if (result.isPresent()) {
 			var user = result.get();
-			if (user.isRecipient()) {
-				// If the user is created before the recipient this creates a null
-				// exception.
-				if (user.getRecipientData() != null) {
-					user.getRecipientData().getCreatedAt();
-				}
-			}
-			else {
-				// If the user is created before the recipient this creates a null
-				// exception.
-				if (user.getDonorData() != null) {
-					user.getDonorData().getCreatedAt();
-				}
-			}
-			return Optional.of(user);
+			return Optional.of(loadChildData(user));
 		}
 		else {
 			return result;
