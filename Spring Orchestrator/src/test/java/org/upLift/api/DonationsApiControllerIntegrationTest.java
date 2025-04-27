@@ -44,7 +44,7 @@ class DonationsApiControllerIntegrationTest extends BaseControllerIntegrationTes
 			.andExpect(jsonPath("$.donor.createdAt", is("2023-10-10T12:30:50.789Z")))
 			// Check that private donor data isn't loaded
 			.andExpect(jsonPath("$.donor.user").doesNotExist());
-		checkPublicRecipientData(result, "$");
+		checkPublicRecipientData(result, "$.recipient");
 
 		// Test getting non-existent donation
 		mockMvc.perform(get("/donations/999"))
@@ -88,9 +88,9 @@ class DonationsApiControllerIntegrationTest extends BaseControllerIntegrationTes
 			.andExpect(jsonPath("$[1].recipient.tags", hasSize(5)))
 			.andExpect(jsonPath("$[1].recipient.tags[?(@.tagName=='housing')].selected", hasItem(true)))
 			.andExpect(jsonPath("$[1].recipient.tags[?(@.tagName=='utilities')].selected", hasItem(true)));
-		checkPublicRecipientData(result, "$[0]");
-		checkRecipient2PublicData(result, "$[1]");
-		checkPrivateRecipientPropertiesNotPresent(result, "$[1]");
+		checkPublicRecipientData(result, "$[0].recipient");
+		checkRecipient2PublicData(result, "$[1].recipient");
+		checkPrivateRecipientPropertiesNotPresent(result, "$[1].recipient");
 
 		// Test getting donations for non-existent donor
 		mockMvc.perform(get("/donations/donor/999"))
@@ -175,7 +175,7 @@ class DonationsApiControllerIntegrationTest extends BaseControllerIntegrationTes
 			.andExpect(jsonPath("$.recipient.tags[3].tagName", is("job-training")))
 			.andExpect(jsonPath("$.recipient.tags[4].tagName", is("transportation")))
 			.andExpect(jsonPath("$.recipient.tags[5].tagName", is("utilities")));
-		checkPrivateRecipientPropertiesNotPresent(result, "$");
+		checkPrivateRecipientPropertiesNotPresent(result, "$.recipient");
 
 		// Test posting donation with non-existent donor
 		newDonation.setDonorId(999);
