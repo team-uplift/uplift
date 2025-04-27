@@ -11,7 +11,7 @@ import org.upLift.TestObjectMapperConfig;
  */
 // Use a slightly different JDBC URL with a different database to avoid conflict with
 // other @DataJpaTest slices
-@DataJpaTest(properties = "spring.datasource.url=jdbc:h2:mem:repo_tests;DB_CLOSE_DELAY=-1;TIME ZONE=UTC")
+@DataJpaTest
 @ActiveProfiles("ci")
 // Do NOT replace the DataSource with a default H2 database, instead use the one based on
 // the CI config to ensure that time zone is set to UTC

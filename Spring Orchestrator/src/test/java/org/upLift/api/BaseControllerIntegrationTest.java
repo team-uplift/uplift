@@ -15,8 +15,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SuppressWarnings("UnusedReturnValue")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK,
-		properties = { "spring.datasource.url=jdbc:h2:mem:controller;DB_CLOSE_DELAY=-1;TIME ZONE=UTC" })
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Import(BaseControllerIntegrationTest.TestConfig.class)
 abstract class BaseControllerIntegrationTest {
