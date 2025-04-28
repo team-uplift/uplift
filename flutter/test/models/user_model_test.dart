@@ -3,7 +3,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:uplift/models/user_model.dart';
 import 'package:uplift/models/donor_model.dart';
-import 'package:uplift/models/recipient_model.dart';
 
 void main() {
   group('User Model', () {

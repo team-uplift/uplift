@@ -122,7 +122,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
   void _startCooldown() {
     final tagsLastGenerated = widget.recipient.tagsLastGenerated;
 
-    final editTime = tagsLastGenerated?.add(const Duration(seconds: 24));
+    final editTime = tagsLastGenerated?.add(const Duration(hours: 24));
     final currentTime = DateTime.now();
 
     if (currentTime.isAfter(editTime!)) {
@@ -188,6 +188,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     required VoidCallback onSuccess,
   }) async {
     try {
+      // TODO issue with cognito verification on email change
       await Amplify.Auth.updateUserAttribute(
         userAttributeKey: CognitoUserAttributeKey.email,
         value: newEmail,
@@ -320,8 +321,9 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
             children: [
               _buildEditProfileCard(),
               const SizedBox(height: 16),
-              _buildChangeEmailCard(),
-              const SizedBox(height: 16),
+              // TODO uncomment below when update email is functional
+              // _buildChangeEmailCard(),
+              // const SizedBox(height: 16),
               _buildLogoutCard(),
               const SizedBox(height: 16),
               _buildConvertAccountCard(),
@@ -354,6 +356,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     );
   }
 
+  // TODO here to be used if we implement email changes
   Widget _buildChangeEmailCard() {
     return Card(
       color: AppColors.warmWhite,
@@ -419,7 +422,8 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
                     context.goNamed('/redirect');
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red),
+                      backgroundColor: AppColors.baseRed,
+                      foregroundColor: AppColors.warmWhite),
                   child: const Text("Convert Account"),
                 ),
               ],

@@ -5,6 +5,7 @@
 /// - _handleSendThankYou
 ///
 ///
+library;
 
 import 'package:flutter/material.dart';
 import 'package:uplift/api/recipient_api.dart';

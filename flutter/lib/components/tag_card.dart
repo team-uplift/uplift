@@ -72,7 +72,6 @@ class TagCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("tag name: ${tag.tagName} weight: ${tag.weight}");
 
     final bgColor = _backgroundColorByWeight(tag.weight);
 

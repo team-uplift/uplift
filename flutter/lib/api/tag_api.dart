@@ -4,6 +4,7 @@
 /// Includes:
 /// - generating tags from a recipient profile
 ///
+library;
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;

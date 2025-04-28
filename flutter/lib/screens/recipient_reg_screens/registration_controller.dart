@@ -220,134 +220,136 @@ class _RegistrationControllerState extends State<RegistrationController> {
     }
   }
 
+  /// builds the box that the screens will live within to tie the look together
   @override
-Widget build(BuildContext context) {
-  return Stack(
-    children: [
-      Scaffold(
-        backgroundColor: AppColors.baseYellow,
-        appBar: AppBar(
-          title: SizedBox(
-            height: 40,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: Image.asset('assets/uplift_black.png'),
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: AppColors.baseYellow,
+          appBar: AppBar(
+            title: SizedBox(
+              height: 40,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Image.asset('assets/uplift_black.png'),
+              ),
+            ),
+            centerTitle: true,
+            backgroundColor: AppColors.baseGreen,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: _stepBack,
             ),
           ),
-          centerTitle: true,
-          backgroundColor: AppColors.baseGreen,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: _stepBack,
-          ),
-        ),
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 12),
-              Center(
-                child: Text(
-                  "Recipient Registration",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Center(
-                child: Text(
-                  "Step ${_currentIndex + 1} of ${registrationQuestions.length}",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Card(
-                    color: AppColors.warmWhite,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: _buildCurrentStep(),
+          body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 12),
+                Center(
+                  child: Text(
+                    "Recipient Registration",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: LinearProgressIndicator(
-                    value: (_currentIndex + 1) / registrationQuestions.length,
-                    backgroundColor: AppColors.warmWhite,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.baseOrange),
-                    minHeight: 8.0,
+                const SizedBox(height: 12),
+                Center(
+                  child: Text(
+                    "Step ${_currentIndex + 1} of ${registrationQuestions.length}",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      if (_isLoading)
-        Positioned.fill(
-          child: Container(
-            color: Colors.black.withOpacity(0.4),
-            child: const Center(
-              child: CircularProgressIndicator(color: AppColors.baseRed),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Card(
+                      color: AppColors.warmWhite,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: _buildCurrentStep(),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: LinearProgressIndicator(
+                      value: (_currentIndex + 1) / registrationQuestions.length,
+                      backgroundColor: AppColors.warmWhite,
+                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.baseOrange),
+                      minHeight: 8.0,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-    ],
-  );
-}
-
-Widget _buildCurrentStep() {
-  final question = registrationQuestions[_currentIndex];
-
-  if (question['type'] == 'confirmation') {
-    return Confirmation(
-      formData: formData,
-      onBack: _stepBack,
-      onGenerate: _handleUserRegistrationAndTags,
-      onJumpToQuestion: (key) {
-        final index = registrationQuestions.indexWhere((q) => q['key'] == key);
-        if (index != -1) {
-          setState(() {
-            _currentIndex = index;
-            returnToConfirmation = true;
-          });
-        }
-      },
-    );
-  } else if (question['type'] == 'showTags') {
-    return TagSelection(
-      formData: formData,
-      availableTags: generatedTags,
-      onBack: _stepBack,
-      onSubmit: _stepForward,
-    );
-  } else {
-    return DynamicQuestionScreen(
-      formData: formData,
-      questions: registrationQuestions,
-      questionIndex: _currentIndex,
-      onNext: _stepForward,
-      onBack: _stepBack,
-      onGenerate: _handleUserRegistrationAndTags,
-      returnToConfirmation: returnToConfirmation,
+        if (_isLoading)
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withAlpha(140),
+              child: const Center(
+                child: CircularProgressIndicator(color: AppColors.baseRed),
+              ),
+            ),
+          ),
+      ],
     );
   }
-}
+
+  /// builds the step we are on for display
+  Widget _buildCurrentStep() {
+    final question = registrationQuestions[_currentIndex];
+
+    if (question['type'] == 'confirmation') {
+      return Confirmation(
+        formData: formData,
+        onBack: _stepBack,
+        onGenerate: _handleUserRegistrationAndTags,
+        onJumpToQuestion: (key) {
+          final index = registrationQuestions.indexWhere((q) => q['key'] == key);
+          if (index != -1) {
+            setState(() {
+              _currentIndex = index;
+              returnToConfirmation = true;
+            });
+          }
+        },
+      );
+    } else if (question['type'] == 'showTags') {
+      return TagSelection(
+        formData: formData,
+        availableTags: generatedTags,
+        onBack: _stepBack,
+        onSubmit: _stepForward,
+      );
+    } else {
+      return DynamicQuestionScreen(
+        formData: formData,
+        questions: registrationQuestions,
+        questionIndex: _currentIndex,
+        onNext: _stepForward,
+        onBack: _stepBack,
+        onGenerate: _handleUserRegistrationAndTags,
+        returnToConfirmation: returnToConfirmation,
+      );
+    }
+  }
 }

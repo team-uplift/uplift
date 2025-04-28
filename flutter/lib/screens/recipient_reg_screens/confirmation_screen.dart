@@ -1,3 +1,12 @@
+/// confirmation_screen.dart
+/// 
+/// used to build a confirmation screen before tag generation is called
+/// all fields on this screen are editable
+/// include:
+/// - _buildGroupedContent
+/// 
+/// TODO test confirmation screen
+
 import 'package:flutter/material.dart';
 import 'package:uplift/constants/constants.dart';
 import 'registration_questions.dart';
@@ -16,6 +25,24 @@ class Confirmation extends StatelessWidget {
     super.key,
   });
 
+  /// builds content to be grouped together on confirmation screen
+  String _buildGroupedContent(Map<String, dynamic> formData) {
+    final first = formData['firstName'] ?? '';
+    final last = formData['lastName'] ?? '';
+    final addr1 = formData['streetAddress1'] ?? '';
+    final addr2 = formData['streetAddress2'] ?? '';
+    final city = formData['city'] ?? '';
+    final state = formData['state'] ?? '';
+    final zip = formData['zipCode'] ?? '';
+
+    return [
+      "$first $last",
+      addr1,
+      if (addr2.toString().isNotEmpty) addr2,
+      "$city, $state $zip",
+    ].where((line) => line.trim().isNotEmpty).join('\n');
+  }
+
   @override
   Widget build(BuildContext context) {
     final groupedFields = {
@@ -29,7 +56,6 @@ class Confirmation extends StatelessWidget {
         'zipCode',
       ],
     };
-
     final groupedKeys = groupedFields.values.expand((keys) => keys).toSet();
 
     return SafeArea(
@@ -40,76 +66,17 @@ class Confirmation extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-
-                  // ✅ Render grouped fields
+                  // building address fields for card
                   ...groupedFields.entries.map((entry) {
-                    final title = entry.key;
-                    final keys = entry.value;
-                    final first = formData['firstName'] ?? '';
-                    final last = formData['lastName'] ?? '';
-                    final addr1 = formData['streetAddress1'] ?? '';
-                    final addr2 = formData['streetAddress2'] ?? '';
-                    final city = formData['city'] ?? '';
-                    final state = formData['state'] ?? '';
-                    final zip = formData['zipCode'] ?? '';
-
-                    final content = [
-                      "$first $last",
-                      addr1,
-                      if (addr2.toString().isNotEmpty) addr2,
-                      "$city, $state $zip",
-                    ].join('\n');
-
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Card(
-                        elevation: 5,
-                        color: AppColors.lightBeige,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: InkWell(
-                          onTap: () => onJumpToQuestion("basicAddressInfo"),
-                          borderRadius: BorderRadius.circular(16),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        title,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(Icons.edit, size: 18, color: AppColors.baseBlue),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  content.isNotEmpty ? content : "Not provided",
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                                const SizedBox(height: 8),
-                                const Text(
-                                  "Tap to edit",
-                                  style: TextStyle(fontSize: 12, color: AppColors.baseBlue),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                    final content = _buildGroupedContent(formData);
+                    return buildConfirmationCard(
+                      title: entry.key,
+                      content: content,
+                      onEdit: () => onJumpToQuestion("basicAddressInfo"),
                     );
                   }),
 
-                  // ✅ Then render all other questions
+                  // all other registration question cards
                   ...registrationQuestions
                       .where((q) =>
                           q['type'] != 'confirmation' &&
@@ -121,60 +88,18 @@ class Confirmation extends StatelessWidget {
                       answer = answer.join(", ");
                     }
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Card(
-                        elevation: 5,
-                        color: AppColors.lightBeige,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: InkWell(
-                          onTap: () => onJumpToQuestion(q['key']),
-                          borderRadius: BorderRadius.circular(16),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        q['q'],
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(Icons.edit, size: 18, color: AppColors.baseBlue),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  answer.toString().isNotEmpty ? answer.toString() : "Not provided",
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                                const SizedBox(height: 8),
-                                const Text(
-                                  "Tap to edit",
-                                  style: TextStyle(fontSize: 12, color: AppColors.baseBlue),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                    return buildConfirmationCard(
+                      title: q['q'],
+                      content: answer?.toString() ?? '',
+                      onEdit: () => onJumpToQuestion(q['key']),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
 
-            // ✅ Confirm & Generate Button
-            Container(
+            // generate tags button
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -182,7 +107,6 @@ class Confirmation extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       showDialog(
-                        
                         context: context,
                         builder: (context) => AlertDialog(
                           backgroundColor: AppColors.warmWhite,
@@ -220,6 +144,61 @@ class Confirmation extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // helper widget to reduce size of maine method here and build out cards
+  Widget buildConfirmationCard({
+    required String title,
+    required String content,
+    required VoidCallback onEdit,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Card(
+        elevation: 5,
+        color: AppColors.lightBeige,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: InkWell(
+          onTap: onEdit,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    const Icon(Icons.edit, size: 18, color: AppColors.baseBlue),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  content.isNotEmpty ? content : "Not provided",
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  "Tap to edit",
+                  style: TextStyle(fontSize: 12, color: AppColors.baseBlue),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
