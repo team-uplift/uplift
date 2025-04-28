@@ -3,6 +3,7 @@
 /// Creates cards to display profile information. The individual cards are
 /// generated from maps of string pairs and tag objects
 ///
+library;
 
 import 'package:flutter/material.dart';
 import 'package:uplift/constants/constants.dart';

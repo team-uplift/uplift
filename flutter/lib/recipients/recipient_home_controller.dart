@@ -7,6 +7,7 @@
 /// - _loadProfile
 /// - _onItemTapped
 ///
+library;
 
 import 'package:flutter/material.dart';
 import 'package:uplift/api/cognito_helper.dart';

@@ -8,6 +8,7 @@
 /// - converting a user from recipient to donor
 /// - deleting a user's account
 ///
+library;
 
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -68,14 +69,13 @@ class UserApi {
   ///
   /// returns a User object on success, null on failure
   static Future<User?> convertToDonor(User user) async {
-    final url = Uri.parse('$baseUrl/users/switch/donor');
+    final url = Uri.parse('$baseUrl/users/switch/donor/${user.id}');
 
     final payload = {
-      'createdAt': user.createdAt?.toIso8601String(),
-      'id': user.id,
       'nickname': user.recipientData?.nickname,
     };
-    print("convert to donor payload: $payload");
+
+    log.info("convert to donor");
 
     try {
       final response = await http.put(

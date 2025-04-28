@@ -48,6 +48,7 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: AppColors.warmWhite,
         title: const Text('Important Information'),
         content: const Text(
             'Submitting false income information is fraud. We only accept official IRS 1040 tax documents for verification.'),
@@ -57,6 +58,10 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
             onPressed: () => Navigator.pop(context, false),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.baseRed,
+              foregroundColor: AppColors.warmWhite,
+            ),
             child: const Text('Continue'),
             onPressed: () => Navigator.pop(context, true),
           ),
@@ -170,6 +175,7 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     final profileData = _buildProfileData();
     final List<Tag> tags = widget.recipient.tags!
       ..sort((a, b) => b.weight.compareTo(a.weight));
