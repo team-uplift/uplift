@@ -24,6 +24,12 @@ public class User extends AbstractCreatedEntity {
 	@JsonSetter(nulls = Nulls.FAIL) // FAIL setting if the value is null
 	private boolean recipient;
 
+	// We should never be sending deleted entries out to the front end, so just ignore
+	// this flag
+	@Column(name = "deleted", nullable = false)
+	@JsonIgnore
+	private boolean deleted;
+
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonInclude(JsonInclude.Include.NON_ABSENT) // Exclude from JSON if absent
 	@JsonProperty("recipientData")
@@ -98,6 +104,14 @@ public class User extends AbstractCreatedEntity {
 	@JsonIgnore
 	public boolean isDonor() {
 		return !recipient;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 	@Schema(implementation = Recipient.class,
