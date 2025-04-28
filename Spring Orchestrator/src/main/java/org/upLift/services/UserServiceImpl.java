@@ -35,12 +35,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean donorExists(Integer id) {
-		return userRepository.existsByIdAndRecipient(id, false);
+		return userRepository.existsByIdAndRecipientAndDeletedIsFalse(id, false);
 	}
 
 	@Override
 	public boolean recipientExists(Integer id) {
-		return userRepository.existsByIdAndRecipient(id, true);
+		return userRepository.existsByIdAndRecipientAndDeletedIsFalse(id, true);
 	}
 
 	@Override
@@ -208,7 +208,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deleteUser(Integer id) {
-		userRepository.deleteById(id);
+		var result = userRepository.findById(id);
+		if (result.isEmpty()) {
+			throw new EntityNotFoundException(id, "User", "User with id " + id + " not found");
+		}
+		var user = result.get();
+		user.setDeleted(true);
+		userRepository.save(user);
 	}
 
 	User loadChildData(User user) {
