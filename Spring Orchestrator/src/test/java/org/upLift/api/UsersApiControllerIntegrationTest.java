@@ -1,6 +1,7 @@
 package org.upLift.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -10,9 +11,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.upLift.model.Donor;
 import org.upLift.model.Recipient;
 import org.upLift.model.User;
+import org.upLift.repositories.UserRepository;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -27,10 +32,20 @@ class UsersApiControllerIntegrationTest extends BaseControllerIntegrationTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@Autowired
+	private UserRepository userRepository;
+
+	private LocalDate todayUtc;
+
+	@BeforeEach
+	void setUp() {
+		todayUtc = ZonedDateTime.now(ZoneOffset.UTC).toLocalDate();
+	}
+
 	ResultActions checkUser1(ResultActions result, String prefix) throws Exception {
 		// Income verification for this user is dynamically set to 90 days before "now",
 		// so just check the date
-		LocalDate incomeVerificationDate = LocalDate.now().minusDays(90);
+		LocalDate incomeVerificationDate = todayUtc.minusDays(90);
 
 		result.andExpect(jsonPath(prefix + ".id", is(1)))
 			.andExpect(jsonPath(prefix + ".cognitoId", is("550e8400-e29b-41d4-a716-446655440000")))
@@ -198,12 +213,10 @@ class UsersApiControllerIntegrationTest extends BaseControllerIntegrationTest {
 			.andExpect(jsonPath("$.recipientData.tagsLastGenerated", is("2023-10-27T11:31:43.471Z")))
 			// identity last verified is dynamically set to 10 days before "now", so just
 			// check the date
-			.andExpect(jsonPath("$.recipientData.identityLastVerified",
-					startsWith(LocalDate.now().minusDays(10).toString())))
+			.andExpect(jsonPath("$.recipientData.identityLastVerified", startsWith(todayUtc.minusDays(10).toString())))
 			// Similarly, income last verified is dynamically set to 100 days before
 			// "now", so just check the date
-			.andExpect(jsonPath("$.recipientData.incomeLastVerified",
-					startsWith(LocalDate.now().minusDays(100).toString())))
+			.andExpect(jsonPath("$.recipientData.incomeLastVerified", startsWith(todayUtc.minusDays(100).toString())))
 			.andExpect(jsonPath("$.recipientData.lastDonationTimestamp").doesNotExist());
 	}
 
@@ -359,7 +372,7 @@ class UsersApiControllerIntegrationTest extends BaseControllerIntegrationTest {
 			// Image URL is created by the service
 			.andExpect(jsonPath("$.recipientData.imageUrl", is(notNullValue())))
 			// Entry should have been created today
-			.andExpect(jsonPath("$.recipientData.createdAt", startsWith(LocalDate.now().toString())))
+			.andExpect(jsonPath("$.recipientData.createdAt", startsWith(todayUtc.toString())))
 			// Verify that other Recipient properties don't exist
 			.andExpect(jsonPath("$.recipientData.formQuestions").doesNotExist())
 			.andExpect(jsonPath("$.recipientData.identityLastVerified").doesNotExist())
@@ -408,6 +421,17 @@ class UsersApiControllerIntegrationTest extends BaseControllerIntegrationTest {
 			.andExpect(jsonPath("$.errorType", is("Bad Request")))
 			.andExpect(jsonPath("$.timestamp").exists())
 			.andExpect(jsonPath("$.path", is("/users/switch/recipient/1")));
+	}
+
+	@Test
+	void deleteUser() throws Exception {
+		var userBefore = userRepository.findById(5).orElseThrow(() -> new RuntimeException("User not found"));
+		assertThat(userBefore.isDeleted(), is(false));
+
+		mockMvc.perform(delete("/users/5")).andExpect(status().isNoContent());
+
+		var userAfter = userRepository.findById(5).orElseThrow(() -> new RuntimeException("User not found"));
+		assertThat(userAfter.isDeleted(), is(true));
 	}
 
 }
