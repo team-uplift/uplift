@@ -14,7 +14,8 @@ public interface RecipientRepository extends JpaRepository<Recipient, Integer> {
 	/**
 	 * Loads all recipients that are linked to the specified tag, whether they selected it
 	 * or not.
-	 * @param tag name of the tag to which the recipient must be linked (selected or not)
+	 * @param tags tags to which the recipient must be linked (selected or not)
+	 * @param pageable Pageable object used to batch the returned recipients
 	 * @return List of recipients who are linked to the specified tag or an empty list if
 	 * there are no such recipients
 	 */
