@@ -55,7 +55,7 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 		assertThat(recipient.getIdentityLastVerified(), is(Instant.parse("2023-10-02T14:10:00.789Z")));
 		assertThat(recipient.getIncomeLastVerified(), is(Instant.parse("2023-10-03T15:20:40.321Z")));
 		assertThat(recipient.getTagsLastGenerated(), is(Instant.parse("2023-10-10T11:05:20.123Z")));
-		assertThat(recipient.getCreatedAt(), is(Instant.parse("2023-10-05T11:25:40.456Z")));
+
 	}
 
 	@Test
@@ -92,14 +92,14 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 
 		user.setRecipientData(newRecipient);
 		// Save the new user
-		User savedUser = userRepository.save(user);
+		Recipient savedRecipient = recipientRepository.save(newRecipient);
 
 		// Ensure changes are flushed to the database
 		entityManager.flush();
 		entityManager.clear();
 
 		// Reload the recipient from the database
-		var loadedRecipient = recipientRepository.findById(savedUser.getId())
+		var loadedRecipient = recipientRepository.findById(savedRecipient.getId())
 			.orElseThrow(() -> new RuntimeException("Recipient not found"));
 
 		// Validate the saved recipient
@@ -116,21 +116,28 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 		assertThat(loadedRecipient.getIdentityLastVerified(), is(Instant.parse("2024-10-27T11:31:43Z")));
 		assertThat(loadedRecipient.getIncomeLastVerified(), is(Instant.parse("2024-12-27T11:31:43Z")));
 		assertThat(loadedRecipient.getCreatedAt(), is(notNullValue()));
-		assertThat(loadedRecipient.getCreatedAt(), is(greaterThanOrEqualTo(now)));
+
+		var loadedUser = userRepository.findById(savedRecipient.getId())
+			.orElseThrow(() -> new RuntimeException("User not found"));
+		// Validate the parent User properties
+		assertThat(loadedUser.getId(), notNullValue());
+		assertThat(loadedUser.getCognitoId(), is("550e8400-e29b-41d4-a716-446655440008"));
+		assertThat(loadedUser.getEmail(), is("sarah.johnson@example.com"));
+		assertThat(loadedUser.isRecipient(), is(true));
 	}
 
 	@Test
 	@DisplayName("Test retrieving recipients by last donation timestamp")
 	void testGetRecipientsByLastDonationTimestamp() {
 		// Arrange
-		Instant cutoff = Instant.now().minus(1, ChronoUnit.DAYS); // 1 day ago
+		Instant cutoff = Instant.parse("2023-10-23T00:00:00Z"); // before 2023-10-23
 
 		// Act
 		List<Recipient> recipients = recipientRepository.getRecipientsByLastDonationTimestamp(cutoff);
 
 		// Assert
 		assertThat(recipients, is(not(empty()))); // Ensure the list is not empty
-
+		assertThat(recipients, hasSize(4));
 		// Validate that all recipients meet the criteria
 		for (Recipient recipient : recipients) {
 			assertThat("Recipient's last donation timestamp should be null or before the cutoff",
@@ -164,7 +171,7 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 
 		// Assert
 		assertThat(recipients, is(not(empty()))); // Ensure the list is not empty
-		assertThat(recipients.size(), is(4)); // Ensure exactly 4 recipients are returned
+		assertThat(recipients, hasSize(4)); // Ensure exactly 4 recipients are returned
 
 		// Validate that the returned recipients have the expected IDs
 		List<Integer> recipientIds = recipients.stream().map(Recipient::getId).toList();

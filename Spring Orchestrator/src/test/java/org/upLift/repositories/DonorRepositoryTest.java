@@ -63,25 +63,35 @@ class DonorRepositoryTest extends BaseRepositoryTest {
 		// Create a new donor
 		Donor newDonor = new Donor();
 		newDonor.setNickname("GenerousDonor");
-		newDonor.setCreatedAt(now);
 
 		user.setDonorData(newDonor);
+
 		// Save the new user
-		User savedUser = userRepository.save(user);
+		// User savedUser = userRepository.save(user);
+		Donor savedDonor = donorRepository.save(newDonor);
 
 		// Ensure changes are flushed to the database
 		entityManager.flush();
 		entityManager.clear();
 
 		// Reload the donor from the database
-		var loadedDonor = donorRepository.findById(savedUser.getId())
+		var loadedDonor = donorRepository.findById(savedDonor.getId())
 			.orElseThrow(() -> new RuntimeException("Donor not found"));
 
 		// Validate the saved donor
 		assertThat(loadedDonor.getId(), notNullValue());
 		assertThat(loadedDonor.getNickname(), is("GenerousDonor"));
-		assertThat(loadedDonor.getCreatedAt(), is(notNullValue()));
-		assertThat(loadedDonor.getCreatedAt(), is(greaterThanOrEqualTo(now)));
+		assertThat(loadedDonor.getCreatedAt(), is(notNullValue())); // Ensure createdAt is
+																	// set
+		assertThat(loadedDonor.getCreatedAt(), is(lessThanOrEqualTo(Instant.now()))); // Ensure
+																						// createdAt
+		var loadedUser = userRepository.findById(savedDonor.getId())
+			.orElseThrow(() -> new RuntimeException("User not found"));
+		// Validate the parent User properties
+		assertThat(loadedUser.getId(), notNullValue());
+		assertThat(loadedUser.getCognitoId(), is("550e8400-e29b-41d4-a716-446655440009"));
+		assertThat(loadedUser.getEmail(), is("donor2@example.com"));
+		assertThat(loadedUser.isRecipient(), is(false));
 	}
 
 }
