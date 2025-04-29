@@ -4,15 +4,14 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.upLift.model.Recipient;
 import org.upLift.model.User;
+
 import java.time.Instant;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -21,9 +20,6 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 
 	@Autowired
 	private RecipientRepository recipientRepository;
-
-	@Autowired
-	private UserRepository userRepository; // Inject UserRepository
 
 	@Autowired
 	private EntityManager entityManager;
@@ -70,7 +66,6 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 	@Test
 	@DisplayName("Test saving a new recipient")
 	void testSaveRecipient() {
-		Instant now = Instant.now();
 		// Create and save a new user
 		User user = new User();
 		user.setCognitoId("550e8400-e29b-41d4-a716-446655440008");
@@ -117,8 +112,7 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 		assertThat(loadedRecipient.getIncomeLastVerified(), is(Instant.parse("2024-12-27T11:31:43Z")));
 		assertThat(loadedRecipient.getCreatedAt(), is(notNullValue()));
 
-		var loadedUser = userRepository.findById(savedRecipient.getId())
-			.orElseThrow(() -> new RuntimeException("User not found"));
+		var loadedUser = loadedRecipient.getUser();
 		// Validate the parent User properties
 		assertThat(loadedUser.getId(), notNullValue());
 		assertThat(loadedUser.getCognitoId(), is("550e8400-e29b-41d4-a716-446655440008"));

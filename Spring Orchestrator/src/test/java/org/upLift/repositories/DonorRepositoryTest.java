@@ -9,7 +9,6 @@ import org.upLift.model.User;
 
 import java.time.Instant;
 import java.util.Optional;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -18,9 +17,6 @@ class DonorRepositoryTest extends BaseRepositoryTest {
 
 	@Autowired
 	private DonorRepository donorRepository;
-
-	@Autowired
-	private UserRepository userRepository; // Inject UserRepository
 
 	@Autowired
 	private EntityManager entityManager;
@@ -52,8 +48,6 @@ class DonorRepositoryTest extends BaseRepositoryTest {
 	@Test
 	@DisplayName("Test saving a new donor")
 	void testSaveDonor() {
-		Instant now = Instant.now();
-
 		// Create and save a new user
 		User user = new User();
 		user.setCognitoId("550e8400-e29b-41d4-a716-446655440009");
@@ -85,8 +79,7 @@ class DonorRepositoryTest extends BaseRepositoryTest {
 																	// set
 		assertThat(loadedDonor.getCreatedAt(), is(lessThanOrEqualTo(Instant.now()))); // Ensure
 																						// createdAt
-		var loadedUser = userRepository.findById(savedDonor.getId())
-			.orElseThrow(() -> new RuntimeException("User not found"));
+		var loadedUser = loadedDonor.getUser();
 		// Validate the parent User properties
 		assertThat(loadedUser.getId(), notNullValue());
 		assertThat(loadedUser.getCognitoId(), is("550e8400-e29b-41d4-a716-446655440009"));
