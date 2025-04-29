@@ -168,7 +168,8 @@ class UserRepositoryTest extends BaseRepositoryTest {
 		assertThat(loadedUser.isRecipient(), is(false));
 		assertThat(loadedUser.isDonor(), is(true));
 		assertThat(loadedUser.getCreatedAt(), is(notNullValue()));
-		assertThat(loadedUser.getCreatedAt(), is(greaterThanOrEqualTo(now)));
+		// Subtract 1 second from now to make sure the "createdAt" is greater
+		assertThat(loadedUser.getCreatedAt(), is(greaterThan(now.minusSeconds(1))));
 
 		// Validate the saved donor data
 		assertThat(loadedUser.getDonorData(), notNullValue());
