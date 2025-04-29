@@ -45,6 +45,7 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 		assertThat(recipient.getState(), is("WI"));
 		assertThat(recipient.getZipCode(), is("53703"));
 		assertThat(recipient.getImageUrl(), is("http://example.com/image2.jpg"));
+		assertThat(recipient.getNickname(), is("Janie"));
 		assertThat(recipient.getLastAboutMe(), is("About Jane"));
 		assertThat(recipient.getLastReasonForHelp(), is("Reason 2"));
 
@@ -52,6 +53,32 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 		assertThat(recipient.getIdentityLastVerified(), is(Instant.parse("2023-10-02T14:10:00.789Z")));
 		assertThat(recipient.getIncomeLastVerified(), is(Instant.parse("2023-10-03T15:20:40.321Z")));
 		assertThat(recipient.getTagsLastGenerated(), is(Instant.parse("2023-10-10T11:05:20.123Z")));
+
+		// Check form questions
+		assertThat(recipient.getFormQuestions(), hasSize(12));
+		// Just check content of the first and last questions to check that it's been
+		// parsed as a JSON object correctly
+		var formQuestion1 = recipient.getFormQuestions().getFirst();
+		assertThat(formQuestion1.getQuestion(), is("Tell us about yourself."));
+		assertThat(formQuestion1.getAnswer(), is("1"));
+		var formQuestion12 = recipient.getFormQuestions().getLast();
+		assertThat(formQuestion12.getQuestion(),
+				is("What has been the most emotionally difficult part of your current situation?"));
+		assertThat(formQuestion12.getAnswer(), is("12"));
+
+		// Check recipient tags
+		assertThat(recipient.getTags(), hasSize(7));
+		// Check content of first tag (not selected) and last tag (selected
+		var tag1 = recipient.getTags().getFirst();
+		assertThat(tag1.getTag().getTagName(), is("education"));
+		assertThat(tag1.getWeight(), is(0.9));
+		assertThat(tag1.isSelected(), is(false));
+		assertThat(tag1.getAddedAt(), is(Instant.parse("2023-10-03T12:40:50.789Z")));
+		var tag7 = recipient.getTags().getLast();
+		assertThat(tag7.getTag().getTagName(), is("utilities"));
+		assertThat(tag7.getWeight(), is(0.5));
+		assertThat(tag7.isSelected(), is(true));
+		assertThat(tag7.getAddedAt(), is(Instant.parse("2023-10-19T11:35:20.456Z")));
 	}
 
 	@Test
