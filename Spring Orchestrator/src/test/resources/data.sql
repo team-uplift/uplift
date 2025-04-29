@@ -151,7 +151,7 @@ VALUES
     ('financial-planning', 7, 0.32, TRUE, '2023-10-27 11:31:43.471'),
     ('food-banks', 7, 0.48, FALSE, '2023-10-27 11:31:43.471'),
 
-    -- tags linked to recipient 9
+    -- tags linked to recipient 9 (deleted)
     ('elderly parent', 9, 0.80, TRUE, '2023-10-28 14:20:01.234'),
     ('financial-planning', 9, 0.80, TRUE, '2023-10-28 14:20:00.123'),
     ('food-banks', 9, 0.70, TRUE, '2023-10-28 14:15:50.789'),
@@ -178,7 +178,7 @@ VALUES (3, 1),
        (4, 1);
 
 -- Now that all the data is added, fix the auto increment sequence generators since we're
--- manually setting ids for some of the tables to ensure the foreign keys work
+-- manually setting ids for some the tables to ensure the foreign keys work
 
 ALTER TABLE users
     ALTER COLUMN id RESTART WITH ((SELECT MAX(id) FROM users) + 1);
