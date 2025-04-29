@@ -340,7 +340,11 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     return Card(
       color: AppColors.warmWhite,
       elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: AppColors.lavender, width: 1.5),
+      ),
       child: ListTile(
         leading: const Icon(Icons.edit),
         title: const Text("Edit Profile"),
@@ -349,7 +353,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
                 "Available in ${_formatDuration(timeRemaining)}",
                 style: const TextStyle(color: Colors.grey),
               )
-            : null,
+            : Text("Edit you profile to generate new tags \nThis can only be done once every 24 hours"),
         onTap: canEdit ? _goToEditProfile : null,
         enabled: canEdit,
       ),
@@ -375,7 +379,11 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     return Card(
       color: AppColors.warmWhite,
       elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: AppColors.lavender, width: 1.5),
+      ),
       child: ListTile(
         leading: const Icon(Icons.logout),
         title: const Text("Logout"),
@@ -400,7 +408,11 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     return Card(
       color: AppColors.warmWhite,
       elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: AppColors.lavender, width: 1.5),
+      ),
       child: ListTile(
         leading: const Icon(Icons.redo, color: AppColors.baseOrange),
         title: const Text("Convert Account", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.baseOrange)),
@@ -438,7 +450,11 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     return Card(
       color: AppColors.warmWhite,
       elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: AppColors.lavender, width: 1.5),
+      ),
       child: ListTile(
         leading: const Icon(Icons.delete_forever, color: AppColors.baseRed),
         title: const Text("Delete Account", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.baseRed)),

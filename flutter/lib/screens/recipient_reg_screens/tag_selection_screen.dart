@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uplift/components/match_color_legend.dart';
 import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/tag_model.dart';
 import 'package:uplift/components/tag_card.dart'; 
@@ -77,10 +78,16 @@ class _TagSelectionState extends State<TagSelection> {
     _sortTagsByWeight(); //sorting all tags when page is built
     return Column(
       children: [
-        const Text("Select up to 10 interests"),
+        const Text(
+          "Select up to 10 interests",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
-        Text("${selectedTags.length} of $maxTagChoices selected"),
-        const SizedBox(height: 12),
+        Text("${selectedTags.length} of $maxTagChoices selected",
+        style: TextStyle(fontSize: 15)),
+        // const SizedBox(height: 20),
+        const MatchColorLegend(), 
+        const SizedBox(height: 20),
         Expanded(
           child: SingleChildScrollView(
             child: Wrap(
