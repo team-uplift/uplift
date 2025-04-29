@@ -57,7 +57,20 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: historyItems.isEmpty
-                  ? const Center(child: Text("No donations to view"))
+              // TODO test this
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[400]),
+                          const SizedBox(height: 16),
+                          Text(
+                            "No donations yet",
+                            style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                    )
                   : ListView(
                       children: historyItems
                           .map((item) => _buildHistoryCard(context, item))
@@ -73,11 +86,14 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
         donation.thankYouMessage!.isNotEmpty;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
       child: Card(
         color: AppColors.warmWhite,
         elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: AppColors.lavender, width: 1.5),
+        ),
         child: ListTile(
           title: Text("From ${donation.donorName}",
               style: const TextStyle(fontWeight: FontWeight.bold)),

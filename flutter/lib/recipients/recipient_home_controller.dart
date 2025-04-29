@@ -89,9 +89,29 @@ class _RecipientHomeState extends State<RecipientHome> {
         centerTitle: true,
         backgroundColor: AppColors.baseGreen,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _screens[_selectedItem],
+      body: Stack(
+        children: [
+          if (_isLoading)
+            const Center(child: CircularProgressIndicator()),
+          AnimatedOpacity(
+            opacity: _isLoading ? 0 : 1,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+              child: _isLoading
+                ? const SizedBox()  // Don't show anything when loading
+                : _screens[_selectedItem],
+            ),
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavBar(
         selectedItem: _selectedItem,
         onItemTapped: _onItemTapped,

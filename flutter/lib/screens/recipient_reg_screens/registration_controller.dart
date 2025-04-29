@@ -83,7 +83,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
           // TODO --> this should go to settings page
           context.goNamed('/recipient_home');
         } else {
-          context.goNamed('donor_or_recipient');
+          context.goNamed('/donor_or_recipient');
         }
       } else {
         _currentIndex--;
@@ -250,10 +250,11 @@ class _RegistrationControllerState extends State<RegistrationController> {
                 Center(
                   child: Text(
                     "Recipient Registration",
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Colors.black,
                     ),
                   ),
                 ),
@@ -261,9 +262,10 @@ class _RegistrationControllerState extends State<RegistrationController> {
                 Center(
                   child: Text(
                     "Step ${_currentIndex + 1} of ${registrationQuestions.length}",
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      // fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
@@ -275,12 +277,22 @@ class _RegistrationControllerState extends State<RegistrationController> {
                     child: Card(
                       color: AppColors.warmWhite,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(color: AppColors.lavender, width: 1.5)
                       ),
-                      elevation: 4,
+                      elevation: 5,
                       child: Padding(
                         padding: const EdgeInsets.all(20),
-                        child: _buildCurrentStep(),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder: (Widget child, Animation<double> animation) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                              );
+                          },
+                          child: _buildCurrentStep(),
+                        )
                       ),
                     ),
                   ),

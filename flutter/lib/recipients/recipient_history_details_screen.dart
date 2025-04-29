@@ -100,7 +100,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
               _buildDonationInfoCard(),
               const SizedBox(height: 24),
               AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 400),
+                transitionBuilder: (child, animation) => FadeTransition(
+                  opacity: animation,
+                  child: child
+                ),
                 child: hasThankYou
                     ? _buildThankYouCard(_donation.thankYouMessage!)
                     : _buildSendThankYou(),
@@ -120,23 +124,25 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
 
   /// builds donation info cards for display
   Widget _buildDonationInfoCard() {
-    return Card(
-      color: AppColors.warmWhite,
-      elevation: 5,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              _donation.donorName,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+    return Container(
+      width: double.infinity,
+      child: Card(
+        color: AppColors.warmWhite,
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: AppColors.lavender, width: 1.5),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                _donation.donorName,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
               Text(
                 "Date: ${_donation.formattedDate}",
                 style: TextStyle(fontSize: 16, color: Colors.grey[700]),
@@ -146,8 +152,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
                 "Amount: ${_donation.formattedAmount}",
                 style: const TextStyle(fontSize: 16),
               ),
-            ])
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -161,9 +167,12 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
           elevation: 5,
           color: AppColors.warmWhite,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(color: AppColors.lavender, width: 1.5)
+              ),
           child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -176,11 +185,20 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(message,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        height: 1.5,
-                      ))
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.baseGreen.withAlpha(70),
+                      borderRadius: BorderRadius.circular(12)
+                    ),
+                    child: Text(message,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          height: 1.5,
+                          color: Colors.black,
+                        )),
+                  )
                 ],
               ))),
     );
@@ -209,8 +227,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
               maxLines: 5,
               decoration: InputDecoration(
                 hintText: "Type your message...",
+                hintStyle: TextStyle(color: Colors.grey[500]),
                 filled: true,
-                fillColor: Colors.grey[100],
+                fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(

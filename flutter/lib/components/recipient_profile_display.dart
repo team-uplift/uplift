@@ -6,6 +6,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:uplift/components/match_color_legend.dart';
 import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/models/tag_model.dart';
@@ -42,9 +43,13 @@ class RecipientProfileDisplay extends StatelessWidget {
           return Card(
             color: AppColors.warmWhite,
             elevation: 5,
-            margin: const EdgeInsets.symmetric(vertical: 8),
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(
+                color: AppColors.lavender,
+                width: 1.5,
+              )
             ),
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -58,7 +63,7 @@ class RecipientProfileDisplay extends StatelessWidget {
                         Text(
                           entry.key,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -75,11 +80,24 @@ class RecipientProfileDisplay extends StatelessWidget {
                   ),
                   // display camera icon and link if user not verified and verification is available
                   if (isVerification && !isVerified)
-                    IconButton(
-                      icon: const Icon(Icons.camera_alt,
-                          color: AppColors.baseRed),
-                      onPressed: onVerifyPressed ?? () {},
-                    ),
+                  // TODO test this
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton.icon(
+                        onPressed: onVerifyPressed,
+                        icon: const Icon(Icons.camera_alt, size: 18),
+                        label: const Text('Verify Now'),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: AppColors.warmWhite,
+                          backgroundColor: AppColors.baseRed,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          textStyle: const TextStyle(fontSize: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    )
                 ],
               ),
             ),
@@ -96,6 +114,7 @@ class RecipientProfileDisplay extends StatelessWidget {
             color: AppColors.warmWhite,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: AppColors.lavender, width: 1.5)
             ),
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -104,9 +123,11 @@ class RecipientProfileDisplay extends StatelessWidget {
                 children: [
                   const Text(
                     "Your Tags",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 12),
+                  
+                  const MatchColorLegend(),
+                  const SizedBox(height: 20),
                   Wrap(
                     alignment: WrapAlignment.start,
                     spacing: 12,
