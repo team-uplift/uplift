@@ -118,4 +118,9 @@ public class RecipientsApiController implements RecipientsApi {
 		return new ResponseEntity<>(recipientService.getMatchingRecipientsByDonorPrompt(formQuestions), HttpStatus.OK);
 	}
 
+	@Override
+	public ResponseEntity<List<Recipient>> getBiasedRecipient(List<FormQuestion> formQuestions) {
+		return new ResponseEntity<>(recipientService.getBiasedRecipientsByDonorPrompt(formQuestions), HttpStatus.OK);
+	}
+
 }

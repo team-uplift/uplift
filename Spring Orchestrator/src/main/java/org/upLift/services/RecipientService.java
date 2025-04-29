@@ -59,4 +59,7 @@ public interface RecipientService {
 	 */
 	Recipient updateSelectedTags(Integer recipientId, @Valid Set<String> selectedTags);
 
+	// TODO - REMOVE
+	List<Recipient> getBiasedRecipientsByDonorPrompt(List<FormQuestion> donorQA);
+
 }

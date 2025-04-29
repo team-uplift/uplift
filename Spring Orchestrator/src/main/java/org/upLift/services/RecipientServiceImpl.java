@@ -189,6 +189,13 @@ public class RecipientServiceImpl implements RecipientService {
 		// Extract the best matching recipients from the selected
 		List<Recipient> recipients = fairnessService.getRecipientsFromTags(tags);
 
+		//TODO - REMOVE
+		// Assume recipients were last donated.
+		for(Recipient recipient : recipients) {
+			recipient.setLastDonationTimestamp(Instant.now());
+			recipientRepository.save(recipient);
+		}
+
 		return recipients;
 	}
 
@@ -233,6 +240,35 @@ public class RecipientServiceImpl implements RecipientService {
 		}
 
 		return canGenerateTags;
+	}
+
+	//TODO -- REMOVE
+	@Override
+	public List<Recipient> getBiasedRecipientsByDonorPrompt(List<FormQuestion> donorQA) {
+
+		AtomicReference<String> donorPrompt = new AtomicReference<>("");
+
+		// Consolidate all form questions into a single string to invoke the matching
+		// service.
+		donorQA.forEach(formQuestion -> {
+			donorPrompt.set(donorPrompt + " " + formQuestion.getAnswer());
+		});
+
+		// Submit prompt to generate appropriate tags.
+		Map<String, Double> mapTags = bedrockService.getTagsFromPrompt(donorPrompt.toString());
+//		List<String> tags = bedrockService.matchTagsFromPrompt(donorPrompt.toString());
+
+		// Extract the best matching recipients from the selected
+		List<Recipient> recipients = fairnessService.getRecipientsByTags(mapTags.keySet().stream().toList());
+
+		//TODO - REMOVE
+
+		for(Recipient recipient : recipients) {
+			recipient.setLastDonationTimestamp(Instant.now());
+			recipientRepository.save(recipient);
+		}
+
+		return recipients;
 	}
 
 }

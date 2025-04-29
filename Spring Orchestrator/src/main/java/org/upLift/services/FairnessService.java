@@ -5,6 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import org.upLift.model.Recipient;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Validated
@@ -101,5 +102,10 @@ public interface FairnessService {
 		}
 
 	}
+
+	// TODO - REMOVE
+	public Map<Integer, RecipientWithMatchedTagWeights> buildRecipientMap(List<String> tags);
+
+	public List<Recipient> getRecipientsByTags(List<String> tags);
 
 }

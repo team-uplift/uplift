@@ -36,7 +36,8 @@ public class BedrockServiceImpl implements BedrockService {
 				+ "numeric weights (from 0 to 1) in the format tag:number. "
 				+ "If the tag is more than one word separate the tag's words with a space. "
 				+ "Do not use underscores or dashes. Tags are less than 4 words each. "
-                + "Remove any gendered language and racial content. Generate at least 15 tags. "
+//                + "Remove any gendered language and racial content. "
+                + "Generate at least 15 tags. "
 				+ "The tags describe the contents and the weights are how relevant the tag is to the following prompt: "
 				+ prompt;
         String response = ChatClient.create(chatModel)
@@ -76,7 +77,7 @@ public class BedrockServiceImpl implements BedrockService {
 
         // Build the request to send to bedrock with the rag sidecar.
         String finalPrompt = "Match to the provided list tags that best match the contents of the following prompt. "
-				+ "Only respond with a comma separated list of the tags. Do not respond in sentences. "
+				+ "Only respond with a comma separated list of the tags. Do not respond in sentences. Only provide 15 tags at most."
 				+ "Do not organize the tags. Do not categorize the tags. Do not use underscores or dashes. \n "
 				+ "Prompt: " + prompt + " \n" + allTags;
         String response = ChatClient.create(chatModel)

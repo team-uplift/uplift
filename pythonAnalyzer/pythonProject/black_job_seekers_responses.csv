@@ -1,0 +1,351 @@
+response_id,question,answer
+1,Tell us where you’re currently living.,I’m currently living in western North Carolina.
+1,Tell us about yourself.,I enjoy drawing and used to dream of being an artist.
+1,What is the biggest reason that you feel like you need help?,It’s hard to keep food on the table and pay the bills.
+1,What is the most difficult thing you face day to day?,Trying to stay hopeful while looking for work.
+1,What has been the hardest thing for you financially this year?,Rent increases have been brutal this year.
+1,Are you currently looking for work?,"Yes, I’m looking hard, just nothing’s worked out yet."
+1,What barriers are preventing you from working or earning more income?,"There’s work, but not enough hours to get by."
+1,What is your biggest challenge related to housing?,Our place needs repairs but we can’t afford to move.
+1,Are you at risk of losing housing in the next 3 months?,"We’re behind, so it’s definitely a risk."
+1,"Do you have a support system of friends, family, or community?",I don’t have much of a support system these days.
+1,What kind of support do you wish you had more of?,More job support or training would really help.
+1,Do you have regular access to mental health support or counseling?,"No, and it’s hard to find in my area."
+1,What has been the most emotionally difficult part of your current situation?,Not knowing when things will get better.
+1,What’s your biggest concern about work?,I’ve been laid off more times than I can count.
+2,Tell us where you’re currently living.,I’m currently living in southern Missouri.
+2,Tell us about yourself.,"I'm a single dad, I enjoy cooking and playing basketball with my son."
+2,What is the biggest reason that you feel like you need help?,I’m trying to hold things together but I need some help to get back on track.
+2,What is the most difficult thing you face day to day?,Worrying about how I’m going to support my kids.
+2,What has been the hardest thing for you financially this year?,We had unexpected medical expenses we couldn’t afford.
+2,Are you currently looking for work?,"Yes, I’ve been applying wherever I can."
+2,What barriers are preventing you from working or earning more income?,Transportation’s a big issue—our car isn’t reliable.
+2,What is your biggest challenge related to housing?,"It’s tight here, but moving costs too much."
+2,Are you at risk of losing housing in the next 3 months?,"Yes, if things don’t change soon, we might have to leave."
+2,"Do you have a support system of friends, family, or community?","No, it feels like I’m pretty much on my own."
+2,What kind of support do you wish you had more of?,"Financial help, just to get through the next few months."
+2,Do you have regular access to mental health support or counseling?,"No, I wish I did, but it’s not available."
+2,What has been the most emotionally difficult part of your current situation?,Trying to stay strong for the kids when I’m struggling inside.
+2,What’s your biggest concern about work?,"I get work sometimes, but it never lasts long."
+3,Tell us where you’re currently living.,I’m currently living in upstate New York.
+3,Tell us about yourself.,I’m into fitness and like to run when I can.
+3,What is the biggest reason that you feel like you need help?,"Everything just got more expensive, and we’re falling behind."
+3,What is the most difficult thing you face day to day?,Worrying about how I’m going to support my kids.
+3,What has been the hardest thing for you financially this year?,"Groceries cost so much more than before, and it adds up fast."
+3,Are you currently looking for work?,"Yes, but it’s tough to find anything steady."
+3,What barriers are preventing you from working or earning more income?,"Not many jobs in my area, and I don’t have a way to commute far."
+3,What is your biggest challenge related to housing?,Rent is going up and it’s getting hard to keep up.
+3,Are you at risk of losing housing in the next 3 months?,"I hope not, but it’s a possibility."
+3,"Do you have a support system of friends, family, or community?","Not really, most people I know are dealing with their own problems."
+3,What kind of support do you wish you had more of?,Access to affordable healthcare would ease a lot of stress.
+3,Do you have regular access to mental health support or counseling?,"No, and it’s hard to find in my area."
+3,What has been the most emotionally difficult part of your current situation?,Not knowing when things will get better.
+3,What’s your biggest concern about work?,The jobs I find don’t offer enough hours or benefits.
+4,Tell us where you’re currently living.,I’m currently living in the suburbs of Indiana.
+4,Tell us about yourself.,"I’m a movie buff, love classic films and thrillers."
+4,What is the biggest reason that you feel like you need help?,"Without steady work, it’s hard to make ends meet."
+4,What is the most difficult thing you face day to day?,Just the constant stress about money and bills.
+4,What has been the hardest thing for you financially this year?,Rent increases have been brutal this year.
+4,Are you currently looking for work?,"Yes, but I haven’t had much luck yet."
+4,What barriers are preventing you from working or earning more income?,"There’s work, but not enough hours to get by."
+4,What is your biggest challenge related to housing?,We’re behind on rent and trying to catch up.
+4,Are you at risk of losing housing in the next 3 months?,"I hope not, but it’s a possibility."
+4,"Do you have a support system of friends, family, or community?","Not really, most people I know are dealing with their own problems."
+4,What kind of support do you wish you had more of?,Help with transportation would make a big difference.
+4,Do you have regular access to mental health support or counseling?,"No, I haven’t been able to get help for that."
+4,What has been the most emotionally difficult part of your current situation?,Feeling like I’m failing my family.
+4,What’s your biggest concern about work?,"I get work sometimes, but it never lasts long."
+5,Tell us where you’re currently living.,"I’m currently living in outside of Pittsburgh, Pennsylvania."
+5,Tell us about yourself.,I enjoy drawing and used to dream of being an artist.
+5,What is the biggest reason that you feel like you need help?,"Without steady work, it’s hard to make ends meet."
+5,What is the most difficult thing you face day to day?,Trying to stay hopeful while looking for work.
+5,What has been the hardest thing for you financially this year?,Our car broke down and fixing it took everything we had.
+5,Are you currently looking for work?,"Yes, I’ve been applying wherever I can."
+5,What barriers are preventing you from working or earning more income?,Childcare costs are too high for me to work right now.
+5,What is your biggest challenge related to housing?,We’re behind on rent and trying to catch up.
+5,Are you at risk of losing housing in the next 3 months?,"I hope not, but it’s a possibility."
+5,"Do you have a support system of friends, family, or community?","No, I don’t really have anyone I can lean on right now."
+5,What kind of support do you wish you had more of?,"Financial help, just to get through the next few months."
+5,Do you have regular access to mental health support or counseling?,"No, it’s not something I can afford."
+5,What has been the most emotionally difficult part of your current situation?,Feeling like I’m failing my family.
+5,What’s your biggest concern about work?,"I get work sometimes, but it never lasts long."
+6,Tell us where you’re currently living.,I’m currently living in central Illinois.
+6,Tell us about yourself.,"I’m a mother of two, love reading and doing hair on the side."
+6,What is the biggest reason that you feel like you need help?,I’m trying to hold things together but I need some help to get back on track.
+6,What is the most difficult thing you face day to day?,Balancing job hunting with taking care of the kids.
+6,What has been the hardest thing for you financially this year?,We had unexpected medical expenses we couldn’t afford.
+6,Are you currently looking for work?,"Yes, but it’s tough to find anything steady."
+6,What barriers are preventing you from working or earning more income?,Childcare costs are too high for me to work right now.
+6,What is your biggest challenge related to housing?,"It’s tight here, but moving costs too much."
+6,Are you at risk of losing housing in the next 3 months?,"We’re behind, so it’s definitely a risk."
+6,"Do you have a support system of friends, family, or community?","Not really, most people I know are dealing with their own problems."
+6,What kind of support do you wish you had more of?,More job support or training would really help.
+6,Do you have regular access to mental health support or counseling?,"No, I don’t have access to that right now."
+6,What has been the most emotionally difficult part of your current situation?,Feeling like I’m failing my family.
+6,What’s your biggest concern about work?,"Jobs come and go, nothing seems stable around here."
+7,Tell us where you’re currently living.,I’m currently living in western North Carolina.
+7,Tell us about yourself.,"I’m a movie buff, love classic films and thrillers."
+7,What is the biggest reason that you feel like you need help?,I’m trying to hold things together but I need some help to get back on track.
+7,What is the most difficult thing you face day to day?,Keeping up with everything without enough money coming in.
+7,What has been the hardest thing for you financially this year?,Our car broke down and fixing it took everything we had.
+7,Are you currently looking for work?,"Yes, but I haven’t had much luck yet."
+7,What barriers are preventing you from working or earning more income?,Transportation’s a big issue—our car isn’t reliable.
+7,What is your biggest challenge related to housing?,Our lease is up soon and I’m not sure we can stay.
+7,Are you at risk of losing housing in the next 3 months?,There’s a real chance if I don’t find work soon.
+7,"Do you have a support system of friends, family, or community?",I don’t have much of a support system these days.
+7,What kind of support do you wish you had more of?,"Financial help, just to get through the next few months."
+7,Do you have regular access to mental health support or counseling?,"No, I don’t have access to that right now."
+7,What has been the most emotionally difficult part of your current situation?,Just the pressure of not being able to provide.
+7,What’s your biggest concern about work?,The jobs I find don’t offer enough hours or benefits.
+8,Tell us where you’re currently living.,I’m currently living in central Illinois.
+8,Tell us about yourself.,I enjoy fixing up old cars and watching documentaries.
+8,What is the biggest reason that you feel like you need help?,I need help because I’m struggling to provide for my family right now.
+8,What is the most difficult thing you face day to day?,Worrying about how I’m going to support my kids.
+8,What has been the hardest thing for you financially this year?,We had unexpected medical expenses we couldn’t afford.
+8,Are you currently looking for work?,"Yes, but I haven’t had much luck yet."
+8,What barriers are preventing you from working or earning more income?,I don’t have the right skills for a lot of the jobs available.
+8,What is your biggest challenge related to housing?,We’re behind on rent and trying to catch up.
+8,Are you at risk of losing housing in the next 3 months?,"We’re behind, so it’s definitely a risk."
+8,"Do you have a support system of friends, family, or community?","No, I don’t really have anyone I can lean on right now."
+8,What kind of support do you wish you had more of?,More job support or training would really help.
+8,Do you have regular access to mental health support or counseling?,"No, it’s not something I can afford."
+8,What has been the most emotionally difficult part of your current situation?,Trying to stay strong for the kids when I’m struggling inside.
+8,What’s your biggest concern about work?,"Jobs come and go, nothing seems stable around here."
+9,Tell us where you’re currently living.,"I’m currently living in outside of Pittsburgh, Pennsylvania."
+9,Tell us about yourself.,"I’m a mother of two, love reading and doing hair on the side."
+9,What is the biggest reason that you feel like you need help?,It’s hard to keep food on the table and pay the bills.
+9,What is the most difficult thing you face day to day?,Worrying about how I’m going to support my kids.
+9,What has been the hardest thing for you financially this year?,We had unexpected medical expenses we couldn’t afford.
+9,Are you currently looking for work?,"Yes, I’ve been applying wherever I can."
+9,What barriers are preventing you from working or earning more income?,"There’s work, but not enough hours to get by."
+9,What is your biggest challenge related to housing?,"It’s tight here, but moving costs too much."
+9,Are you at risk of losing housing in the next 3 months?,There’s a real chance if I don’t find work soon.
+9,"Do you have a support system of friends, family, or community?",I don’t have much of a support system these days.
+9,What kind of support do you wish you had more of?,Access to affordable healthcare would ease a lot of stress.
+9,Do you have regular access to mental health support or counseling?,"No, I don’t have access to that right now."
+9,What has been the most emotionally difficult part of your current situation?,Not knowing when things will get better.
+9,What’s your biggest concern about work?,I’ve been laid off more times than I can count.
+10,Tell us where you’re currently living.,I’m currently living in a rural area in Kentucky.
+10,Tell us about yourself.,"I’m a movie buff, love classic films and thrillers."
+10,What is the biggest reason that you feel like you need help?,"Everything just got more expensive, and we’re falling behind."
+10,What is the most difficult thing you face day to day?,Worrying about how I’m going to support my kids.
+10,What has been the hardest thing for you financially this year?,"Groceries cost so much more than before, and it adds up fast."
+10,Are you currently looking for work?,"Yes, but it’s tough to find anything steady."
+10,What barriers are preventing you from working or earning more income?,Transportation’s a big issue—our car isn’t reliable.
+10,What is your biggest challenge related to housing?,We’re behind on rent and trying to catch up.
+10,Are you at risk of losing housing in the next 3 months?,"I hope not, but it’s a possibility."
+10,"Do you have a support system of friends, family, or community?","I’m doing this alone, there’s not much help around me."
+10,What kind of support do you wish you had more of?,I wish we had more help with childcare.
+10,Do you have regular access to mental health support or counseling?,"No, it’s not something I can afford."
+10,What has been the most emotionally difficult part of your current situation?,Not knowing when things will get better.
+10,What’s your biggest concern about work?,The jobs I find don’t offer enough hours or benefits.
+11,Tell us where you’re currently living.,I’m currently living in western North Carolina.
+11,Tell us about yourself.,"I'm a single dad, I enjoy cooking and playing basketball with my son."
+11,What is the biggest reason that you feel like you need help?,I’m trying to hold things together but I need some help to get back on track.
+11,What is the most difficult thing you face day to day?,Worrying about how I’m going to support my kids.
+11,What has been the hardest thing for you financially this year?,"Groceries cost so much more than before, and it adds up fast."
+11,Are you currently looking for work?,"Yes, I’m looking hard, just nothing’s worked out yet."
+11,What barriers are preventing you from working or earning more income?,Transportation’s a big issue—our car isn’t reliable.
+11,What is your biggest challenge related to housing?,"It’s tight here, but moving costs too much."
+11,Are you at risk of losing housing in the next 3 months?,"Yes, if things don’t change soon, we might have to leave."
+11,"Do you have a support system of friends, family, or community?","No, it feels like I’m pretty much on my own."
+11,What kind of support do you wish you had more of?,Help with transportation would make a big difference.
+11,Do you have regular access to mental health support or counseling?,"No, I haven’t been able to get help for that."
+11,What has been the most emotionally difficult part of your current situation?,The constant stress and uncertainty.
+11,What’s your biggest concern about work?,"Jobs come and go, nothing seems stable around here."
+12,Tell us where you’re currently living.,I’m currently living in western North Carolina.
+12,Tell us about yourself.,"I’m a mother of two, love reading and doing hair on the side."
+12,What is the biggest reason that you feel like you need help?,"Everything just got more expensive, and we’re falling behind."
+12,What is the most difficult thing you face day to day?,Trying to stay hopeful while looking for work.
+12,What has been the hardest thing for you financially this year?,Rent increases have been brutal this year.
+12,Are you currently looking for work?,"Yes, I’ve been applying wherever I can."
+12,What barriers are preventing you from working or earning more income?,"There’s work, but not enough hours to get by."
+12,What is your biggest challenge related to housing?,Our lease is up soon and I’m not sure we can stay.
+12,Are you at risk of losing housing in the next 3 months?,It’s something we’re really worried about.
+12,"Do you have a support system of friends, family, or community?","I’m doing this alone, there’s not much help around me."
+12,What kind of support do you wish you had more of?,More job support or training would really help.
+12,Do you have regular access to mental health support or counseling?,"No, and it’s hard to find in my area."
+12,What has been the most emotionally difficult part of your current situation?,Just the pressure of not being able to provide.
+12,What’s your biggest concern about work?,"I get work sometimes, but it never lasts long."
+13,Tell us where you’re currently living.,I’m currently living in a small city in Michigan.
+13,Tell us about yourself.,I enjoy drawing and used to dream of being an artist.
+13,What is the biggest reason that you feel like you need help?,It’s hard to keep food on the table and pay the bills.
+13,What is the most difficult thing you face day to day?,Keeping up with everything without enough money coming in.
+13,What has been the hardest thing for you financially this year?,We had unexpected medical expenses we couldn’t afford.
+13,Are you currently looking for work?,"Yes, every week I’m sending out applications."
+13,What barriers are preventing you from working or earning more income?,"There’s work, but not enough hours to get by."
+13,What is your biggest challenge related to housing?,Our place needs repairs but we can’t afford to move.
+13,Are you at risk of losing housing in the next 3 months?,"Yes, if things don’t change soon, we might have to leave."
+13,"Do you have a support system of friends, family, or community?",I don’t have much of a support system these days.
+13,What kind of support do you wish you had more of?,Help with transportation would make a big difference.
+13,Do you have regular access to mental health support or counseling?,"No, I haven’t been able to get help for that."
+13,What has been the most emotionally difficult part of your current situation?,Trying to stay strong for the kids when I’m struggling inside.
+13,What’s your biggest concern about work?,I’ve been laid off more times than I can count.
+14,Tell us where you’re currently living.,I’m currently living in southern Missouri.
+14,Tell us about yourself.,I enjoy drawing and used to dream of being an artist.
+14,What is the biggest reason that you feel like you need help?,I’m trying to hold things together but I need some help to get back on track.
+14,What is the most difficult thing you face day to day?,Just the constant stress about money and bills.
+14,What has been the hardest thing for you financially this year?,Rent increases have been brutal this year.
+14,Are you currently looking for work?,"Yes, I’m looking hard, just nothing’s worked out yet."
+14,What barriers are preventing you from working or earning more income?,Childcare costs are too high for me to work right now.
+14,What is your biggest challenge related to housing?,"It’s tight here, but moving costs too much."
+14,Are you at risk of losing housing in the next 3 months?,It’s something we’re really worried about.
+14,"Do you have a support system of friends, family, or community?","No, it feels like I’m pretty much on my own."
+14,What kind of support do you wish you had more of?,More job support or training would really help.
+14,Do you have regular access to mental health support or counseling?,"No, I wish I did, but it’s not available."
+14,What has been the most emotionally difficult part of your current situation?,Trying to stay strong for the kids when I’m struggling inside.
+14,What’s your biggest concern about work?,I’ve been laid off more times than I can count.
+15,Tell us where you’re currently living.,I’m currently living in the suburbs of Indiana.
+15,Tell us about yourself.,"I’m into photography, mostly just on my phone for now."
+15,What is the biggest reason that you feel like you need help?,"Everything just got more expensive, and we’re falling behind."
+15,What is the most difficult thing you face day to day?,Balancing job hunting with taking care of the kids.
+15,What has been the hardest thing for you financially this year?,Our car broke down and fixing it took everything we had.
+15,Are you currently looking for work?,"Yes, every week I’m sending out applications."
+15,What barriers are preventing you from working or earning more income?,"Not many jobs in my area, and I don’t have a way to commute far."
+15,What is your biggest challenge related to housing?,"It’s tight here, but moving costs too much."
+15,Are you at risk of losing housing in the next 3 months?,"I hope not, but it’s a possibility."
+15,"Do you have a support system of friends, family, or community?",I don’t have much of a support system these days.
+15,What kind of support do you wish you had more of?,Access to affordable healthcare would ease a lot of stress.
+15,Do you have regular access to mental health support or counseling?,"No, I don’t have access to that right now."
+15,What has been the most emotionally difficult part of your current situation?,Trying to stay strong for the kids when I’m struggling inside.
+15,What’s your biggest concern about work?,I’ve been laid off more times than I can count.
+16,Tell us where you’re currently living.,I’m currently living in central Illinois.
+16,Tell us about yourself.,"I love gardening, but it’s tough with everything going on."
+16,What is the biggest reason that you feel like you need help?,I’m trying to hold things together but I need some help to get back on track.
+16,What is the most difficult thing you face day to day?,Worrying about how I’m going to support my kids.
+16,What has been the hardest thing for you financially this year?,We had unexpected medical expenses we couldn’t afford.
+16,Are you currently looking for work?,"Yes, but I haven’t had much luck yet."
+16,What barriers are preventing you from working or earning more income?,Transportation’s a big issue—our car isn’t reliable.
+16,What is your biggest challenge related to housing?,Our place needs repairs but we can’t afford to move.
+16,Are you at risk of losing housing in the next 3 months?,"We’re behind, so it’s definitely a risk."
+16,"Do you have a support system of friends, family, or community?","No, it feels like I’m pretty much on my own."
+16,What kind of support do you wish you had more of?,Access to affordable healthcare would ease a lot of stress.
+16,Do you have regular access to mental health support or counseling?,"No, I wish I did, but it’s not available."
+16,What has been the most emotionally difficult part of your current situation?,Trying to stay strong for the kids when I’m struggling inside.
+16,What’s your biggest concern about work?,The jobs I find don’t offer enough hours or benefits.
+17,Tell us where you’re currently living.,I’m currently living in the suburbs of Indiana.
+17,Tell us about yourself.,"I’m passionate about music, especially playing the keyboard at church."
+17,What is the biggest reason that you feel like you need help?,It’s hard to keep food on the table and pay the bills.
+17,What is the most difficult thing you face day to day?,Just the constant stress about money and bills.
+17,What has been the hardest thing for you financially this year?,Utilities have gone up and it’s hard to keep up.
+17,Are you currently looking for work?,"Yes, every week I’m sending out applications."
+17,What barriers are preventing you from working or earning more income?,Transportation’s a big issue—our car isn’t reliable.
+17,What is your biggest challenge related to housing?,Rent is going up and it’s getting hard to keep up.
+17,Are you at risk of losing housing in the next 3 months?,"We’re behind, so it’s definitely a risk."
+17,"Do you have a support system of friends, family, or community?","Not really, most people I know are dealing with their own problems."
+17,What kind of support do you wish you had more of?,More job support or training would really help.
+17,Do you have regular access to mental health support or counseling?,"No, I haven’t been able to get help for that."
+17,What has been the most emotionally difficult part of your current situation?,The constant stress and uncertainty.
+17,What’s your biggest concern about work?,The jobs I find don’t offer enough hours or benefits.
+18,Tell us where you’re currently living.,I’m currently living in a rural area in Kentucky.
+18,Tell us about yourself.,"I'm a single dad, I enjoy cooking and playing basketball with my son."
+18,What is the biggest reason that you feel like you need help?,"Without steady work, it’s hard to make ends meet."
+18,What is the most difficult thing you face day to day?,Trying to stay hopeful while looking for work.
+18,What has been the hardest thing for you financially this year?,"Groceries cost so much more than before, and it adds up fast."
+18,Are you currently looking for work?,"Yes, but it’s tough to find anything steady."
+18,What barriers are preventing you from working or earning more income?,"There’s work, but not enough hours to get by."
+18,What is your biggest challenge related to housing?,We’re behind on rent and trying to catch up.
+18,Are you at risk of losing housing in the next 3 months?,It’s something we’re really worried about.
+18,"Do you have a support system of friends, family, or community?","Not really, most people I know are dealing with their own problems."
+18,What kind of support do you wish you had more of?,Access to affordable healthcare would ease a lot of stress.
+18,Do you have regular access to mental health support or counseling?,"No, and it’s hard to find in my area."
+18,What has been the most emotionally difficult part of your current situation?,Not knowing when things will get better.
+18,What’s your biggest concern about work?,"Even when I find work, it feels like I’m always close to losing it."
+19,Tell us where you’re currently living.,I’m currently living in northern Georgia.
+19,Tell us about yourself.,I’m into fitness and like to run when I can.
+19,What is the biggest reason that you feel like you need help?,"Without steady work, it’s hard to make ends meet."
+19,What is the most difficult thing you face day to day?,Balancing job hunting with taking care of the kids.
+19,What has been the hardest thing for you financially this year?,We had unexpected medical expenses we couldn’t afford.
+19,Are you currently looking for work?,"Yes, but it’s tough to find anything steady."
+19,What barriers are preventing you from working or earning more income?,"There’s work, but not enough hours to get by."
+19,What is your biggest challenge related to housing?,Rent is going up and it’s getting hard to keep up.
+19,Are you at risk of losing housing in the next 3 months?,There’s a real chance if I don’t find work soon.
+19,"Do you have a support system of friends, family, or community?","No, it feels like I’m pretty much on my own."
+19,What kind of support do you wish you had more of?,More job support or training would really help.
+19,Do you have regular access to mental health support or counseling?,"No, I don’t have access to that right now."
+19,What has been the most emotionally difficult part of your current situation?,Just the pressure of not being able to provide.
+19,What’s your biggest concern about work?,"Even when I find work, it feels like I’m always close to losing it."
+20,Tell us where you’re currently living.,I’m currently living in southern Missouri.
+20,Tell us about yourself.,I love baking and have always wanted to start a small bakery.
+20,What is the biggest reason that you feel like you need help?,"Without steady work, it’s hard to make ends meet."
+20,What is the most difficult thing you face day to day?,Keeping up with everything without enough money coming in.
+20,What has been the hardest thing for you financially this year?,Utilities have gone up and it’s hard to keep up.
+20,Are you currently looking for work?,"Yes, but I haven’t had much luck yet."
+20,What barriers are preventing you from working or earning more income?,"There’s work, but not enough hours to get by."
+20,What is your biggest challenge related to housing?,"It’s tight here, but moving costs too much."
+20,Are you at risk of losing housing in the next 3 months?,"We’re behind, so it’s definitely a risk."
+20,"Do you have a support system of friends, family, or community?","Not really, most people I know are dealing with their own problems."
+20,What kind of support do you wish you had more of?,Access to affordable healthcare would ease a lot of stress.
+20,Do you have regular access to mental health support or counseling?,"No, I wish I did, but it’s not available."
+20,What has been the most emotionally difficult part of your current situation?,Feeling like I’m failing my family.
+20,What’s your biggest concern about work?,"Even when I find work, it feels like I’m always close to losing it."
+21,Tell us where you’re currently living.,"I’m currently living in outside of Pittsburgh, Pennsylvania."
+21,Tell us about yourself.,I’m into fitness and like to run when I can.
+21,What is the biggest reason that you feel like you need help?,It’s hard to keep food on the table and pay the bills.
+21,What is the most difficult thing you face day to day?,Just the constant stress about money and bills.
+21,What has been the hardest thing for you financially this year?,Utilities have gone up and it’s hard to keep up.
+21,Are you currently looking for work?,"Yes, but I haven’t had much luck yet."
+21,What barriers are preventing you from working or earning more income?,Childcare costs are too high for me to work right now.
+21,What is your biggest challenge related to housing?,Our lease is up soon and I’m not sure we can stay.
+21,Are you at risk of losing housing in the next 3 months?,There’s a real chance if I don’t find work soon.
+21,"Do you have a support system of friends, family, or community?","I’m doing this alone, there’s not much help around me."
+21,What kind of support do you wish you had more of?,Help with transportation would make a big difference.
+21,Do you have regular access to mental health support or counseling?,"No, I haven’t been able to get help for that."
+21,What has been the most emotionally difficult part of your current situation?,Not knowing when things will get better.
+21,What’s your biggest concern about work?,The jobs I find don’t offer enough hours or benefits.
+22,Tell us where you’re currently living.,I’m currently living in western North Carolina.
+22,Tell us about yourself.,"I’m a movie buff, love classic films and thrillers."
+22,What is the biggest reason that you feel like you need help?,I need help because I’m struggling to provide for my family right now.
+22,What is the most difficult thing you face day to day?,Trying to stay hopeful while looking for work.
+22,What has been the hardest thing for you financially this year?,Our car broke down and fixing it took everything we had.
+22,Are you currently looking for work?,"Yes, I’ve been applying wherever I can."
+22,What barriers are preventing you from working or earning more income?,Transportation’s a big issue—our car isn’t reliable.
+22,What is your biggest challenge related to housing?,Our lease is up soon and I’m not sure we can stay.
+22,Are you at risk of losing housing in the next 3 months?,There’s a real chance if I don’t find work soon.
+22,"Do you have a support system of friends, family, or community?","No, it feels like I’m pretty much on my own."
+22,What kind of support do you wish you had more of?,"Financial help, just to get through the next few months."
+22,Do you have regular access to mental health support or counseling?,"No, I wish I did, but it’s not available."
+22,What has been the most emotionally difficult part of your current situation?,Not knowing when things will get better.
+22,What’s your biggest concern about work?,I’ve been laid off more times than I can count.
+23,Tell us where you’re currently living.,I’m currently living in upstate New York.
+23,Tell us about yourself.,"I’m a mother of two, love reading and doing hair on the side."
+23,What is the biggest reason that you feel like you need help?,It’s hard to keep food on the table and pay the bills.
+23,What is the most difficult thing you face day to day?,Trying to stay hopeful while looking for work.
+23,What has been the hardest thing for you financially this year?,Rent increases have been brutal this year.
+23,Are you currently looking for work?,"Yes, every week I’m sending out applications."
+23,What barriers are preventing you from working or earning more income?,"Not many jobs in my area, and I don’t have a way to commute far."
+23,What is your biggest challenge related to housing?,"It’s tight here, but moving costs too much."
+23,Are you at risk of losing housing in the next 3 months?,"We’re behind, so it’s definitely a risk."
+23,"Do you have a support system of friends, family, or community?",I don’t have much of a support system these days.
+23,What kind of support do you wish you had more of?,I wish we had more help with childcare.
+23,Do you have regular access to mental health support or counseling?,"No, I wish I did, but it’s not available."
+23,What has been the most emotionally difficult part of your current situation?,The constant stress and uncertainty.
+23,What’s your biggest concern about work?,"I get work sometimes, but it never lasts long."
+24,Tell us where you’re currently living.,I’m currently living in a small city in Michigan.
+24,Tell us about yourself.,I’m into fitness and like to run when I can.
+24,What is the biggest reason that you feel like you need help?,I’m trying to hold things together but I need some help to get back on track.
+24,What is the most difficult thing you face day to day?,Balancing job hunting with taking care of the kids.
+24,What has been the hardest thing for you financially this year?,Utilities have gone up and it’s hard to keep up.
+24,Are you currently looking for work?,"Yes, I’ve been applying wherever I can."
+24,What barriers are preventing you from working or earning more income?,"There’s work, but not enough hours to get by."
+24,What is your biggest challenge related to housing?,Our place needs repairs but we can’t afford to move.
+24,Are you at risk of losing housing in the next 3 months?,"We’re behind, so it’s definitely a risk."
+24,"Do you have a support system of friends, family, or community?","No, I don’t really have anyone I can lean on right now."
+24,What kind of support do you wish you had more of?,Help with transportation would make a big difference.
+24,Do you have regular access to mental health support or counseling?,"No, and it’s hard to find in my area."
+24,What has been the most emotionally difficult part of your current situation?,The constant stress and uncertainty.
+24,What’s your biggest concern about work?,I’ve been laid off more times than I can count.
+25,Tell us where you’re currently living.,I’m currently living in northern Georgia.
+25,Tell us about yourself.,"I’m a movie buff, love classic films and thrillers."
+25,What is the biggest reason that you feel like you need help?,"Without steady work, it’s hard to make ends meet."
+25,What is the most difficult thing you face day to day?,Balancing job hunting with taking care of the kids.
+25,What has been the hardest thing for you financially this year?,We had unexpected medical expenses we couldn’t afford.
+25,Are you currently looking for work?,"Yes, I’ve been applying wherever I can."
+25,What barriers are preventing you from working or earning more income?,Childcare costs are too high for me to work right now.
+25,What is your biggest challenge related to housing?,Our lease is up soon and I’m not sure we can stay.
+25,Are you at risk of losing housing in the next 3 months?,It’s something we’re really worried about.
+25,"Do you have a support system of friends, family, or community?","No, it feels like I’m pretty much on my own."
+25,What kind of support do you wish you had more of?,I wish we had more help with childcare.
+25,Do you have regular access to mental health support or counseling?,"No, I don’t have access to that right now."
+25,What has been the most emotionally difficult part of your current situation?,Trying to stay strong for the kids when I’m struggling inside.
+25,What’s your biggest concern about work?,"I get work sometimes, but it never lasts long."

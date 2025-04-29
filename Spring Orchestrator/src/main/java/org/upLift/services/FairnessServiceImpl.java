@@ -122,7 +122,7 @@ public class FairnessServiceImpl implements FairnessService {
 	 * RecipientWithMatchedTagWeights object for each recipient who was linked to at least
 	 * one of the specified tags
 	 */
-	Map<Integer, RecipientWithMatchedTagWeights> buildRecipientMap(List<String> tags) {
+	public Map<Integer, RecipientWithMatchedTagWeights> buildRecipientMap(List<String> tags) {
 		var recipientTagMap = new HashMap<Integer, RecipientWithMatchedTagWeights>();
 		for (String tag : tags) {
 			List<RecipientTag> recipientTags = recipientTagsRepository.getRecipientTagsByTagName(tag);
@@ -262,6 +262,19 @@ public class FairnessServiceImpl implements FairnessService {
 			return recipient.getId();
 		}
 
+	}
+
+	// TODO - REMOVE
+	public List<Recipient> getRecipientsByTags(List<String> tags) {
+		Set<Recipient> recipients = new HashSet<>();
+		for (String tag : tags) {
+			List<RecipientTag> recipientTags = recipientTagsRepository.getRecipientTagsByTagName(tag);
+			for (RecipientTag recipientTag : recipientTags) {
+				var recipient = recipientTag.getRecipient();
+				recipients.add(recipient);
+			}
+		}
+		return recipients.stream().sorted(Comparator.comparing(Recipient::getId)).collect(Collectors.toList());
 	}
 
 }
