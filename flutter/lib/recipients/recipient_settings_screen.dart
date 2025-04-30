@@ -54,6 +54,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
   bool canEdit = false;
   Duration timeRemaining = Duration.zero;
   Timer? countdownTimer;
+  final api = UserApi();
 
   @override
   void initState() {
@@ -196,7 +197,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
 
       final attrMap = await getCognitoAttributes();
 
-      final success = await UserApi.updateEmail(
+      final success = await api.updateEmail(
         userId: widget.profile.id!,
         attrMap: attrMap!,
       );
@@ -405,6 +406,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
   }
 
   Widget _buildConvertAccountCard() {
+
     return Card(
       color: AppColors.warmWhite,
       elevation: 5,
@@ -429,7 +431,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
                     child: const Text("Cancel")),
                 ElevatedButton(
                   onPressed: () {
-                    UserApi.convertToDonor(widget.profile);
+                    api.convertToDonor(widget.profile);
                     Navigator.pop(context);
                     context.goNamed('/redirect');
                   },
@@ -471,7 +473,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
                     child: const Text("Cancel")),
                 ElevatedButton(
                   onPressed: () {
-                    UserApi.deleteAccount(widget.profile);
+                    api.deleteAccount(widget.profile);
                     context.goNamed('/redirect');
                   },
                   style: ElevatedButton.styleFrom(

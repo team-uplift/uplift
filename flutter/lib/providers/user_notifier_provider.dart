@@ -7,5 +7,6 @@ part 'user_notifier_provider.g.dart';
 
 @riverpod
 Future<User?> user(UserRef ref, String userId) async {
-  return await UserApi.fetchUserById(userId);
+  final api = UserApi();
+  return await api.fetchUserById(userId);
 }

@@ -1,0 +1,159 @@
+// test/components/tag_card_test.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:uplift/components/tag_card.dart';
+import 'package:uplift/constants/constants.dart';
+import 'package:uplift/models/tag_model.dart';
+
+void main() {
+  Tag makeTag(double weight) => Tag(
+        createdAt: DateTime.now(),
+        addedAt: DateTime.now(),
+        tagName: 'TestTag',
+        weight: weight,
+      );
+
+  group('TagCard', () {
+    testWidgets('uses correct background for weight < 0.8', (tester) async {
+      final weight = 0.4;
+      final tag = makeTag(weight);
+      final expected = Color.lerp(
+        AppColors.warmWhite,
+        AppColors.baseOrange,
+        weight / 0.8,
+      )!;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: TagCard(tag: tag)),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Find the Container decoration
+      final container = tester.widget<Container>(
+        find.descendant(
+          of: find.byType(TagCard),
+          matching: find.byType(Container),
+        ).first,
+      );
+      final deco = container.decoration as BoxDecoration;
+      expect(deco.color, equals(expected));
+    });
+
+    testWidgets('uses correct background for weight ≥ 0.8', (tester) async {
+      final weight = 0.9;
+      final tag = makeTag(weight);
+      final expected = Color.lerp(
+        AppColors.baseOrange,
+        AppColors.baseRed,
+        (weight - 0.8) / 0.2,
+      )!;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: TagCard(tag: tag)),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final container = tester.widget<Container>(
+        find.descendant(
+          of: find.byType(TagCard),
+          matching: find.byType(Container),
+        ).first,
+      );
+      final deco = container.decoration as BoxDecoration;
+      expect(deco.color, equals(expected));
+    });
+
+    testWidgets('shadow adjusts blurRadius, offset, and color', (tester) async {
+      // Test for weight = 0.0
+      var tag = makeTag(0.0);
+      await tester.pumpWidget(
+        MaterialApp(home: Scaffold(body: TagCard(tag: tag))),
+      );
+      await tester.pumpAndSettle();
+
+      var container = tester.widget<Container>(
+        find.descendant(
+          of: find.byType(TagCard),
+          matching: find.byType(Container),
+        ).first,
+      );
+      var boxShadow = (container.decoration as BoxDecoration).boxShadow!.first;
+      expect(boxShadow.blurRadius, 3.0);
+      expect(boxShadow.offset.dy, 4.0);
+      expect(boxShadow.color, Colors.black.withAlpha(100));
+
+      // Test for weight = 1.0
+      tag = makeTag(1.0);
+      await tester.pumpWidget(
+        MaterialApp(home: Scaffold(body: TagCard(tag: tag))),
+      );
+      await tester.pumpAndSettle();
+
+      container = tester.widget<Container>(
+        find.descendant(
+          of: find.byType(TagCard),
+          matching: find.byType(Container),
+        ).first,
+      );
+      boxShadow = (container.decoration as BoxDecoration).boxShadow!.first;
+      expect(boxShadow.blurRadius, 13.0); // 3 + 10*1.0
+      expect(boxShadow.offset.dy, 6.0);   // 4 + 2*1.0
+
+      final expectedHighShadow = Color(AppColors.baseOrange.value)
+          .withAlpha(200);
+      expect(boxShadow.color, expectedHighShadow);
+    });
+
+    testWidgets('selected style overrides background and text color',
+        (tester) async {
+      final tag = makeTag(0.5);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: TagCard(tag: tag, isSelected: true)),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final container = tester.widget<Container>(
+        find.descendant(
+          of: find.byType(TagCard),
+          matching: find.byType(Container),
+        ).first,
+      );
+      final deco = container.decoration as BoxDecoration;
+      expect(deco.color, AppColors.baseBlue);
+
+      final textWidget = tester.widget<Text>(find.text('TestTag'));
+      expect(textWidget.style?.color, AppColors.warmWhite);
+    });
+
+    testWidgets('onTap callback is invoked when tapped', (tester) async {
+      bool tapped = false;
+      final tag = makeTag(0.2);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: TagCard(
+              tag: tag,
+              onTap: () {
+                tapped = true;
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(TagCard));
+      await tester.pumpAndSettle();
+
+      expect(tapped, isTrue);
+    });
+  });
+}

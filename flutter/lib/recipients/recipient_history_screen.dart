@@ -18,28 +18,39 @@ import 'recipient_history_details_screen.dart';
 class RecipientHistoryScreen extends StatefulWidget {
   final User profile;
   final Recipient recipient;
-  const RecipientHistoryScreen(
-      {super.key, required this.profile, required this.recipient});
+  final RecipientApi api;
+
+  RecipientHistoryScreen({
+    super.key,
+    required this.profile,
+    required this.recipient,
+    RecipientApi? api,
+  })  : api = api ?? RecipientApi();                // ← don’t forget to call super
 
   @override
   State<RecipientHistoryScreen> createState() => _RecipientHistoryScreenState();
 }
 
+
 class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
+  late final RecipientApi api;
+
   @override
   void initState() {
     super.initState();
+    api = widget.api;
     _loadDonations();
   }
 
   List<Donation> historyItems = [];
   bool _isLoading = true;
 
+
   /// fetches all donation objects associated with user from api and stores them
   /// in a list
   Future<void> _loadDonations() async {
     final donations =
-        await RecipientApi.fetchDonationsForRecipient(widget.profile.id!);
+        await api.fetchDonationsForRecipient(widget.profile.id!);
 
     setState(() {
       historyItems = donations;

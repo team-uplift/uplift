@@ -12,16 +12,22 @@ import 'package:uplift/utils/logger.dart';
 import '../models/tag_model.dart';
 
 class TagApi {
+
+  // for testing purposes
+  final http.Client client;
+
+  TagApi({http.Client? client}) : client = client ?? http.Client();
+
   static const String baseUrl =
       'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
 
   /// generates tags from a recipients registration answers
   ///
   /// returns a list of tag objects on success, an empty list on failure
-  static Future<List<Tag>> generateTags(
+  Future<List<Tag>> generateTags(
       int userId, List<Map<String, dynamic>> questions) async {
     try {
-      final response = await http.post(
+      final response = await client.post(
         Uri.parse('$baseUrl/recipients/tagGeneration/$userId'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(questions),

@@ -33,6 +33,7 @@ class RecipientProfileScreen extends StatefulWidget {
 
 class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
   late Recipient _recipient;
+  final api = RecipientApi();
 
   @override
   void initState() {
@@ -109,7 +110,7 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
         await ImagePicker().pickImage(source: source); //image chosen by user
     if (pickedFile == null) return;
 
-    final success = await RecipientApi.uploadIncomeVerificationImage(
+    final success = await api.uploadIncomeVerificationImage(
       widget.recipient.id,
       File(pickedFile.path),
     );

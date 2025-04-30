@@ -32,6 +32,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
   late Donation _donation;
   bool _thankYouSent = false;
   final TextEditingController _controller = TextEditingController();
+  final api = RecipientApi();
 
   @override
   void initState() {
@@ -45,7 +46,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
     final message = _controller.text.trim();
     if (message.isEmpty) return;
 
-    final success = await RecipientApi.sendThankYouMessage(
+    final success = await api.sendThankYouMessage(
       donationId: _donation.id,
       message: message,
     );

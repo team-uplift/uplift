@@ -18,17 +18,22 @@ import 'dart:convert';
 import 'package:uplift/utils/logger.dart';
 
 class UserApi {
+  // for testing purposes
+  final http.Client client;
+
+  UserApi({http.Client? client}) : client = client ?? http.Client();
+  
   static const baseUrl =
       'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
 
   /// fetches a user by a user id
   ///
   /// returns a User object on success, null on failure
-  static Future<User?> fetchUserById(String userId) async {
+  Future<User?> fetchUserById(String userId) async {
     final url = Uri.parse('$baseUrl/users/cognito/$userId');
 
     try {
-      final response = await http.get(url);
+      final response = await client.get(url);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -48,11 +53,11 @@ class UserApi {
   /// updates a user's information
   ///
   /// returns 'true' on success, 'false' on failure
-  static Future<bool> updateUser(User user) async {
+  Future<bool> updateUser(User user) async {
     final url = Uri.parse('$baseUrl/users');
 
     try {
-      final response = await http.put(
+      final response = await client.put(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(user.toJson()),
@@ -68,7 +73,7 @@ class UserApi {
   /// converts a user from recipient to donor
   ///
   /// returns a User object on success, null on failure
-  static Future<User?> convertToDonor(User user) async {
+  Future<User?> convertToDonor(User user) async {
     final url = Uri.parse('$baseUrl/users/switch/donor/${user.id}');
 
     final payload = {
@@ -78,7 +83,7 @@ class UserApi {
     log.info("convert to donor");
 
     try {
-      final response = await http.put(
+      final response = await client.put(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload),
@@ -103,11 +108,11 @@ class UserApi {
   /// converts a user from donor to recipient
   ///
   /// returns a User object on success, null on failure
-  static Future<User?> convertToRecipient(User user) async {
+  Future<User?> convertToRecipient(User user) async {
     final url = Uri.parse('$baseUrl/users/switch/recipient');
 
     try {
-      final response = await http.put(
+      final response = await client.put(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(user.toJson()),
@@ -132,11 +137,11 @@ class UserApi {
   /// deletes a user account from DB and amplify
   ///
   /// does not return
-  static Future<void> deleteAccount(User user) async {
+  Future<void> deleteAccount(User user) async {
     final userId = user.id;
 
     try {
-      final response = await http.delete(
+      final response = await client.delete(
         Uri.parse('$baseUrl/users/$userId'),
         headers: {'Content-Type': 'application/json'},
       );
@@ -163,7 +168,7 @@ class UserApi {
   /// updates the email address of a user
   ///
   /// returns the status code of the response
-  static Future<bool> updateEmail({
+  Future<bool> updateEmail({
     required int userId,
     required Map<String, dynamic> attrMap,
   }) async {
@@ -173,7 +178,7 @@ class UserApi {
       'email': attrMap['email'],
     };
 
-    final response = await http.put(
+    final response = await client.put(
       Uri.parse('$baseUrl/users'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(payload),

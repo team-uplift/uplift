@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:uplift/components/match_color_legend.dart';
+import 'package:uplift/constants/constants.dart';
+
+void main() {
+  testWidgets('MatchColorLegend renders texts and gradient bar', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: MatchColorLegend())),
+    );
+    await tester.pumpAndSettle();
+
+    // 1) Verify the labels
+    expect(find.text('Strong Match'), findsOneWidget);
+    expect(find.text('Weaker Match'), findsOneWidget);
+
+    // 2) Find the Container with the exact gradient we expect
+    final gradientFinder = find.byWidgetPredicate((w) {
+      if (w is Container && w.decoration is BoxDecoration) {
+        final deco = w.decoration as BoxDecoration;
+        final grad = deco.gradient;
+        if (grad is LinearGradient) {
+          return grad.colors.length == 3 &&
+            grad.colors[0] == AppColors.baseRed &&
+            grad.colors[1] == AppColors.baseOrange &&
+            grad.colors[2] == AppColors.warmWhite &&
+            grad.stops != null &&
+            grad.stops!.length == 3 &&
+            grad.stops![0] == 0.0 &&
+            grad.stops![1] == 0.2 &&
+            grad.stops![2] == 1.0;
+        }
+      }
+      return false;
+    });
+    expect(gradientFinder, findsOneWidget);
+
+    // 3) Check its rendered size
+    final box = tester.renderObject<RenderBox>(gradientFinder);
+    expect(box.size.height, 16.0);
+    expect(box.size.width, greaterThan(0.0));
+  });
+}

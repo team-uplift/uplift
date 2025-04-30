@@ -1,0 +1,87 @@
+// test/api/tag_api_test.dart
+
+import 'dart:convert';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:mocktail/mocktail.dart';
+
+import 'package:uplift/api/tag_api.dart';
+import 'package:uplift/models/tag_model.dart';
+
+class MockClient extends Mock implements http.Client {}
+
+void main() {
+  const baseUrl = TagApi.baseUrl;
+  late MockClient mockClient;
+  late TagApi api;
+
+  setUpAll(() {
+    registerFallbackValue(Uri());
+  });
+
+  setUp(() {
+    mockClient = MockClient();
+    api = TagApi(client: mockClient);
+  });
+
+  group('generateTags', () {
+    final userId = 7;
+    final questions = [
+      {'question': 'Q1', 'answer': 'A1'}
+    ];
+
+    test('returns list of Tag on 201', () async {
+      final fakeTagsJson = [
+        {
+          'createdAt': '2025-04-29T12:00:00.000Z',
+          'tagName': 'Health',
+          'weight': 0.75,
+          'addedAt': '2025-04-29T12:00:00.000Z',
+          'selected': true,
+        },
+        {
+          'createdAt': '2025-04-29T12:05:00.000Z',
+          'tagName': 'Education',
+          'weight': 0.50,
+          'addedAt': '2025-04-29T12:05:00.000Z',
+          // selected omitted, defaults to false
+        }
+      ];
+
+      when(() => mockClient.post(
+            Uri.parse('$baseUrl/recipients/tagGeneration/$userId'),
+            headers: {'Content-Type': 'application/json'},
+            body: any(named: 'body'),
+          )).thenAnswer((_) async =>
+          http.Response(jsonEncode(fakeTagsJson), 201));
+
+      final tags = await api.generateTags(userId, questions);
+
+      expect(tags, hasLength(2));
+      expect(tags[0], isA<Tag>());
+      expect(tags[0].tagName, 'Health');
+      expect(tags[0].weight, 0.75);
+      expect(tags[0].selected, isTrue);
+      expect(tags[1].tagName, 'Education');
+      expect(tags[1].selected, isFalse);
+    });
+
+    test('returns empty list on non-201 status', () async {
+      when(() => mockClient.post(any(),
+          headers: any(named: 'headers'), body: any(named: 'body')))
+        .thenAnswer((_) async => http.Response('error', 400));
+
+      final tags = await api.generateTags(userId, questions);
+      expect(tags, isEmpty);
+    });
+
+    test('returns empty list on exception', () async {
+      when(() => mockClient.post(any(),
+          headers: any(named: 'headers'), body: any(named: 'body')))
+        .thenThrow(Exception('network'));
+
+      final tags = await api.generateTags(userId, questions);
+      expect(tags, isEmpty);
+    });
+  });
+}

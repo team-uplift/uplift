@@ -14,18 +14,24 @@ library;
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:uplift/api/cognito_helper.dart';
 import 'package:uplift/utils/logger.dart';
 
 import '../models/donation_model.dart';
 
 class RecipientApi {
+  // for testing purposes
+  final http.Client client;
+
+  RecipientApi({http.Client? client}) : client = client ?? http.Client();
+
   static const String baseUrl =
       'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
 
   /// create a recipient user from formdata and amplify auth information
   ///
   /// returns the user id on success, null on failure
-  static Future<int?> createRecipientUser(
+  Future<int?> createRecipientUser(
     Map<String, dynamic> formData,
     List<Map<String, dynamic>> formQuestions,
     Map<String, dynamic> attrMap,
@@ -49,7 +55,7 @@ class RecipientApi {
     };
 
     try {
-      final response = await http.post(
+      final response = await client.post(
         Uri.parse('$baseUrl/users'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload),
@@ -72,9 +78,9 @@ class RecipientApi {
   /// updates a recipients selected tags associated with their profile
   ///
   /// returns 'true' on success, 'false' on failure
-  static Future<bool> updateTags(int userId, List<String> selectedTags) async {
+  Future<bool> updateTags(int userId, List<String> selectedTags) async {
     try {
-      final response = await http.put(
+      final response = await client.put(
         Uri.parse('$baseUrl/recipients/tagSelection/$userId'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(selectedTags),
@@ -90,7 +96,7 @@ class RecipientApi {
   /// uploads income image to api for verification
   ///
   /// returns 'true' if verified, 'false' otherwise
-  static Future<bool> uploadIncomeVerificationImage(
+  Future<bool> uploadIncomeVerificationImage(
       int userId, File imageFile) async {
     // print("start of income verification api call");
     try {
@@ -127,10 +133,10 @@ class RecipientApi {
   /// retrieves list of all donations associated with recipient
   ///
   /// returns list of donation objects on success, null on failure
-  static Future<List<Donation>> fetchDonationsForRecipient(
+  Future<List<Donation>> fetchDonationsForRecipient(
       int recipientId) async {
     try {
-      final response = await http.get(
+      final response = await client.get(
         Uri.parse('$baseUrl/donations/recipient/$recipientId'),
         headers: {'Content-Type': 'application/json'},
       );
@@ -152,9 +158,9 @@ class RecipientApi {
   /// fetches a specific donation by donation id
   ///
   /// returns donation object on success, null on failure
-  static Future<Donation?> fetchDonationById(int donationId) async {
+  Future<Donation?> fetchDonationById(int donationId) async {
     try {
-      final response = await http.get(
+      final response = await client.get(
         Uri.parse('$baseUrl/donations/$donationId'),
         headers: {'Content-Type': 'application/json'},
       );
@@ -176,7 +182,7 @@ class RecipientApi {
   /// sends thank you message from recipient to donor
   ///
   /// returns donation object on success, null on failure
-  static Future<Donation?> sendThankYouMessage({
+  Future<Donation?> sendThankYouMessage({
     // required int userId,
     required int donationId,
     required String message,
@@ -187,7 +193,7 @@ class RecipientApi {
     };
 
     try {
-      final response = await http.post(
+      final response = await client.post(
         Uri.parse('$baseUrl/messages'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload),
@@ -210,7 +216,7 @@ class RecipientApi {
   /// updates a recipient with new information from edited form
   ///
   /// returns 'true' on succes, 'false' on failure
-  static Future<bool> updateRecipientUserProfile(
+  Future<bool> updateRecipientUserProfile(
     Map<String, dynamic> formData,
     List<Map<String, dynamic>> formQuestions,
     Map<String, dynamic> attrMap,
@@ -236,7 +242,7 @@ class RecipientApi {
     };
 
     try {
-      final response = await http.put(
+      final response = await client.put(
         Uri.parse('$baseUrl/users'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload),

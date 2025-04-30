@@ -55,7 +55,8 @@ class _RecipientHomeState extends State<RecipientHome> {
   Future<void> _loadProfile() async {
     final attrMap = await getCognitoAttributes();
     final cognitoId = attrMap?['sub'];
-    final user = await UserApi.fetchUserById(cognitoId!);
+    final api = UserApi();
+    final user = await api.fetchUserById(cognitoId!);
 
     if (user != null) {
       setState(() {

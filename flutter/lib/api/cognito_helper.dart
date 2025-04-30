@@ -38,7 +38,7 @@ Future<JsonWebToken?> fetchCognitoAuthSession() async {
     final cognitoPlugin = Amplify.Auth.getPlugin(AmplifyAuthCognito.pluginKey);
     final result = await cognitoPlugin.fetchAuthSession();
     final accessToken = result.userPoolTokensResult.value.accessToken;
-    log.info("Successfully fetched auth session.");
+    log.info("Successfully fetched auth session. ");
     return accessToken;
   } on AuthException catch (e) {
     log.severe('Error retrieving auth session: ${e.message}');

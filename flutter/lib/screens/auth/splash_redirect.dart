@@ -25,6 +25,7 @@ class SplashRedirector extends StatefulWidget {
 }
 
 class _SplashRedirectorState extends State<SplashRedirector> {
+  final api = UserApi();
 
   @override
   void initState() {
@@ -115,7 +116,7 @@ class _SplashRedirectorState extends State<SplashRedirector> {
       final cognitoId = attrMap?['sub'];
 
       // Check if user exists in backend
-      final user = await UserApi.fetchUserById(cognitoId);
+      final user = await api.fetchUserById(cognitoId);
 
       // Redirect
       if (user == null) {
