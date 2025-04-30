@@ -61,6 +61,7 @@ class DrawerWidget extends StatelessWidget {
               title: const Text("Logout"),
               onTap: () {
                 logout(context);
+                // TODO --> send to redirect not login
                 context.goNamed('/login');
               },
             )

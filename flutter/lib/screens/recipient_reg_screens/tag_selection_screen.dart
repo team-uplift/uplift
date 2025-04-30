@@ -25,7 +25,6 @@ class TagSelection extends StatefulWidget {
 
 class _TagSelectionState extends State<TagSelection> {
   final int maxTagChoices = 10;
-  // TODO dont need list of tags need only list of tag.names for submission
   final List<Tag> selectedTags = [];
 
   @override
