@@ -14,6 +14,7 @@ import 'package:uplift/screens/home/donor_tag_screen.dart';
 import 'package:uplift/screens/home/home_screen.dart';
 import 'package:uplift/screens/home/profile_screen.dart';
 import 'package:uplift/screens/home/quiz_screen.dart';
+import 'package:uplift/screens/home/account_settings_screen.dart';
 import 'package:uplift/recipients/recipient_home_controller.dart';
 import 'package:uplift/screens/home/recipient_detail_screen.dart';
 import 'package:uplift/screens/home/recipient_list_screen.dart';
@@ -175,6 +176,13 @@ final GoRouter _router = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final questionsAnswers = state.extra as List<Map<String, dynamic>>;
         return DonorTagPage(questionsAnswers: questionsAnswers);
+      },
+    ),
+    GoRoute(
+      path: '/account_settings',
+      name: '/account_settings',
+      builder: (BuildContext context, GoRouterState state) {
+        return const AccountSettingsScreen();
       },
     ),
   ],

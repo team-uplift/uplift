@@ -143,7 +143,7 @@ class RecipientListCard extends StatelessWidget {
                         ),
                         padding: const EdgeInsets.all(16),
                         child: Text(
-                          recipient.firstName ?? 'Anonymous',
+                          recipient.nickname ?? 'Anonymous',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,

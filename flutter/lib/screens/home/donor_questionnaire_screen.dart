@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+// import 'package:uplift/constants/constants.dart';
+import '../../constants/constants.dart';
 
 class DonorQuestionnaire extends StatefulWidget {
   const DonorQuestionnaire({super.key});
@@ -105,14 +107,15 @@ class _DonorQuestionnaireState extends State<DonorQuestionnaire> {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Theme.of(context).primaryColor,
-                          Theme.of(context).primaryColor.withOpacity(0.8),
-                        ],
-                      ),
+                      color: AppColors.baseBlue,
+                      // gradient: LinearGradient(
+                      //   begin: Alignment.topLeft,
+                      //   end: Alignment.bottomRight,
+                      //   colors: [
+                      //     Theme.of(context).primaryColor,
+                      //     Theme.of(context).primaryColor.withOpacity(0.8),
+                      //   ],
+                      // ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
