@@ -35,7 +35,9 @@ public class BedrockServiceImpl implements BedrockService {
         String finalPrompt = "Only generate a comma separated list of tags/descriptors and associated "
 				+ "numeric weights (from 0 to 1) in the format tag:number. "
 				+ "If the tag is more than one word separate the tag's words with a space. "
-				+ "Do not use underscores or dashes. Tags are less than 4 words each. " + "Generate at least 15 tags. "
+                + "Do not use underscores or dashes. Tags are less than 4 words each. "
+                + "Remove any gendered language and racial content. "
+                + "Generate at least 15 tags. "
 				+ "The tags describe the contents and the weights are how relevant the tag is to the following prompt: "
 				+ prompt;
         String response = ChatClient.create(chatModel)
