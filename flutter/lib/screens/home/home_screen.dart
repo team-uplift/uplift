@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/components/drawer_widget.dart';
 import 'package:uplift/components/standard_button.dart';
+import 'package:uplift/constants/constants.dart';
 import 'package:uplift/providers/user_notifier_provider.dart';
 import 'package:uplift/services/badge_service.dart';
 import 'package:uplift/models/badge.dart';
@@ -84,14 +85,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColor.withOpacity(0.8),
-                      ],
-                    ),
+                    color: AppColors.baseBlue
+                    // gradient: LinearGradient(
+                    //   begin: Alignment.topLeft,
+                    //   end: Alignment.bottomRight,
+                    //   colors: [
+                    //     Theme.of(context).primaryColor,
+                    //     Theme.of(context).primaryColor.withOpacity(0.8),
+                    //   ],
+                    // ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,59 +173,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                   ],
                 ),
-
-                // Statistics Grid
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "The Impact of Poverty",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      GridView.count(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 16,
-                        crossAxisSpacing: 16,
-                        childAspectRatio: 1.2,
-                        children: [
-                          _buildStatCard(
-                            "37.9M",
-                            "Americans live in poverty",
-                            Icons.people_outline,
-                            Colors.blue,
-                          ),
-                          _buildStatCard(
-                            "1 in 6",
-                            "Children face hunger",
-                            Icons.child_care,
-                            Colors.orange,
-                          ),
-                          _buildStatCard(
-                            "34M",
-                            "People are food insecure",
-                            Icons.restaurant,
-                            Colors.red,
-                          ),
-                          _buildStatCard(
-                            "5.6M",
-                            "Seniors face hunger",
-                            Icons.elderly,
-                            Colors.purple,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
                 // Call to Action Section
                 Padding(
                   padding: const EdgeInsets.all(16),
@@ -280,6 +229,60 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                   ),
                 ),
+
+                // Statistics Grid
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "The Impact of Poverty",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
+                        childAspectRatio: 1.2,
+                        children: [
+                          _buildStatCard(
+                            "37.9M",
+                            "Americans live in poverty",
+                            Icons.people_outline,
+                            Colors.blue,
+                          ),
+                          _buildStatCard(
+                            "1 in 6",
+                            "Children face hunger",
+                            Icons.child_care,
+                            Colors.orange,
+                          ),
+                          _buildStatCard(
+                            "34M",
+                            "People are food insecure",
+                            Icons.restaurant,
+                            Colors.red,
+                          ),
+                          _buildStatCard(
+                            "5.6M",
+                            "Seniors face hunger",
+                            Icons.elderly,
+                            Colors.purple,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                
 
                 // Info Cards
                 Padding(
@@ -410,7 +413,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: badge.isUnlocked
-                ? Theme.of(context).primaryColor.withOpacity(0.3)
+                ? AppColors.baseBlue.withOpacity(1.0)
                 : Colors.grey.withOpacity(0.3),
             width: 2,
           ),
