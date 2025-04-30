@@ -6,6 +6,7 @@ import 'package:uplift/components/donor_tag_card.dart';
 import 'package:uplift/components/standard_button.dart';
 import 'package:uplift/models/donor_tag_model.dart';
 import 'package:uplift/models/recipient_model.dart';
+import '../../constants/constants.dart';
 
 class DonorTagPage extends StatefulWidget {
   final List<Map<String, dynamic>> questionsAnswers;
@@ -161,14 +162,15 @@ class _DonorTagPageState extends State<DonorTagPage> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColor.withOpacity(0.8),
-                      ],
-                    ),
+                    color: AppColors.baseBlue,
+                    // gradient: LinearGradient(
+                    //   begin: Alignment.topLeft,
+                    //   end: Alignment.bottomRight,
+                    //   colors: [
+                    //     Theme.of(context).primaryColor,
+                    //     Theme.of(context).primaryColor.withOpacity(0.8),
+                    //   ],
+                    // ),
                   ),
                   child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

@@ -15,7 +15,7 @@ void logout(dynamic context) async {
       context.go('/redirect');
     }
   } on AuthException catch (e) {
-    print("Sign out error: ${e.message}");
+    debugPrint("Sign out error: ${e.message}");
   }
 }
 
@@ -32,8 +32,21 @@ class DrawerWidget extends StatelessWidget {
         child: ListView(
           children: [
             DrawerHeader(
-              child: Image.network(
-                  "https://image.similarpng.com/file/similarpng/original-picture/2021/05/Modern-logo-design-template-on-transparent-PNG.png"),
+              decoration: BoxDecoration(
+                color: AppColors.baseGreen,
+              ),
+              child: Center(
+                child: Container(
+                  constraints: const BoxConstraints(
+                    maxWidth: 100,
+                    maxHeight: 100,
+                  ),
+                  child: Image.asset(
+                    "assets/uplift_black.png",
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.home),

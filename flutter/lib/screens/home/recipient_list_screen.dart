@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uplift/components/drawer_widget.dart';
 import 'package:uplift/components/recipient_list_card.dart';
 import 'package:uplift/models/recipient_model.dart';
-
+import '../../constants/constants.dart';
 class RecipientList extends StatefulWidget {
   final List<Recipient>? fetchedRecipients;
 
@@ -149,14 +149,15 @@ class _RecipientListState extends State<RecipientList> {
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Theme.of(context).primaryColor,
-                              Theme.of(context).primaryColor.withOpacity(0.8),
-                            ],
-                          ),
+                          color: AppColors.baseBlue,
+                          // gradient: LinearGradient(
+                          //   begin: Alignment.topLeft,
+                          //   end: Alignment.bottomRight,
+                          //   colors: [
+                          //     Theme.of(context).primaryColor,
+                          //     Theme.of(context).primaryColor.withOpacity(0.8),
+                          //   ],
+                          // ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

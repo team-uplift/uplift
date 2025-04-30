@@ -20,7 +20,7 @@ import 'package:uplift/models/transaction_model.dart';
 import 'package:uplift/providers/transaction_notifier_provider.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:uplift/services/badge_service.dart';
-
+import '../../constants/constants.dart';
 final String secretKey =
     "EKwrpcfi3uHe0lxsC_kwuKr3L5paEFn41Z49fZEwdjVFohu0x-djRhfNGqusnpP_cJ3C6rbErp_HqYc4";
 final String clientID =
@@ -369,14 +369,15 @@ class _DonatePageState extends ConsumerState<DonatePage> {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColor.withOpacity(0.8),
-                    ],
-                  ),
+                  color: AppColors.baseBlue,
+                  // gradient: LinearGradient(
+                  //   begin: Alignment.topLeft,
+                  //   end: Alignment.bottomRight,
+                  //   colors: [
+                  //     Theme.of(context).primaryColor,
+                  //     Theme.of(context).primaryColor.withOpacity(0.8),
+                  //   ],
+                  // ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
