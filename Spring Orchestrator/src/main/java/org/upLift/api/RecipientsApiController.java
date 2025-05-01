@@ -19,7 +19,6 @@ import org.upLift.model.RecipientTag;
 import org.upLift.model.Tag;
 import org.upLift.services.RecipientService;
 import org.upLift.services.TextractService;
-import org.upLift.services.UserService;
 import software.amazon.awssdk.core.SdkBytes;
 
 import java.io.IOException;
@@ -39,14 +38,10 @@ public class RecipientsApiController implements RecipientsApi {
 
 	private final TextractService textractService;
 
-	private final UserService userService;
-
 	@Autowired
-	public RecipientsApiController(RecipientService recipientService, TextractService textractService,
-			UserService userService) {
+	public RecipientsApiController(RecipientService recipientService, TextractService textractService) {
 		this.recipientService = recipientService;
 		this.textractService = textractService;
-		this.userService = userService;
 	}
 
 	public ResponseEntity<List<Tag>> getRandomSelectedTags(
