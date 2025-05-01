@@ -1,0 +1,22 @@
+# Action that only runs the tests, triggered by PRs
+name: Orchestrator Test
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths: [ Spring Orchestrator/** ]
+
+jobs:
+  test:
+    runs-on: [ ubuntu-latest ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4.7.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: maven
+      - name: Run tests
+        run: mvn -Pci -f "./Spring Orchestrator/pom.xml" clean test

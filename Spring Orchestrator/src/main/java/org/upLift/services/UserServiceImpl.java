@@ -35,12 +35,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean donorExists(Integer id) {
-		return userRepository.existsByIdAndRecipient(id, false);
+		return userRepository.existsByIdAndRecipientAndDeletedIsFalse(id, false);
 	}
 
 	@Override
 	public boolean recipientExists(Integer id) {
-		return userRepository.existsByIdAndRecipient(id, true);
+		return userRepository.existsByIdAndRecipientAndDeletedIsFalse(id, true);
 	}
 
 	@Override
@@ -208,7 +208,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deleteUser(Integer id) {
-		userRepository.deleteById(id);
+		var result = userRepository.findById(id);
+		if (result.isEmpty()) {
+			throw new EntityNotFoundException(id, "User", "User with id " + id + " not found");
+		}
+		var user = result.get();
+		user.setDeleted(true);
+		userRepository.save(user);
 	}
 
 	User loadChildData(User user) {
@@ -240,27 +246,27 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	private String generateRandomNickname() {
+	String generateRandomNickname() {
 		List<String> colors = List.of("Red", "Blue", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown", "Black",
 				"White", "Cyan", "Magenta", "Teal", "Lavender", "Maroon", "Navy", "Olive", "Silver", "Gold", "Beige",
 				"Coral", "Turquoise", "Indigo", "Violet", "Amber", "Emerald", "Peach", "Mint", "Charcoal", "Ruby",
 				"Sapphire", "Crimson", "Ivory", "Lilac", "Periwinkle", "Aquamarine", "Fuchsia", "Mustard", "Plum",
 				"Tan");
-		List<String> nicknames = List.of("alligator", "anteater", "armadillo", "auroch", "axolotl", "badger", "bat",
-				"beaver", "buffalo", "camel", "chameleon", "cheetah", "chipmunk", "chinchilla", "chupacabra",
-				"cormorant", "coyote", "crow", "dingo", "dinosaur", "dolphin", "duck", "dragon", "elephant", "ferret",
-				"fox", "frog", "giraffe", "gopher", "grizzly", "hedgehog", "hippo", "hyena", "jackal", "ibex", "ifrit",
-				"iguana", "koala", "kraken", "lemur", "leopard", "liger", "llama", "manatee", "mink", "monkey",
-				"narwhal", "nyan cat", "orangutan", "otter", "panda", "penguin", "platypus", "python", "pumpkin",
-				"quagga", "rabbit", "raccoon", "rhino", "sheep", "shrew", "skunk", "slow loris", "squirrel", "turtle",
-				"walrus", "wolf", "wolverine", "wombat");
+		List<String> nicknames = List.of("alligator", "anteater", "antelope", "armadillo", "auroch", "axolotl",
+				"badger", "bat", "beaver", "buffalo", "camel", "chameleon", "cheetah", "chipmunk", "chinchilla",
+				"condor", "cormorant", "coyote", "crow", "dingo", "dinosaur", "dolphin", "duck", "dragon", "elephant",
+				"ferret", "fox", "frog", "giraffe", "gopher", "grizzly", "hedgehog", "hippo", "hyena", "jackal", "ibex",
+				"iguana", "koala", "kraken", "lemur", "leopard", "liger", "llama", "manatee", "mink", "monkey", "moose",
+				"narwhal", "nyan cat", "orangutan", "otter", "panda", "penguin", "platypus", "python", "quokka",
+				"rabbit", "raccoon", "rhino", "shark", "sheep", "shrew", "skunk", "slow loris", "squirrel", "swan",
+				"turtle", "walrus", "wolf", "wolverine", "wombat", "zebra");
 		Random random = new Random();
 		String color = colors.get(random.nextInt(colors.size()));
 		String nickname = nicknames.get(random.nextInt(nicknames.size()));
 		return color + " " + nickname;
 	}
 
-	private String generateIconUrl(String seed) {
+	String generateIconUrl(String seed) {
 		return "https://api.dicebear.com/7.x/pixel-art/svg?seed=" + seed;
 	}
 

@@ -50,7 +50,7 @@ class DonorRepositoryTest extends BaseRepositoryTest {
 	void testSaveDonor() {
 		// Create and save a new user
 		User user = new User();
-		user.setCognitoId("550e8400-e29b-41d4-a716-446655440009");
+		user.setCognitoId("550e8400-e29b-41d4-a716-446655440099");
 		user.setEmail("donor2@example.com");
 		user.setRecipient(false);
 
@@ -75,14 +75,13 @@ class DonorRepositoryTest extends BaseRepositoryTest {
 		// Validate the saved donor
 		assertThat(loadedDonor.getId(), notNullValue());
 		assertThat(loadedDonor.getNickname(), is("GenerousDonor"));
-		assertThat(loadedDonor.getCreatedAt(), is(notNullValue())); // Ensure createdAt is
-																	// set
-		assertThat(loadedDonor.getCreatedAt(), is(lessThanOrEqualTo(Instant.now()))); // Ensure
-																						// createdAt
+		// Ensure createdAt is set
+		assertThat(loadedDonor.getCreatedAt(), is(notNullValue()));
+		assertThat(loadedDonor.getCreatedAt(), is(lessThanOrEqualTo(Instant.now())));
 		var loadedUser = loadedDonor.getUser();
 		// Validate the parent User properties
 		assertThat(loadedUser.getId(), notNullValue());
-		assertThat(loadedUser.getCognitoId(), is("550e8400-e29b-41d4-a716-446655440009"));
+		assertThat(loadedUser.getCognitoId(), is("550e8400-e29b-41d4-a716-446655440099"));
 		assertThat(loadedUser.getEmail(), is("donor2@example.com"));
 		assertThat(loadedUser.isRecipient(), is(false));
 	}

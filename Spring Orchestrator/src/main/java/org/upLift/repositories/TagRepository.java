@@ -13,7 +13,10 @@ public interface TagRepository extends JpaRepository<Tag, String> {
 	 * @return List containing all tags selected by at least one recipient
 	 */
 	@Query("""
-			SELECT tag.tag FROM RecipientTag tag WHERE tag.selected = true GROUP BY tag.tag.tagName
+			SELECT tag.tag FROM RecipientTag tag
+			WHERE tag.selected = true
+				AND tag.recipient.user.deleted = false
+			GROUP BY tag.tag.tagName
 			""")
 	List<Tag> getSelectedTags();
 

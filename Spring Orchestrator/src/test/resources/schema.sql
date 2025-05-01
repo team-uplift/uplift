@@ -6,8 +6,9 @@ CREATE TABLE users
     id         integer PRIMARY KEY AUTO_INCREMENT,
     cognito_id varchar(36), -- Replace uuid with varchar(36) for compatibility
     email      varchar(320),
-    recipient  boolean,
-    created_at timestamp NOT NULL
+    recipient  boolean NOT NULL,
+    created_at timestamp NOT NULL,
+    deleted    boolean NOT NULL DEFAULT false
 );
 
 CREATE TABLE recipients
