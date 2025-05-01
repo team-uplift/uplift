@@ -11,7 +11,8 @@ class Donation {
   final int recipientId;
   final String recipientName;
   final DateTime createdAt;
-
+  final String? thankYouMessage;
+  final String? nickname;
   Donation({
     required this.id,
     required this.amount,
@@ -19,6 +20,8 @@ class Donation {
     required this.recipientId,
     required this.recipientName,
     required this.createdAt,
+    this.thankYouMessage,
+    this.nickname,
   });
 
   factory Donation.fromJson(Map<String, dynamic> json) {
@@ -30,7 +33,8 @@ class Donation {
     final donorId = json['donorId'] as int? ?? 0;
     final recipientId = json['recipientId'] as int? ?? 0;
     final recipientName = json['recipientName'] as String? ?? 'Anonymous';
-
+    final thankYouMessage = json['thankYouMessage'] as String?;
+    final nickname = json['nickname'] as String?;
     // Parse date with error handling
     DateTime createdAt;
     try {
@@ -47,6 +51,8 @@ class Donation {
       recipientId: recipientId,
       recipientName: recipientName,
       createdAt: createdAt,
+      thankYouMessage: thankYouMessage,
+      nickname: nickname,
     );
   }
 }

@@ -4,6 +4,7 @@ import '../../constants/constants.dart';
 import 'package:uplift/api/user_api.dart';
 import 'package:uplift/models/user_model.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import '../../components/settings_card.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -101,14 +102,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: AppColors.baseBlue,
-                // gradient: LinearGradient(
-                //   begin: Alignment.topLeft,
-                //   end: Alignment.bottomRight,
-                //   colors: [
-                //     Theme.of(context).primaryColor,
-                //     Theme.of(context).primaryColor.withOpacity(0.8),
-                //   ],
-                // ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,114 +131,43 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  _buildSettingCard(
-                    "Change Password",
-                    "Update your account password",
-                    Icons.lock_outline,
-                    () {
-                      // TODO: Implement password change
+                  SettingsCard(
+                    title: "Change Password",
+                    description: "Update your account password",
+                    icon: Icons.lock_outline,
+                    onTap: () {
+                      context.pushNamed('/change_password');
                     },
                   ),
+                  // const SizedBox(height: 16),
+                  // SettingsCard(
+                  //   title: "Email Preferences",
+                  //   description: "Manage your email notifications",
+                  //   icon: Icons.email_outlined,
+                  //   onTap: () {
+                  //   },
+                  // ),
+                  // const SizedBox(height: 16),
+                  // SettingsCard(
+                  //   title: "Two-Factor Authentication",
+                  //   description: "Add an extra layer of security",
+                  //   icon: Icons.security_outlined,
+                  //   onTap: () {
+                  //   },
+                  // ),
+
                   const SizedBox(height: 16),
-                  _buildSettingCard(
-                    "Email Preferences",
-                    "Manage your email notifications",
-                    Icons.email_outlined,
-                    () {
-                      // TODO: Implement email preferences
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  _buildSettingCard(
-                    "Two-Factor Authentication",
-                    "Add an extra layer of security",
-                    Icons.security_outlined,
-                    () {
-                      // TODO: Implement 2FA
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  _buildSettingCard(
-                    "Delete Account",
-                    "Permanently delete your account",
-                    Icons.delete_outline,
-                    _handleDeleteAccount,
-                    isDestructive: true,
+
+                  SettingsCard(
+                    title: "Delete Account",
+                    description: "Permanently delete your account",
+                    icon: Icons.delete_outline,
+                    onTap: _handleDeleteAccount,
                   ),
                 ],
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSettingCard(
-    String title,
-    String description,
-    IconData icon,
-    VoidCallback onTap, {
-    bool isDestructive = false,
-  }) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: isDestructive
-                      ? Colors.red.withOpacity(0.1)
-                      : Theme.of(context).primaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  icon,
-                  size: 24,
-                  color: isDestructive
-                      ? Colors.red
-                      : Theme.of(context).primaryColor,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: isDestructive ? Colors.red : null,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: Colors.grey[400],
-              ),
-            ],
-          ),
         ),
       ),
     );
