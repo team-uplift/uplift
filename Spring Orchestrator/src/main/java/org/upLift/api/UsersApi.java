@@ -29,7 +29,7 @@ public interface UsersApi {
 			tags = { "User" })
 	@ApiResponses(
 			value = {
-					@ApiResponse(responseCode = "200", description = "Successful operation",
+					@ApiResponse(responseCode = "201", description = "Successful operation",
 							content = @Content(mediaType = "application/json",
 									schema = @Schema(implementation = User.class))),
 
@@ -43,8 +43,12 @@ public interface UsersApi {
 	@Operation(summary = "Deletes a user", description = "delete a user",
 			security = { @SecurityRequirement(name = "userstore_auth", scopes = { "write:users", "read:users" }) },
 			tags = { "User" })
-	@ApiResponses(value = { @ApiResponse(responseCode = "400", description = "Invalid ID supplied") })
-	@RequestMapping(value = "/users/{userId}", method = RequestMethod.DELETE)
+	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "User deletion successful"),
+			@ApiResponse(responseCode = "404", description = "User not found to delete",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = ErrorResults.EntityNotFoundError.class))) })
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@DeleteMapping(value = "/users/{userId}")
 	void deleteUser(@Parameter(in = ParameterIn.PATH, description = "User id to delete", required = true,
 			schema = @Schema()) @PathVariable("userId") Integer userId);
 

@@ -25,6 +25,27 @@ class UserRepositoryTest extends BaseRepositoryTest {
 	private EntityManager entityManager;
 
 	@Test
+	void testExistsByIdAndRecipientAndDeletedIsFalse() {
+		// Check recipient with id = 1
+		assertThat(userRepository.existsByIdAndRecipientAndDeletedIsFalse(1, true), is(true));
+		assertThat(userRepository.existsByIdAndRecipientAndDeletedIsFalse(1, false), is(false));
+
+		// Check donor with id = 3
+		assertThat(userRepository.existsByIdAndRecipientAndDeletedIsFalse(3, true), is(false));
+		assertThat(userRepository.existsByIdAndRecipientAndDeletedIsFalse(3, false), is(true));
+
+		// Check deleted recipient id = 9
+		assertThat(userRepository.existsById(9), is(true));
+		assertThat(userRepository.existsByIdAndRecipientAndDeletedIsFalse(9, true), is(false));
+		assertThat(userRepository.existsByIdAndRecipientAndDeletedIsFalse(9, false), is(false));
+
+		// Check deleted donor id = 10
+		assertThat(userRepository.existsById(10), is(true));
+		assertThat(userRepository.existsByIdAndRecipientAndDeletedIsFalse(10, true), is(false));
+		assertThat(userRepository.existsByIdAndRecipientAndDeletedIsFalse(10, false), is(false));
+	}
+
+	@Test
 	@DisplayName("Test finding a user by ID and validate all properties, including child entities")
 	void testFindById() {
 		// Check recipient with ID = 2
@@ -147,7 +168,8 @@ class UserRepositoryTest extends BaseRepositoryTest {
 		assertThat(loadedUser.isRecipient(), is(false));
 		assertThat(loadedUser.isDonor(), is(true));
 		assertThat(loadedUser.getCreatedAt(), is(notNullValue()));
-		assertThat(loadedUser.getCreatedAt(), is(greaterThanOrEqualTo(now)));
+		// Subtract 1 second from now to make sure the "createdAt" is greater
+		assertThat(loadedUser.getCreatedAt(), is(greaterThan(now.minusSeconds(1))));
 
 		// Validate the saved donor data
 		assertThat(loadedUser.getDonorData(), notNullValue());

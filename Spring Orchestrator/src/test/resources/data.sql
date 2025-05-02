@@ -3,15 +3,20 @@
 ALTER TABLE messages ALTER COLUMN id RESTART WITH 1;
 
 -- Insert sample data into `users`
-INSERT INTO users (id, cognito_id, email, recipient, created_at)
-VALUES (1, '550e8400-e29b-41d4-a716-446655440000', 'recipient1@example.com', TRUE, '2023-10-01 10:20:30.123'),
-       (2, '550e8400-e29b-41d4-a716-446655440001', 'recipient2@example.com', TRUE, '2023-10-05 11:25:40.456'),
-       (3, '550e8400-e29b-41d4-a716-446655440002', 'donor1@example.com', FALSE, '2023-10-10 12:30:50.789'),
-       (4, '550e8400-e29b-41d4-a716-446655440003', 'donor2@example.com', FALSE, '2023-10-15 13:35:00.321'),
-       (5, '550e8400-e29b-41d4-a716-446655440004', 'recipient3@example.com', TRUE, '2023-10-20 14:25:30.123'),
-       (6, '550e8400-e29b-41d4-a716-446655440005', 'recipient4@example.com', TRUE, '2023-10-25 09:15:30.123'),
-       (7, '550e8400-e29b-41d4-a716-446655440007', 'recipient5@example.com', TRUE, '2023-10-27 11:32:57.123'),
-       (8, '550e8400-e29b-41d4-a716-446655440006', 'donor3@example.com', FALSE, '2023-10-15 16:30:30.123');
+INSERT INTO users (id, cognito_id, email, recipient, created_at, deleted)
+VALUES (1, '550e8400-e29b-41d4-a716-446655440000', 'recipient1@example.com', TRUE, '2023-10-01 10:20:30.123', FALSE),
+       (2, '550e8400-e29b-41d4-a716-446655440001', 'recipient2@example.com', TRUE, '2023-10-05 11:25:40.456', FALSE),
+       (3, '550e8400-e29b-41d4-a716-446655440002', 'donor1@example.com', FALSE, '2023-10-10 12:30:50.789', FALSE),
+       (4, '550e8400-e29b-41d4-a716-446655440003', 'donor2@example.com', FALSE, '2023-10-15 13:35:00.321', FALSE),
+       (5, '550e8400-e29b-41d4-a716-446655440004', 'recipient3@example.com', TRUE, '2023-10-20 14:25:30.123', FALSE),
+       (6, '550e8400-e29b-41d4-a716-446655440005', 'recipient4@example.com', TRUE, '2023-10-25 09:15:30.123', FALSE),
+       (7, '550e8400-e29b-41d4-a716-446655440007', 'recipient5@example.com', TRUE, '2023-10-27 11:32:57.123', FALSE),
+       (8, '550e8400-e29b-41d4-a716-446655440006', 'donor3@example.com', FALSE, '2023-10-15 16:30:30.123', FALSE),
+       -- Add a deleted recipient to check filtering
+       (9, '550e8400-e29b-41d4-a716-446655440008', 'recipient6@example.com', TRUE, '2023-10-28 13:45:30.123', TRUE),
+       -- Add a deleted donor to check filtering
+       (10, '550e8400-e29b-41d4-a716-446655440009', 'donor4@example.com', TRUE, '2023-10-29 18:32:19.547', TRUE);
+
 
 
 -- Insert sample data into `recipients`
@@ -39,15 +44,25 @@ VALUES (1, 'John', 'Doe', '123 Elm St', '', 'Springfield', 'IL', '62701', 'About
         'About test', 'Test reason', '[{"question":"question7","answer":"answer7"}]', 'https://example.com/image7.jpg',
         DATEADD('DAY', -10, CURRENT_TIMESTAMP), DATEADD('DAY', -100, CURRENT_TIMESTAMP), 'Purple koala',
         '2023-10-27 11:31:43.471', NULL,
-            '2023-10-27 11:32:57.123');
-
+            '2023-10-27 11:32:57.123'),
+       (9, 'Robert', 'Wilson', '567 Cedar Lane', 'Unit 12', 'Portland', 'OR', '97201',
+        'About Robert', 'Need assistance with basics',
+        '[{"question":"Tell us about yourself.","answer":"Working to get back on my feet"}]',
+        'http://example.com/image9.jpg',
+        '2023-10-28 13:50:30.123',
+        DATEADD('DAY', -50, CURRENT_TIMESTAMP),
+        'Rob',
+        '2023-10-28 14:00:10.789',
+        NULL,
+        '2023-10-28 13:45:30.123');
 
 
 -- Insert sample data into `donors`
 INSERT INTO donors (id, nickname, created_at)
 VALUES (3, 'KindDonor1', '2023-10-10 12:30:50.789'),
        (4, 'HelpfulDonor2', '2023-10-15 13:35:00.321'),
-       (8, 'GenerousSoul3', '2023-10-15 16:30:30.123');
+       (8, 'GenerousSoul3', '2023-10-15 16:30:30.123'),
+       (10, 'Donor4', '2023-10-29 18:32:20.458');
 
 
 -- Insert sample data into `donor_sessions`
@@ -76,7 +91,9 @@ VALUES ('food', 'necessities', '2023-10-05 09:20:30.123'),
        ('job-training', 'education', '2023-10-19 16:20:50.987'),
        ('legal-aid', 'support', '2023-10-20 17:30:50.321'),
        ('food-banks', 'necessities', '2023-10-21 18:40:00.654'),
-       ('financial-planning', 'self-improvement', '2023-10-22 19:50:10.987');
+       ('financial-planning', 'self-improvement', '2023-10-22 19:50:10.987'),
+       -- tag linked only to recipient 9 (deleted)
+       ('elderly parent', 'support', '2023-10-23 07:38:41.394');
 
 -- Insert sample data into `messages`
 INSERT INTO messages (donation_id, message, donor_read, created_at)
@@ -132,7 +149,15 @@ VALUES
 
     -- tags linked to recipient 7
     ('financial-planning', 7, 0.32, TRUE, '2023-10-27 11:31:43.471'),
-    ('food-banks', 7, 0.48, FALSE, '2023-10-27 11:31:43.471');
+    ('food-banks', 7, 0.48, FALSE, '2023-10-27 11:31:43.471'),
+
+    -- tags linked to recipient 9 (deleted)
+    ('elderly parent', 9, 0.80, TRUE, '2023-10-28 14:20:01.234'),
+    ('financial-planning', 9, 0.80, TRUE, '2023-10-28 14:20:00.123'),
+    ('food-banks', 9, 0.70, TRUE, '2023-10-28 14:15:50.789'),
+    ('health', 9, 0.85, TRUE, '2023-10-28 14:05:30.123'),
+    ('job-training', 9, 0.75, TRUE, '2023-10-28 14:10:40.456'),
+    ('transportation', 9, 0.65, FALSE, '2023-10-28 14:25:10.456');
 
 
 -- Insert sample data into `donor_shown_tags`
@@ -153,7 +178,7 @@ VALUES (3, 1),
        (4, 1);
 
 -- Now that all the data is added, fix the auto increment sequence generators since we're
--- manually setting ids for some of the tables to ensure the foreign keys work
+-- manually setting ids for some the tables to ensure the foreign keys work
 
 ALTER TABLE users
     ALTER COLUMN id RESTART WITH ((SELECT MAX(id) FROM users) + 1);
