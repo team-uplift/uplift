@@ -6,12 +6,13 @@ import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 
 import 'package:uplift/api/tag_api.dart';
+import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/tag_model.dart';
 
 class MockClient extends Mock implements http.Client {}
 
 void main() {
-  const baseUrl = TagApi.baseUrl;
+  const baseUrl = AppConfig.baseUrl;
   late MockClient mockClient;
   late TagApi api;
 

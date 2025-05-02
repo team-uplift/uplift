@@ -21,12 +21,12 @@ void main() {
     dummyRecipient = Recipient(id: 1, formQuestions: []);
     dummyUser = User(
       id: 1,
-      createdAt: DateTime.now(),
       cognitoId: 'cid',
       email: 'a@b.com',
       recipient: true,
       recipientData: dummyRecipient,
       donorData: null,
+      createdAt: DateTime.now(),
     );
   });
 
@@ -35,49 +35,46 @@ void main() {
       home: RecipientHistoryScreen(
         profile: dummyUser,
         recipient: dummyRecipient,
-        api: mockApi,
+        api: mockApi, // make sure your widget takes this `api` parameter
       ),
     );
   }
 
-  testWidgets('tapping a card pushes detail screen and then reloads when popped true',
-      (tester) async {
-    final donation = Donation(
-      id: 20,
-      createdAt: DateTime.parse('2025-03-03T00:00:00Z'),
-      donorName: 'Carol',
-      amount: 250,
-    );
+  testWidgets(
+    'tapping a card pushes detail screen and then reloads when popped true',
+    (tester) async {
+      // Arrange: set up one donation, then an empty list on the second call
+      final donation = Donation(
+        id: 20,
+        createdAt: DateTime.parse('2025-03-03T00:00:00Z'),
+        donorName: 'Carol',
+        amount: 250,
+      );
+      var callCount = 0;
+      when(() => mockApi.fetchDonationsForRecipient(1)).thenAnswer((_) async {
+        callCount++;
+        final list = callCount == 1 ? [donation] : <Donation>[];
+        return (list, list.isEmpty ? "No donations yet." : '');
+      });
+      // Act: pump & settle so initState/_loadDonations runs
+      await tester.pumpWidget(_buildTestApp());
+      await tester.pumpAndSettle();
 
-    // First call returns [donation], second call returns empty list
-    var callCount = 0;
-    when(() => mockApi.fetchDonationsForRecipient(1))
-        .thenAnswer((_) async {
-      callCount++;
-      return callCount == 1 ? [donation] : <Donation>[];
-    });
+      // Verify initial card shows up
+      expect(find.text('From Carol'), findsOneWidget);
 
-    await tester.pumpWidget(_buildTestApp());
+      // Act: tap the card to navigate
+      await tester.tap(find.byType(ListTile).first);
+      await tester.pumpAndSettle();
 
-    // initial load
-    await tester.pump();             // start initState
-    await tester.pumpAndSettle();    // finish first load
+      // Simulate popping the detail screen with `true`
+      tester.state<NavigatorState>(find.byType(Navigator)).pop(true);
+      await tester.pumpAndSettle();
 
-    // one card present
-    expect(find.text('From Carol'), findsOneWidget);
-
-    // Tap it
-    await tester.tap(find.byType(ListTile).first);
-    await tester.pump(); // begin navigation
-
-    // Simulate that HistoryDetailScreen popped with 'true'
-    tester.state<NavigatorState>(find.byType(Navigator)).pop(true);
-    await tester.pumpAndSettle();
-
-    // Now the second stub ran and returned empty list.
-    // Since _isLoading stays false, no spinner—just empty-state.
-    expect(find.byType(CircularProgressIndicator), findsNothing);
-    expect(find.text('No donations yet'), findsOneWidget);
-    expect(find.byIcon(Icons.inbox_outlined), findsOneWidget);
-  });
+      // Assert: after the pop we hit the second stub (empty list)
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.text('No donations yet.'), findsOneWidget);
+      expect(find.byIcon(Icons.inbox_outlined), findsOneWidget);
+    },
+  );
 }

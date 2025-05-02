@@ -6,17 +6,17 @@ import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 
 import 'package:uplift/api/recipient_api.dart';
+import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/donation_model.dart';
 
 class MockClient extends Mock implements http.Client {}
 
 void main() {
-  const baseUrl = RecipientApi.baseUrl;
+  const baseUrl = AppConfig.baseUrl;
   late MockClient mockClient;
   late RecipientApi api;
 
   setUpAll(() {
-    // In case any named parameters need fallback values
     registerFallbackValue(Uri());
   });
 
@@ -52,20 +52,23 @@ void main() {
         (_) async => http.Response(jsonEncode(responseJson), 200),
       );
 
-      final id = await api.createRecipientUser(formData, formQuestions, attrMap);
-      expect(id, 99);
+      final id =
+          await api.createRecipientUser(formData, formQuestions, attrMap);
+      expect(id, equals(99));
     });
 
     test('returns id on 201', () async {
-      when(() => mockClient.post(any(), headers: any(named: 'headers'), body: any(named: 'body')))
+      when(() => mockClient.post(any(),
+              headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response(jsonEncode({'id': 42}), 201));
 
       final id = await api.createRecipientUser({}, [], {});
-      expect(id, 42);
+      expect(id, equals(42));
     });
 
     test('returns null on error status', () async {
-      when(() => mockClient.post(any(), headers: any(named: 'headers'), body: any(named: 'body')))
+      when(() => mockClient.post(any(),
+              headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response('fail', 500));
 
       final id = await api.createRecipientUser({}, [], {});
@@ -73,8 +76,9 @@ void main() {
     });
 
     test('returns null on exception', () async {
-      when(() => mockClient.post(any(), headers: any(named: 'headers'), body: any(named: 'body')))
-          .thenThrow(Exception('network'));
+      when(() => mockClient.post(any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'))).thenThrow(Exception('network'));
 
       final id = await api.createRecipientUser({}, [], {});
       expect(id, isNull);
@@ -94,7 +98,8 @@ void main() {
     });
 
     test('returns false on non-204', () async {
-      when(() => mockClient.put(any(), headers: any(named: 'headers'), body: any(named: 'body')))
+      when(() => mockClient.put(any(),
+              headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response('', 400));
 
       final ok = await api.updateTags(7, []);
@@ -102,8 +107,9 @@ void main() {
     });
 
     test('returns false on exception', () async {
-      when(() => mockClient.put(any(), headers: any(named: 'headers'), body: any(named: 'body')))
-          .thenThrow(Exception());
+      when(() => mockClient.put(any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'))).thenThrow(Exception());
 
       final ok = await api.updateTags(7, []);
       expect(ok, isFalse);
@@ -111,7 +117,7 @@ void main() {
   });
 
   group('fetchDonationsForRecipient', () {
-    test('parses list on 200', () async {
+    test('parses list on 200 and message is empty', () async {
       final donationsJson = [
         {
           'id': 1,
@@ -121,21 +127,37 @@ void main() {
         }
       ];
       when(() => mockClient.get(
-            Uri.parse('$baseUrl/donations/recipient/5'),
-            headers: {'Content-Type': 'application/json'},
-          )).thenAnswer((_) async => http.Response(jsonEncode(donationsJson), 200));
+                Uri.parse('$baseUrl/donations/recipient/5'),
+                headers: {'Content-Type': 'application/json'},
+              ))
+          .thenAnswer(
+              (_) async => http.Response(jsonEncode(donationsJson), 200));
 
-      final list = await api.fetchDonationsForRecipient(5);
-      expect(list, hasLength(1));
-      expect(list.first.donorName, 'X');
+      final result = await api.fetchDonationsForRecipient(5);
+      final donations = result.$1;
+      final message = result.$2;
+
+      expect(donations, hasLength(1));
+      expect(donations.first.donorName, 'X');
+      expect(message, isEmpty); // <— now we assert it's the empty string
     });
 
-    test('returns empty list on non-200', () async {
+    test('returns empty list and fixed error message on non-200', () async {
       when(() => mockClient.get(any(), headers: any(named: 'headers')))
-          .thenAnswer((_) async => http.Response('fail', 404));
+          .thenAnswer((_) async => http.Response('not found', 404));
 
-      final list = await api.fetchDonationsForRecipient(5);
-      expect(list, isEmpty);
+      final result = await api.fetchDonationsForRecipient(5);
+      expect(result.$1, isEmpty);
+      expect(result.$2, equals('Failed to fetch donations.'));
+    });
+
+    test('returns empty list and exception message on exception', () async {
+      when(() => mockClient.get(any(), headers: any(named: 'headers')))
+          .thenThrow(Exception('oops'));
+
+      final result = await api.fetchDonationsForRecipient(5);
+      expect(result.$1, isEmpty);
+      expect(result.$2, equals('Error fetching donations.'));
     });
   });
 
@@ -148,16 +170,18 @@ void main() {
         'amount': 2000
       };
       when(() => mockClient.get(
-            Uri.parse('$baseUrl/donations/2'),
-            headers: {'Content-Type': 'application/json'},
-          )).thenAnswer((_) async => http.Response(jsonEncode(donationJson), 200));
+                Uri.parse('$baseUrl/donations/2'),
+                headers: {'Content-Type': 'application/json'},
+              ))
+          .thenAnswer(
+              (_) async => http.Response(jsonEncode(donationJson), 200));
 
       final d = await api.fetchDonationById(2);
       expect(d, isNotNull);
-      expect(d!.id, 2);
+      expect(d!.id, equals(2));
     });
 
-    test('returns null on error', () async {
+    test('returns null on exception', () async {
       when(() => mockClient.get(any(), headers: any(named: 'headers')))
           .thenThrow(Exception());
 
@@ -167,7 +191,7 @@ void main() {
   });
 
   group('sendThankYouMessage', () {
-    test('returns Donation on 200', () async {
+    test('returns Donation on 200/201', () async {
       final resJson = {
         'id': 3,
         'createdAt': '2025-04-21T10:00:00Z',
@@ -182,11 +206,12 @@ void main() {
 
       final d = await api.sendThankYouMessage(donationId: 3, message: 'thanks');
       expect(d, isNotNull);
-      expect(d!.donorName, 'Z');
+      expect(d!.donorName, equals('Z'));
     });
 
     test('returns null on non-200/201', () async {
-      when(() => mockClient.post(any(), headers: any(named: 'headers'), body: any(named: 'body')))
+      when(() => mockClient.post(any(),
+              headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response('', 400));
 
       final d = await api.sendThankYouMessage(donationId: 3, message: 'x');
@@ -194,8 +219,9 @@ void main() {
     });
 
     test('returns null on exception', () async {
-      when(() => mockClient.post(any(), headers: any(named: 'headers'), body: any(named: 'body')))
-          .thenThrow(Exception());
+      when(() => mockClient.post(any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'))).thenThrow(Exception());
 
       final d = await api.sendThankYouMessage(donationId: 3, message: 'x');
       expect(d, isNull);
@@ -227,15 +253,18 @@ void main() {
             body: any(named: 'body'),
           )).thenAnswer((_) async => http.Response('', 200));
 
-      final ok = await api.updateRecipientUserProfile(formData, formQuestions, attrMap);
+      final ok = await api.updateRecipientUserProfile(
+          formData, formQuestions, attrMap);
       expect(ok, isTrue);
     });
 
     test('returns false on exception', () async {
-      when(() => mockClient.put(any(), headers: any(named: 'headers'), body: any(named: 'body')))
-          .thenThrow(Exception());
+      when(() => mockClient.put(any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'))).thenThrow(Exception());
 
-      final ok = await api.updateRecipientUserProfile(formData, formQuestions, attrMap);
+      final ok = await api.updateRecipientUserProfile(
+          formData, formQuestions, attrMap);
       expect(ok, isFalse);
     });
   });

@@ -54,7 +54,7 @@ void main() {
           path: '/',
           builder: (c, s) => RecipientSettingsScreen(
             profile: dummyUser,
-            recipient: dummyRecipient,
+            recipient: dummyRecipient, onVerifyPressed: () {  },
           ),
         ),
         GoRoute(
@@ -134,7 +134,7 @@ void main() {
           path: '/',
           builder: (c, s) => RecipientSettingsScreen(
             profile: dummyUser,
-            recipient: dummyRecipient,
+            recipient: dummyRecipient, onVerifyPressed: () {  },
           ),
         ),
       ],

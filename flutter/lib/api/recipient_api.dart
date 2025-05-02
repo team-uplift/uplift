@@ -145,11 +145,11 @@ class RecipientApi {
         return (donationsList, msg);
       } else {
         log.severe("Failed to fetch donations: ${response.statusCode}");
-        return ([] as List<Donation>, "Failed to fetch donations.");
+        return (<Donation>[], "Failed to fetch donations.");
       }
     } catch (e) {
       log.severe("Error fetching donations: $e");
-      return ([] as List<Donation>, "Error fetching donations.");
+      return (<Donation>[], "Error fetching donations.");
     }
   }
 
