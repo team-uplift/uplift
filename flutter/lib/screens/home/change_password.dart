@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/constants.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -31,8 +32,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       setState(() => _isLoading = true);
 
       try {
-        // TODO: Implement password change logic
-        await Future.delayed(const Duration(seconds: 1)); // Simulate API call
+        await Amplify.Auth.updatePassword(
+          oldPassword: _currentPasswordController.text,
+          newPassword: _newPasswordController.text,
+        );
+
         if (mounted) {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
@@ -42,7 +46,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: ${e.toString()}')),
+            SnackBar(content: Text('Error updating password: ${e.toString()}')),
           );
         }
       } finally {

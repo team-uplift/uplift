@@ -3,7 +3,6 @@ import '../../constants/constants.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import '../../api/user_api.dart';
 
-
 class PersonalInfoScreen extends StatefulWidget {
   const PersonalInfoScreen({super.key});
 
@@ -134,7 +133,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              
               const SizedBox(height: 20),
               TextFormField(
                 controller: _emailController,
@@ -168,7 +166,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 },
               ),
               const SizedBox(height: 20),
-              
               const SizedBox(height: 32),
               SizedBox(
                 height: 56,
