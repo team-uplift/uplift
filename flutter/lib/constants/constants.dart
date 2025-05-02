@@ -12,6 +12,9 @@ class AppColors {
   static const Color warmWhite = Color(0xFFFFF8F0);
   static const Color mutedTeal = Color(0xFF5CB8A7);
   static const Color lightBeige = Color(0xFFFFF3E0);
+}
 
-
+class AppConfig {
+    static const baseUrl =
+      'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
 }

@@ -4,6 +4,7 @@
 /// Includes:
 /// - getting user attributes from cognito
 /// - getting the auth session and
+library;
 
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';

@@ -12,25 +12,25 @@ library;
 
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/user_model.dart';
 import 'dart:convert';
 
 import 'package:uplift/utils/logger.dart';
 
 class UserApi {
-  // for testing purposes
+  // pass http client for testing or default to normal http client
   final http.Client client;
-
   UserApi({http.Client? client}) : client = client ?? http.Client();
-  
-  static const baseUrl =
-      'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
+
+  // static const baseUrl =
+  //     'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
 
   /// fetches a user by a user id
   ///
   /// returns a User object on success, null on failure
   Future<User?> fetchUserById(String userId) async {
-    final url = Uri.parse('$baseUrl/users/cognito/$userId');
+    final url = Uri.parse('${AppConfig.baseUrl}/users/cognito/$userId');
 
     try {
       final response = await client.get(url);
@@ -45,7 +45,6 @@ class UserApi {
       }
     } catch (e) {
       log.severe('Error fetching donor: $e');
-
       return null;
     }
   }
@@ -54,7 +53,7 @@ class UserApi {
   ///
   /// returns 'true' on success, 'false' on failure
   Future<bool> updateUser(User user) async {
-    final url = Uri.parse('$baseUrl/users');
+    final url = Uri.parse('${AppConfig.baseUrl}/users');
 
     try {
       final response = await client.put(
@@ -74,7 +73,7 @@ class UserApi {
   ///
   /// returns a User object on success, null on failure
   Future<User?> convertToDonor(User user) async {
-    final url = Uri.parse('$baseUrl/users/switch/donor/${user.id}');
+    final url = Uri.parse('${AppConfig.baseUrl}/users/switch/donor/${user.id}');
 
     final payload = {
       'nickname': user.recipientData?.nickname,
@@ -109,7 +108,7 @@ class UserApi {
   ///
   /// returns a User object on success, null on failure
   Future<User?> convertToRecipient(User user) async {
-    final url = Uri.parse('$baseUrl/users/switch/recipient');
+    final url = Uri.parse('${AppConfig.baseUrl}/users/switch/recipient');
 
     try {
       final response = await client.put(
@@ -142,7 +141,7 @@ class UserApi {
 
     try {
       final response = await client.delete(
-        Uri.parse('$baseUrl/users/$userId'),
+        Uri.parse('${AppConfig.baseUrl}/users/$userId'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -179,7 +178,7 @@ class UserApi {
     };
 
     final response = await client.put(
-      Uri.parse('$baseUrl/users'),
+      Uri.parse('${AppConfig.baseUrl}/users'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(payload),
     );

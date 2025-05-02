@@ -43,6 +43,7 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
   }
 
   List<Donation> historyItems = [];
+  String msg = "";
   bool _isLoading = true;
 
 
@@ -53,7 +54,8 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
         await api.fetchDonationsForRecipient(widget.profile.id!);
 
     setState(() {
-      historyItems = donations;
+      historyItems = donations.$1;
+      msg = donations.$2;
       _isLoading = false;
     });
   }
@@ -73,11 +75,11 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[400]),
+                          Icon(Icons.inbox_outlined, size: 64, color: AppColors.baseBlue),
                           const SizedBox(height: 16),
                           Text(
-                            "No donations yet",
-                            style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                            msg,
+                            style: TextStyle(fontSize: 18, color: Colors.black),
                           ),
                         ],
                       ),
