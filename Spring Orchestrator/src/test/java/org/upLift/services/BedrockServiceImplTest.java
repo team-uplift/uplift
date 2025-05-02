@@ -44,23 +44,18 @@ class BedrockServiceImplTest {
 				+ "numeric weights (from 0 to 1) in the format tag:number. "
 				+ "If the tag is more than one word separate the tag's words with a space. "
 				+ "Do not use underscores or dashes. Tags are less than 4 words each. "
-				+ "Remove any gendered language and racial content. "
-				+ "Generate at least 15 tags. "
+				+ "Remove any gendered language and racial content. " + "Generate at least 15 tags. "
 				+ "The tags describe the contents and the weights are how relevant the tag is to the following prompt: "
 				+ prompt;
 
 		// mock static ChatClient.create(...) to return a deep-stubbed ChatClient
 		try (MockedStatic<ChatClient> chatClientStatic = mockStatic(ChatClient.class)) {
 			var chatClientMock = mock(ChatClient.class, RETURNS_DEEP_STUBS);
-			chatClientStatic.when(() -> ChatClient.create(chatModel))
-					.thenReturn(chatClientMock);
+			chatClientStatic.when(() -> ChatClient.create(chatModel)).thenReturn(chatClientMock);
 
 			// stub the builder chain to return our fake response
-			when(chatClientMock.prompt()
-					.user((Consumer<ChatClient.PromptUserSpec>) any())
-					.call()
-					.content())
-					.thenReturn(llmResponse);
+			when(chatClientMock.prompt().user((Consumer<ChatClient.PromptUserSpec>) any()).call().content())
+				.thenReturn(llmResponse);
 
 			Map<String, Double> tags = service.getTagsFromPrompt(prompt);
 
@@ -79,13 +74,9 @@ class BedrockServiceImplTest {
 	void getTagsFromPrompt_withNullResponse_returnsEmptyMap() {
 		try (MockedStatic<ChatClient> chatClientStatic = mockStatic(ChatClient.class)) {
 			var chatClientMock = mock(ChatClient.class, RETURNS_DEEP_STUBS);
-			chatClientStatic.when(() -> ChatClient.create(chatModel))
-					.thenReturn(chatClientMock);
-			when(chatClientMock.prompt()
-					.user((Consumer<ChatClient.PromptUserSpec>) any())
-					.call()
-					.content())
-					.thenReturn(null);
+			chatClientStatic.when(() -> ChatClient.create(chatModel)).thenReturn(chatClientMock);
+			when(chatClientMock.prompt().user((Consumer<ChatClient.PromptUserSpec>) any()).call().content())
+				.thenReturn(null);
 
 			Map<String, Double> tags = service.getTagsFromPrompt("whatever");
 
@@ -108,13 +99,9 @@ class BedrockServiceImplTest {
 
 		try (MockedStatic<ChatClient> chatClientStatic = mockStatic(ChatClient.class)) {
 			var chatClientMock = mock(ChatClient.class, RETURNS_DEEP_STUBS);
-			chatClientStatic.when(() -> ChatClient.create(chatModel))
-					.thenReturn(chatClientMock);
-			when(chatClientMock.prompt()
-					.user((Consumer<ChatClient.PromptUserSpec>) any())
-					.call()
-					.content())
-					.thenReturn(llmMatchResponse);
+			chatClientStatic.when(() -> ChatClient.create(chatModel)).thenReturn(chatClientMock);
+			when(chatClientMock.prompt().user((Consumer<ChatClient.PromptUserSpec>) any()).call().content())
+				.thenReturn(llmMatchResponse);
 
 			List<String> matched = service.matchTagsFromPrompt(prompt);
 
@@ -143,4 +130,5 @@ class BedrockServiceImplTest {
 			assertTrue(matched.isEmpty());
 		}
 	}
+
 }

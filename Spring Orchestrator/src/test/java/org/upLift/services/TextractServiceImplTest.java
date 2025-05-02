@@ -23,91 +23,89 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class TextractServiceImplTest {
 
-    private final RecipientService recipientService = mock(RecipientService.class);
-    private final TextractServiceImpl service = new TextractServiceImpl(recipientService);
+	private final RecipientService recipientService = mock(RecipientService.class);
 
-    @Test
-    void validateRecipientIncome_whenIncomeUnderThreshold_updatesRecipientAndReturnsTrue() {
-        // arrange
-        SdkBytes imageBytes = SdkBytes.fromByteArray(new byte[]{0x01, 0x02});
-        int recipientId = 42;
-        Recipient recipient = new Recipient();
-        recipient.setIncomeLastVerified(null);
-        when(recipientService.getRecipientById(recipientId)).thenReturn(recipient);
-        when(recipientService.saveRecipient(recipient)).thenReturn(recipient);
+	private final TextractServiceImpl service = new TextractServiceImpl(recipientService);
 
-        // stub the static TextractClient.builder() chain
-        try (MockedStatic<TextractClient> textractStatic = mockStatic(TextractClient.class)) {
-            var builderMock = mock(TextractClientBuilder.class);
-            var clientMock  = mock(TextractClient.class);
-            textractStatic.when(() -> TextractClient.builder()).thenReturn(builderMock);
-            when(builderMock.region(Region.US_EAST_1)).thenReturn(builderMock);
-            when(builderMock.build()).thenReturn(clientMock);
+	@Test
+	void validateRecipientIncome_whenIncomeUnderThreshold_updatesRecipientAndReturnsTrue() {
+		// arrange
+		SdkBytes imageBytes = SdkBytes.fromByteArray(new byte[] { 0x01, 0x02 });
+		int recipientId = 42;
+		Recipient recipient = new Recipient();
+		recipient.setIncomeLastVerified(null);
+		when(recipientService.getRecipientById(recipientId)).thenReturn(recipient);
+		when(recipientService.saveRecipient(recipient)).thenReturn(recipient);
 
-            // simulate AWS response: blocks ["income","15","25000"]
-            Block bIncome = Block.builder().text("income").build();
-            Block bBox15  = Block.builder().text("15").build();
-            Block bValue  = Block.builder().text("25000").build();
-            DetectDocumentTextResponse awsResponse =
-                    DetectDocumentTextResponse.builder()
-                            .blocks(List.of(bIncome, bBox15, bValue))
-                            .build();
+		// stub the static TextractClient.builder() chain
+		try (MockedStatic<TextractClient> textractStatic = mockStatic(TextractClient.class)) {
+			var builderMock = mock(TextractClientBuilder.class);
+			var clientMock = mock(TextractClient.class);
+			textractStatic.when(() -> TextractClient.builder()).thenReturn(builderMock);
+			when(builderMock.region(Region.US_EAST_1)).thenReturn(builderMock);
+			when(builderMock.build()).thenReturn(clientMock);
 
-            when(clientMock.detectDocumentText(any(DetectDocumentTextRequest.class)))
-                    .thenReturn(awsResponse);
+			// simulate AWS response: blocks ["income","15","25000"]
+			Block bIncome = Block.builder().text("income").build();
+			Block bBox15 = Block.builder().text("15").build();
+			Block bValue = Block.builder().text("25000").build();
+			DetectDocumentTextResponse awsResponse = DetectDocumentTextResponse.builder()
+				.blocks(List.of(bIncome, bBox15, bValue))
+				.build();
 
-            // act
-            boolean result = service.validateRecipientIncome(imageBytes, recipientId);
+			when(clientMock.detectDocumentText(any(DetectDocumentTextRequest.class))).thenReturn(awsResponse);
 
-            // assert
-            assertTrue(result, "Should return true for income < 30000");
-            // verify client was closed
-            verify(clientMock).close();
-            // verify recipient was fetched and saved
-            verify(recipientService).getRecipientById(recipientId);
-            verify(recipientService).saveRecipient(recipient);
-            // incomeLastVerified should now be set
-            assertNotNull(recipient.getIncomeLastVerified());
-            assertTrue(recipient.getIncomeLastVerified().isBefore(Instant.now().plusSeconds(1)));
-        }
-    }
+			// act
+			boolean result = service.validateRecipientIncome(imageBytes, recipientId);
 
-    @Test
-    void validateRecipientIncome_whenIncomeAboveThreshold_returnsFalseAndDoesNotSave() {
-        // arrange
-        SdkBytes imageBytes = SdkBytes.fromByteArray(new byte[]{});
-        int recipientId = 99;
+			// assert
+			assertTrue(result, "Should return true for income < 30000");
+			// verify client was closed
+			verify(clientMock).close();
+			// verify recipient was fetched and saved
+			verify(recipientService).getRecipientById(recipientId);
+			verify(recipientService).saveRecipient(recipient);
+			// incomeLastVerified should now be set
+			assertNotNull(recipient.getIncomeLastVerified());
+			assertTrue(recipient.getIncomeLastVerified().isBefore(Instant.now().plusSeconds(1)));
+		}
+	}
 
-        // stub the static TextractClient.builder() chain
-        try (MockedStatic<TextractClient> textractStatic = mockStatic(TextractClient.class)) {
-            var builderMock = mock(TextractClientBuilder.class);
-            var clientMock  = mock(TextractClient.class);
-            textractStatic.when(() -> TextractClient.builder()).thenReturn(builderMock);
-            when(builderMock.region(Region.US_EAST_1)).thenReturn(builderMock);
-            when(builderMock.build()).thenReturn(clientMock);
+	@Test
+	void validateRecipientIncome_whenIncomeAboveThreshold_returnsFalseAndDoesNotSave() {
+		// arrange
+		SdkBytes imageBytes = SdkBytes.fromByteArray(new byte[] {});
+		int recipientId = 99;
 
-            // simulate AWS response: blocks ["income","15","35000"]
-            Block bIncome = Block.builder().text("income").build();
-            Block bBox15  = Block.builder().text("15").build();
-            Block bValue  = Block.builder().text("35000").build();
-            DetectDocumentTextResponse awsResponse =
-                    DetectDocumentTextResponse.builder()
-                            .blocks(List.of(bIncome, bBox15, bValue))
-                            .build();
+		// stub the static TextractClient.builder() chain
+		try (MockedStatic<TextractClient> textractStatic = mockStatic(TextractClient.class)) {
+			var builderMock = mock(TextractClientBuilder.class);
+			var clientMock = mock(TextractClient.class);
+			textractStatic.when(() -> TextractClient.builder()).thenReturn(builderMock);
+			when(builderMock.region(Region.US_EAST_1)).thenReturn(builderMock);
+			when(builderMock.build()).thenReturn(clientMock);
 
-            when(clientMock.detectDocumentText(any(DetectDocumentTextRequest.class)))
-                    .thenReturn(awsResponse);
+			// simulate AWS response: blocks ["income","15","35000"]
+			Block bIncome = Block.builder().text("income").build();
+			Block bBox15 = Block.builder().text("15").build();
+			Block bValue = Block.builder().text("35000").build();
+			DetectDocumentTextResponse awsResponse = DetectDocumentTextResponse.builder()
+				.blocks(List.of(bIncome, bBox15, bValue))
+				.build();
 
-            // act
-            boolean result = service.validateRecipientIncome(imageBytes, recipientId);
+			when(clientMock.detectDocumentText(any(DetectDocumentTextRequest.class))).thenReturn(awsResponse);
 
-            // assert
-            assertFalse(result, "Should return false for income >= 30000");
-            // client.close should still be called
-            verify(clientMock).close();
-            // recipientService should not be invoked
-            verify(recipientService, never()).getRecipientById(anyInt());
-            verify(recipientService, never()).saveRecipient(any());
-        }
-    }
+			// act
+			boolean result = service.validateRecipientIncome(imageBytes, recipientId);
+
+			// assert
+			assertFalse(result, "Should return false for income >= 30000");
+			// client.close should still be called
+			verify(clientMock).close();
+			// recipientService should not be invoked
+			verify(recipientService, never()).getRecipientById(anyInt());
+			verify(recipientService, never()).saveRecipient(any());
+		}
+	}
+
 }
