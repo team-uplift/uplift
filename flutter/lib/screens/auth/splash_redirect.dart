@@ -26,6 +26,8 @@ class SplashRedirector extends StatefulWidget {
 
 class _SplashRedirectorState extends State<SplashRedirector> {
   final api = UserApi();
+  // toggle for turning splash screen on and off
+  final quicksplash = false;
 
   @override
   void initState() {
@@ -130,7 +132,9 @@ class _SplashRedirectorState extends State<SplashRedirector> {
           log.info("route to recipient dashboard");
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             if (!mounted) return;
-            await playQuickSplash(context);
+            if (quicksplash == true) {
+              await playQuickSplash(context);
+            }
             if (!mounted) return;
             context.goNamed('/recipient_home', extra: user);
           });
@@ -138,7 +142,9 @@ class _SplashRedirectorState extends State<SplashRedirector> {
           log.info("route to donor dashboard");
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             if (!mounted) return;
-            await playQuickSplash(context);
+            if (quicksplash == true) {
+              await playQuickSplash(context);
+            }
             if (!mounted) return;
             context.goNamed('/home', extra: user);
           });
