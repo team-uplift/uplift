@@ -93,6 +93,9 @@ class TagCard extends StatelessWidget {
             color: isSelected ? AppColors.warmWhite : Colors.black,
           ),
           textAlign: TextAlign.center,
+          softWrap: true,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );

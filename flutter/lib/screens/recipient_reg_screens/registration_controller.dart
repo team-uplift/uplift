@@ -125,6 +125,8 @@ class _RegistrationControllerState extends State<RegistrationController> {
         if (q['type'] != 'compositeAddress' &&
             q['type'] != 'showTags' &&
             q['type'] != 'confirmation' &&
+            q['key'] != 'lastAboutMe' &&
+            // TODO maybe add q['key'] != 'lastReasonForHelp?
             (formData[q['key']]?.toString().trim().isNotEmpty ?? false))
           {
             'question': q['q'],

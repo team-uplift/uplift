@@ -1,4 +1,5 @@
 import 'package:uplift/models/tag_model.dart';
+import 'package:uplift/utils/logger.dart';
 
 class Recipient {
   final int id;
@@ -96,8 +97,8 @@ class Recipient {
             : null,
       );
     } catch (e) {
-      print('Error parsing Recipient from JSON: $e');
-      print('JSON received: $json');
+      log.severe('Error parsing Recipient from JSON: $e');
+      log.info('JSON received: $json');
       rethrow;
     }
   }
