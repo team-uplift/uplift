@@ -15,6 +15,15 @@ import java.util.Set;
 public interface RecipientService {
 
 	/**
+	 * Checks if a recipient entry exists with the specified persistence id, deleted or
+	 * not.
+	 * @param id persistence id of a recipient to look for
+	 * @return true if there's a recipient entry with the specified persistence id,
+	 * deleted or not, or false if no such entry exists
+	 */
+	boolean existsById(int id);
+
+	/**
 	 * Retrieves a randomly-selected, randomly-ordered List of tags chosen by at least one
 	 * recipient. If there are at least quantity number of tags, returns the specified
 	 * quantity. If there are fewer tags than the specified quantity, returns all

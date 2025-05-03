@@ -39,6 +39,11 @@ public class RecipientServiceImpl implements RecipientService {
 	}
 
 	@Override
+	public boolean existsById(int id) {
+		return recipientRepository.existsById(id);
+	}
+
+	@Override
 	public List<Tag> getRandomSelectedTags(int quantity) {
 		List<Tag> allSelectedTags = tagRepository.getSelectedTags();
 		Collections.shuffle(allSelectedTags);
