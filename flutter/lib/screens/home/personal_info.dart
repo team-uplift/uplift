@@ -4,7 +4,12 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import '../../api/user_api.dart';
 
 class PersonalInfoScreen extends StatefulWidget {
-  const PersonalInfoScreen({super.key});
+  final Map<String, dynamic>? mockUserData;
+
+  const PersonalInfoScreen({
+    super.key,
+    this.mockUserData,
+  });
 
   @override
   State<PersonalInfoScreen> createState() => _PersonalInfoScreenState();
@@ -16,11 +21,32 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   bool _isLoading = false;
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      _isInitialized = true;
+      if (widget.mockUserData != null) {
+        _setMockData();
+      } else {
+        _loadUserData();
+      }
+    }
+  }
+
+  void _setMockData() {
+    setState(() {
+      _nameController.text = widget.mockUserData?['name'] ?? '';
+      _emailController.text = widget.mockUserData?['email'] ?? '';
+      _phoneController.text = widget.mockUserData?['phone'] ?? '';
+    });
   }
 
   Future<void> _loadUserData() async {
