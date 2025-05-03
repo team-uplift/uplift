@@ -54,7 +54,8 @@ public class BedrockServiceImpl implements BedrockService {
         Map<String, Double> finalTags = new HashMap<>();
         for (String tag : finalResponse) {
             List<String> preProcessedValues = List.of(tag.split(":"));
-            finalTags.put(preProcessedValues.get(0).toLowerCase().trim(), Double.parseDouble(preProcessedValues.get(1)));
+            finalTags.put(preProcessedValues.get(0).toLowerCase().trim(),
+					Double.parseDouble(preProcessedValues.get(1)));
         }
 
         logger.info(response);

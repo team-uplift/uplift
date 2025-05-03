@@ -53,8 +53,9 @@ public interface RecipientService {
 	 * This method takes in a donor's question and answers and passes those as a prompt to
 	 * amazon bedrock to gather a list of known tags, then matches those tags to
 	 * recipients that meet the donor's preferences in a fair and balanced strategy.
-	 * @param donorQA
-	 * @return
+	 * @param donorQA form questions answered by the donor, used to find matching
+	 * recipients
+	 * @return List of recipients selected based on donor question responses
 	 */
 	List<Recipient> getMatchingRecipientsByDonorPrompt(List<FormQuestion> donorQA);
 
