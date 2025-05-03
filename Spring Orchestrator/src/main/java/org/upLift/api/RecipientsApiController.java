@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.upLift.exceptions.EntityNotFoundException;
 import org.upLift.exceptions.ModelException;
 import org.upLift.exceptions.TimingException;
 import org.upLift.model.FormQuestion;
@@ -80,15 +81,23 @@ public class RecipientsApiController implements RecipientsApi {
 
 	@Override
 	public ResponseEntity<Boolean> verifyRecipientIncome(Integer recipientId, MultipartFile file) {
-		try {
-			// Get the file's bytes from the uploaded MultipartFile
-			byte[] bytes = file.getBytes();
-			Boolean isValidated = textractService.validateRecipientIncome(SdkBytes.fromByteArray(bytes), recipientId);
+		LOG.info("Verifying income for recipient {}", recipientId);
+		if (recipientService.existsById(recipientId)) {
+			try {
+				// Get the file's bytes from the uploaded MultipartFile
+				byte[] bytes = file.getBytes();
+				Boolean isValidated = textractService.validateRecipientIncome(SdkBytes.fromByteArray(bytes),
+						recipientId);
 
-			return new ResponseEntity<>(isValidated, HttpStatus.OK);
+				return new ResponseEntity<>(isValidated, HttpStatus.OK);
+			}
+			catch (IOException e) {
+				LOG.error("Error verifying income for recipient {}", recipientId, e);
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
-		catch (IOException e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		else {
+			throw new EntityNotFoundException(recipientId, "Recipient", "Recipient not found, can't verify income");
 		}
 
 	}
