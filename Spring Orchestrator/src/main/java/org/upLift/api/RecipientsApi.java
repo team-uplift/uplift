@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -90,7 +91,8 @@ public interface RecipientsApi {
 
 			@ApiResponse(responseCode = "400", description = "Invalid input") })
 	@PutMapping(value = "/recipients/tagSelection/{recipientId}")
-	ResponseEntity<Void> updateSelectedRecipientTags(
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	void updateSelectedRecipientTags(
 			@Parameter(in = ParameterIn.PATH, description = "Recipient id whose selected tags should be updated",
 					required = true, schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
 			@Parameter(in = ParameterIn.DEFAULT, description = "List of tags that the recipient has selected.",

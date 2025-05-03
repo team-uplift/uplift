@@ -1,14 +1,10 @@
 package org.upLift.api;
 
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.upLift.exceptions.ModelException;
@@ -44,24 +40,22 @@ public class RecipientsApiController implements RecipientsApi {
 		this.textractService = textractService;
 	}
 
-	public ResponseEntity<List<Tag>> getRandomSelectedTags(
-			@RequestParam(value = "quantity", required = false) Integer quantity) {
-		LOG.info("Returning {} random selected tags", quantity);
+	public ResponseEntity<List<Tag>> getRandomSelectedTags(Integer quantity) {
 		int numberOfTags = quantity != null ? quantity : DEFAULT_NUMBER_OF_TAGS;
+		LOG.info("Returning {} random selected tags", quantity);
 		return new ResponseEntity<>(recipientService.getRandomSelectedTags(numberOfTags), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<List<Recipient>> findRecipientsByTags(
-			@Valid @RequestParam(value = "tag", required = false) List<String> tags) {
+	public ResponseEntity<List<Recipient>> findRecipientsByTags(List<String> tags) {
 		LOG.info("Finding recipients that match selected tags");
 		LOG.debug("Tags used to match: {}", tags);
 		return new ResponseEntity<>(recipientService.getMatchingRecipientsByTags(tags), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<List<RecipientTag>> updateRecipientTags(@PathVariable("recipientId") Integer recipientId,
-			@Valid @RequestBody List<FormQuestion> formQuestions) {
+	public ResponseEntity<List<RecipientTag>> updateRecipientTags(Integer recipientId,
+			List<FormQuestion> formQuestions) {
 		LOG.info("Updating recipient tags for recipient {}", recipientId);
 		try {
 			List<RecipientTag> generatedTags = recipientService.generateRecipientTags(recipientId, formQuestions);
@@ -78,18 +72,10 @@ public class RecipientsApiController implements RecipientsApi {
 	}
 
 	@Override
-	public ResponseEntity<Void> updateSelectedRecipientTags(@PathVariable("recipientId") Integer recipientId,
-			@Valid @RequestBody Set<String> selectedTags) {
+	public void updateSelectedRecipientTags(Integer recipientId, Set<String> selectedTags) {
 		LOG.info("Updating selected tags for recipient {}", recipientId);
 		LOG.debug("SelectedTags: {}", selectedTags);
-		try {
-			recipientService.updateSelectedTags(recipientId, selectedTags);
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}
-		catch (ModelException e) {
-			LOG.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		recipientService.updateSelectedTags(recipientId, selectedTags);
 	}
 
 	@Override
@@ -97,7 +83,6 @@ public class RecipientsApiController implements RecipientsApi {
 		try {
 			// Get the file's bytes from the uploaded MultipartFile
 			byte[] bytes = file.getBytes();
-
 			Boolean isValidated = textractService.validateRecipientIncome(SdkBytes.fromByteArray(bytes), recipientId);
 
 			return new ResponseEntity<>(isValidated, HttpStatus.OK);
