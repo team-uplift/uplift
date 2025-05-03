@@ -40,6 +40,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     return Scaffold(
       drawer: const DrawerWidget(),
       appBar: AppBar(
+        
         title: const Text(
           "Your Impact",
           style: TextStyle(

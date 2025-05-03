@@ -12,23 +12,25 @@ library;
 
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/user_model.dart';
 import 'dart:convert';
 
 import 'package:uplift/utils/logger.dart';
 
 class UserApi {
-  static const baseUrl =
-      'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
+  // pass http client for testing or default to normal http client
+  final http.Client client;
+  UserApi({http.Client? client}) : client = client ?? http.Client();
 
   /// fetches a user by a user id
   ///
   /// returns a User object on success, null on failure
-  static Future<User?> fetchUserById(String userId) async {
-    final url = Uri.parse('$baseUrl/users/cognito/$userId');
+  Future<User?> fetchUserById(String userId) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/users/cognito/$userId');
 
     try {
-      final response = await http.get(url);
+      final response = await client.get(url);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -40,7 +42,6 @@ class UserApi {
       }
     } catch (e) {
       log.severe('Error fetching donor: $e');
-
       return null;
     }
   }
@@ -48,11 +49,11 @@ class UserApi {
   /// updates a user's information
   ///
   /// returns 'true' on success, 'false' on failure
-  static Future<bool> updateUser(User user) async {
-    final url = Uri.parse('$baseUrl/users');
+  Future<bool> updateUser(User user) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/users');
 
     try {
-      final response = await http.put(
+      final response = await client.put(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(user.toJson()),
@@ -68,8 +69,8 @@ class UserApi {
   /// converts a user from recipient to donor
   ///
   /// returns a User object on success, null on failure
-  static Future<User?> convertToDonor(User user) async {
-    final url = Uri.parse('$baseUrl/users/switch/donor/${user.id}');
+  Future<User?> convertToDonor(User user) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/users/switch/donor/${user.id}');
 
     final payload = {
       'nickname': user.recipientData?.nickname,
@@ -78,7 +79,7 @@ class UserApi {
     log.info("convert to donor");
 
     try {
-      final response = await http.put(
+      final response = await client.put(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload),
@@ -103,11 +104,11 @@ class UserApi {
   /// converts a user from donor to recipient
   ///
   /// returns a User object on success, null on failure
-  static Future<User?> convertToRecipient(User user) async {
-    final url = Uri.parse('$baseUrl/users/switch/recipient');
+  Future<User?> convertToRecipient(User user) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/users/switch/recipient');
 
     try {
-      final response = await http.put(
+      final response = await client.put(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(user.toJson()),
@@ -132,12 +133,12 @@ class UserApi {
   /// deletes a user account from DB and amplify
   ///
   /// does not return
-  static Future<void> deleteAccount(User user) async {
+  Future<void> deleteAccount(User user) async {
     final userId = user.id;
 
     try {
-      final response = await http.delete(
-        Uri.parse('$baseUrl/users/$userId'),
+      final response = await client.delete(
+        Uri.parse('${AppConfig.baseUrl}/users/$userId'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -163,7 +164,7 @@ class UserApi {
   /// updates the email address of a user
   ///
   /// returns the status code of the response
-  static Future<bool> updateEmail({
+  Future<bool> updateEmail({
     required int userId,
     required Map<String, dynamic> attrMap,
   }) async {
@@ -173,8 +174,8 @@ class UserApi {
       'email': attrMap['email'],
     };
 
-    final response = await http.put(
-      Uri.parse('$baseUrl/users'),
+    final response = await client.put(
+      Uri.parse('${AppConfig.baseUrl}/users'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(payload),
     );

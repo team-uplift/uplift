@@ -72,7 +72,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         ],
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.baseGreen,
       ),
       drawer: const DrawerWidget(),
       body: userAsync.when(

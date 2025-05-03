@@ -8,6 +8,7 @@
 /// - _shadowByWeight
 /// - _textColor
 ///
+library;
 
 import 'package:flutter/material.dart';
 import 'package:uplift/constants/constants.dart';
@@ -65,6 +66,7 @@ class TagCard extends StatelessWidget {
   /// currently unused but might be helpful in future
   ///
   /// returns black or white color
+  // ignore: unused_element
   Color _textColor(Color background) {
     final double luminance = background.computeLuminance();
     return luminance > 0.2 ? Colors.black : Colors.white;
@@ -93,6 +95,9 @@ class TagCard extends StatelessWidget {
             color: isSelected ? AppColors.warmWhite : Colors.black,
           ),
           textAlign: TextAlign.center,
+          softWrap: true,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );

@@ -4,6 +4,7 @@
 /// to appropriate homepage or registration
 /// includes:
 /// - _handleRedirect
+/// - playQuickSplash
 ///
 
 import 'dart:async';
@@ -25,6 +26,9 @@ class SplashRedirector extends StatefulWidget {
 }
 
 class _SplashRedirectorState extends State<SplashRedirector> {
+  final api = UserApi();
+  // toggle for turning splash screen on and off
+  final quicksplash = false;
 
   @override
   void initState() {
@@ -32,11 +36,14 @@ class _SplashRedirectorState extends State<SplashRedirector> {
     _handleRedirect();
   }
 
+  /// function to play a splash screen animation and song upon login
+  /// chatgpt helped generate this function
   Future<void> playQuickSplash(BuildContext context) async {
     final overlay = Overlay.of(context);
     final audioPlayer = AudioPlayer();
     final fadeController = AnimationController(
-      vsync: Navigator.of(context), // still needs proper vsync (or separate widget)
+      vsync: Navigator.of(
+          context), // still needs proper vsync (or separate widget)
       duration: const Duration(seconds: 2),
     );
 
@@ -102,44 +109,47 @@ class _SplashRedirectorState extends State<SplashRedirector> {
     fadeController.dispose();
     await audioPlayer.dispose();
 
-    await Future.delayed(const Duration(milliseconds: 200)); // let screen clean up
+    await Future.delayed(
+        const Duration(milliseconds: 200)); // let screen clean up
   }
-
-
 
   /// fetches user from backend then uses that info to route to appropriate screen
   Future<void> _handleRedirect() async {
     try {
-      // Get current user attributes
+      // get current user attributes
       final attrMap = await getCognitoAttributes();
       final cognitoId = attrMap?['sub'];
 
-      // Check if user exists in backend
-      final user = await UserApi.fetchUserById(cognitoId);
+      // check if user exists in backend
+      final user = await api.fetchUserById(cognitoId);
 
-      // Redirect
+      // redirect
       if (user == null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
           context
-              .goNamed('/donor_or_recipient'); // triggers re-registration flow
+              .goNamed('/donor_or_recipient'); // triggers registration flow
         });
       } else {
         if (user.recipient == true) {
           log.info("route to recipient dashboard");
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             if (!mounted) return;
-            await playQuickSplash(context);
+            if (quicksplash == true) {
+              await playQuickSplash(context);
+            }
             if (!mounted) return;
-            context.goNamed('/recipient_home', extra: user);
+            context.goNamed('/recipient_home', extra: user); // logs recipient in
           });
         } else {
           log.info("route to donor dashboard");
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             if (!mounted) return;
-            await playQuickSplash(context);
+            if (quicksplash == true) {
+              await playQuickSplash(context);
+            }
             if (!mounted) return;
-            context.goNamed('/home', extra: user);
+            context.goNamed('/home', extra: user); // logs donor in
           });
         }
       }

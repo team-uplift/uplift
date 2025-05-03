@@ -1,3 +1,12 @@
+/// tag_selection_screen.dart
+/// 
+/// screen made for user to select tags when they register
+/// includes:
+/// - _toggleTag
+/// - _sortTagsByWeight
+/// - _submit
+
+
 import 'package:flutter/material.dart';
 import 'package:uplift/components/match_color_legend.dart';
 import 'package:uplift/constants/constants.dart';
@@ -20,25 +29,25 @@ class TagSelection extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _TagSelectionState createState() => _TagSelectionState();
 }
 
 class _TagSelectionState extends State<TagSelection> {
   final int maxTagChoices = 10;
-  // TODO dont need list of tags need only list of tag.names for submission
   final List<Tag> selectedTags = [];
 
   @override
   void initState() {
     super.initState();
 
-    // Rebuild selectedTags from any tags already marked as selected
+    // rebuild selectedTags from any tags already marked as selected
     selectedTags.addAll(
       widget.availableTags.where((tag) => tag.selected),
     );
   }
 
-
+  /// sets state of tags based on user selection
   void _toggleTag(Tag tag) {
     setState(() {
       tag.selected = !tag.selected;
@@ -55,6 +64,7 @@ class _TagSelectionState extends State<TagSelection> {
     });
   }
 
+  /// submits user choices of tags to update their profile
   void _submit() {
     final selectedTags = widget.availableTags
       .where((tag) => tag.selected)
@@ -66,7 +76,7 @@ class _TagSelectionState extends State<TagSelection> {
     }
   }
 
-
+  /// sorts tags by matching weight
   void _sortTagsByWeight() {
     setState(() {
       widget.availableTags.sort((a, b) => b.weight.compareTo(a.weight));
@@ -75,11 +85,11 @@ class _TagSelectionState extends State<TagSelection> {
 
   @override
   Widget build(BuildContext context) {
-    _sortTagsByWeight(); //sorting all tags when page is built
+    _sortTagsByWeight(); // sorting all tags when page is built
     return Column(
       children: [
         const Text(
-          "Select up to 10 interests",
+          "Select up to 10 tags",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
@@ -125,36 +135,3 @@ class _TagSelectionState extends State<TagSelection> {
   }
 }
 
-
-  // final List<Tag> availableTags = [
-  //   const Tag(name: "Tech", weight: 0.92),
-  //   const Tag(name: "Education", weight: 0.81),
-  //   const Tag(name: "Music", weight: 0.67),
-  //   const Tag(name: "Mental Health", weight: 0.74),
-  //   const Tag(name: "Food Access", weight: 0.33),
-  //   const Tag(name: "Housing", weight: 0.58),
-  //   const Tag(name: "Transportation", weight: 0.46),
-  //   const Tag(name: "LGBTQ+ Support", weight: 0.88),
-  //   const Tag(name: "Parenting", weight: 0.52),
-  //   const Tag(name: "Women’s Health", weight: 0.77),
-  //   const Tag(name: "Disability", weight: 0.35),
-  //   const Tag(name: "Art", weight: 0.61),
-  //   const Tag(name: "Sports", weight: 0.44),
-  //   const Tag(name: "Gaming", weight: 0.70),
-  //   const Tag(name: "Environment", weight: 0.50),
-  //   const Tag(name: "Science", weight: 0.66),
-  //   const Tag(name: "Business", weight: 0.39),
-  //   const Tag(name: "Startups", weight: 0.82),
-  //   const Tag(name: "Healthcare", weight: 0.79),
-  //   const Tag(name: "Immigration", weight: 0.47),
-  //   const Tag(name: "Youth Programs", weight: 0.73),
-  //   const Tag(name: "Scholarships", weight: 0.68),
-  //   const Tag(name: "Books", weight: 0.54),
-  //   const Tag(name: "Film", weight: 0.62),
-  //   const Tag(name: "Culture", weight: 0.31),
-  //   const Tag(name: "Fashion", weight: 0.48),
-  //   const Tag(name: "Social Justice", weight: 0.85),
-  //   const Tag(name: "Climate", weight: 0.53),
-  //   const Tag(name: "Coding", weight: 0.90),
-  //   const Tag(name: "Community", weight: 0.76),
-  // ];

@@ -1,11 +1,10 @@
 /// confirmation_screen.dart
-/// 
+///
 /// used to build a confirmation screen before tag generation is called
 /// all fields on this screen are editable
 /// include:
 /// - _buildGroupedContent
-/// 
-/// TODO test confirmation screen
+///
 
 import 'package:flutter/material.dart';
 import 'package:uplift/constants/constants.dart';
@@ -106,6 +105,7 @@ class Confirmation extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     onPressed: () {
+                      // warning that user will not be able to generate tags again for 24 hours
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
@@ -149,7 +149,7 @@ class Confirmation extends StatelessWidget {
     );
   }
 
-  // helper widget to reduce size of maine method here and build out cards
+  // helper widget to reduce size of main method here and build out cards
   Widget buildConfirmationCard({
     required String title,
     required String content,

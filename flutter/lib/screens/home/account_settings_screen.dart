@@ -14,6 +14,7 @@ class AccountSettingsScreen extends StatefulWidget {
 }
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
+  final api = UserApi();
   Future<User?> _getCurrentUser() async {
     try {
       final attributes = await Amplify.Auth.fetchUserAttributes();
@@ -26,7 +27,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         throw Exception('Failed to get user authentication information');
       }
 
-      return await UserApi.fetchUserById(cognitoId);
+      return await api.fetchUserById(cognitoId);
     } catch (e) {
       debugPrint('Error getting current user: $e');
       return null;
@@ -61,7 +62,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               onPressed: () async {
                 Navigator.pop(context);
                 try {
-                  await UserApi.deleteAccount(user);
+                  await api.deleteAccount(user);
                   if (mounted) {
                     context.goNamed('/redirect');
                   }

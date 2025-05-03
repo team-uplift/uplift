@@ -24,9 +24,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   }
 
   Future<void> _loadUserData() async {
+    final api = UserApi();
     try {
       final cognitoUser = await Amplify.Auth.getCurrentUser();
-      final userData = await UserApi.fetchUserById(cognitoUser.userId);
+      final userData = await api.fetchUserById(cognitoUser.userId);
 
       if (mounted) {
         setState(() {

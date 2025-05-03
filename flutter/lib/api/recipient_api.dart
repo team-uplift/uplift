@@ -14,18 +14,22 @@ library;
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:uplift/constants/constants.dart';
 import 'package:uplift/utils/logger.dart';
-
 import '../models/donation_model.dart';
 
+// if planning on using JWT for authentication, fastest method would be to
+// use cognito helper functions here
+
 class RecipientApi {
-  static const String baseUrl =
-      'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
+  // pass http client for testing or default to normal http client
+  final http.Client client;
+  RecipientApi({http.Client? client}) : client = client ?? http.Client();
 
   /// create a recipient user from formdata and amplify auth information
   ///
   /// returns the user id on success, null on failure
-  static Future<int?> createRecipientUser(
+  Future<int?> createRecipientUser(
     Map<String, dynamic> formData,
     List<Map<String, dynamic>> formQuestions,
     Map<String, dynamic> attrMap,
@@ -49,8 +53,8 @@ class RecipientApi {
     };
 
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/users'),
+      final response = await client.post(
+        Uri.parse('${AppConfig.baseUrl}/users'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload),
       );
@@ -72,10 +76,10 @@ class RecipientApi {
   /// updates a recipients selected tags associated with their profile
   ///
   /// returns 'true' on success, 'false' on failure
-  static Future<bool> updateTags(int userId, List<String> selectedTags) async {
+  Future<bool> updateTags(int userId, List<String> selectedTags) async {
     try {
-      final response = await http.put(
-        Uri.parse('$baseUrl/recipients/tagSelection/$userId'),
+      final response = await client.put(
+        Uri.parse('${AppConfig.baseUrl}/recipients/tagSelection/$userId'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(selectedTags),
       );
@@ -90,13 +94,12 @@ class RecipientApi {
   /// uploads income image to api for verification
   ///
   /// returns 'true' if verified, 'false' otherwise
-  static Future<bool> uploadIncomeVerificationImage(
-      int userId, File imageFile) async {
-    // print("start of income verification api call");
+  Future<bool> uploadIncomeVerificationImage(int userId, File imageFile) async {
     try {
       final request = http.MultipartRequest(
         'PUT',
-        Uri.parse('$baseUrl/recipients/verification/income/$userId'),
+        Uri.parse(
+            '${AppConfig.baseUrl}/recipients/verification/income/$userId'),
       );
 
       request.files.add(
@@ -104,12 +107,8 @@ class RecipientApi {
             'incomeVerificationFile', imageFile.path),
       );
 
-      // print("request: ${request.files.isEmpty}");
-
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
-
-      // print("response: $responseBody");
 
       if (response.statusCode == 200 && responseBody.trim() == 'true') {
         log.info("Recipient income verification successful.");
@@ -126,36 +125,42 @@ class RecipientApi {
 
   /// retrieves list of all donations associated with recipient
   ///
-  /// returns list of donation objects on success, null on failure
-  static Future<List<Donation>> fetchDonationsForRecipient(
+  /// returns (list of donation objects, string) on success, (empty list, string) on failure
+  Future<(List<Donation>, String)> fetchDonationsForRecipient(
       int recipientId) async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/donations/recipient/$recipientId'),
+      final response = await client.get(
+        Uri.parse('${AppConfig.baseUrl}/donations/recipient/$recipientId'),
         headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         log.info("Successfully fetched recipient donations.");
-        return data.map((json) => Donation.fromJson(json)).toList();
+        final donationsList =
+            data.map((json) => Donation.fromJson(json)).toList();
+        var msg = "";
+        if (donationsList.isEmpty) {
+          msg = "No donations yet.";
+        }
+        return (donationsList, msg);
       } else {
         log.severe("Failed to fetch donations: ${response.statusCode}");
-        return [];
+        return (<Donation>[], "Failed to fetch donations.");
       }
     } catch (e) {
       log.severe("Error fetching donations: $e");
-      return [];
+      return (<Donation>[], "Error fetching donations.");
     }
   }
 
   /// fetches a specific donation by donation id
   ///
   /// returns donation object on success, null on failure
-  static Future<Donation?> fetchDonationById(int donationId) async {
+  Future<Donation?> fetchDonationById(int donationId) async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/donations/$donationId'),
+      final response = await client.get(
+        Uri.parse('${AppConfig.baseUrl}/donations/$donationId'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -176,8 +181,7 @@ class RecipientApi {
   /// sends thank you message from recipient to donor
   ///
   /// returns donation object on success, null on failure
-  static Future<Donation?> sendThankYouMessage({
-    // required int userId,
+  Future<Donation?> sendThankYouMessage({
     required int donationId,
     required String message,
   }) async {
@@ -187,8 +191,8 @@ class RecipientApi {
     };
 
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/messages'),
+      final response = await client.post(
+        Uri.parse('${AppConfig.baseUrl}/messages'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload),
       );
@@ -210,7 +214,7 @@ class RecipientApi {
   /// updates a recipient with new information from edited form
   ///
   /// returns 'true' on succes, 'false' on failure
-  static Future<bool> updateRecipientUserProfile(
+  Future<bool> updateRecipientUserProfile(
     Map<String, dynamic> formData,
     List<Map<String, dynamic>> formQuestions,
     Map<String, dynamic> attrMap,
@@ -236,8 +240,8 @@ class RecipientApi {
     };
 
     try {
-      final response = await http.put(
-        Uri.parse('$baseUrl/users'),
+      final response = await client.put(
+        Uri.parse('${AppConfig.baseUrl}/users'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload),
       );

@@ -1,4 +1,3 @@
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -74,7 +73,7 @@ class DrawerWidget extends StatelessWidget {
               title: const Text("Logout"),
               onTap: () {
                 logout(context);
-                context.goNamed('/login');
+                context.goNamed('/redirect');
               },
             )
           ],

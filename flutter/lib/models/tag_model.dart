@@ -3,14 +3,14 @@ class Tag {
   final String tagName;
   final double weight;
   final DateTime addedAt;
-  bool selected; // remove `final`
+  bool selected;
 
   Tag({
     required this.createdAt,
     required this.tagName,
     required this.weight,
     required this.addedAt,
-    this.selected = false, // default
+    this.selected = false,
   });
 
   factory Tag.fromJson(Map<String, dynamic> json) {

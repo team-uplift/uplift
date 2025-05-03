@@ -11,13 +11,6 @@ class MatchColorLegend extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // const Text(
-        //   "Match Strength Guide",
-        //   style: TextStyle(
-        //     fontSize: 16,
-        //     fontWeight: FontWeight.bold,
-        //   ),
-        // ),
         const SizedBox(height: 12),
         Row(
           children: [

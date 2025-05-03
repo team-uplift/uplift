@@ -8,21 +8,25 @@ library;
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:uplift/constants/constants.dart';
 import 'package:uplift/utils/logger.dart';
 import '../models/tag_model.dart';
 
 class TagApi {
-  static const String baseUrl =
-      'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
+  
+  // pass http client for testing or default to normal http client
+  final http.Client client;
+  TagApi({http.Client? client}) : client = client ?? http.Client();
+
 
   /// generates tags from a recipients registration answers
   ///
   /// returns a list of tag objects on success, an empty list on failure
-  static Future<List<Tag>> generateTags(
+  Future<List<Tag>> generateTags(
       int userId, List<Map<String, dynamic>> questions) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/recipients/tagGeneration/$userId'),
+      final response = await client.post(
+        Uri.parse('${AppConfig.baseUrl}/recipients/tagGeneration/$userId'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(questions),
       );
@@ -36,6 +40,7 @@ class TagApi {
         return [];
       }
     } catch (e) {
+      // TODO handle error messaging in display widget
       log.severe("Tag generation error: $e");
       return [];
     }

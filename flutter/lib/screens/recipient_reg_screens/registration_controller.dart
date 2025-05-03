@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 import 'package:uplift/api/cognito_helper.dart';
 import 'package:uplift/api/recipient_api.dart';
 import 'package:uplift/api/tag_api.dart';
+import 'package:uplift/components/recipient_appbar.dart';
 import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/tag_model.dart';
 import 'package:uplift/utils/logger.dart';
@@ -47,6 +48,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
   late List<Tag> generatedTags;
   bool _isLoading = false;
   bool returnToConfirmation = false;
+  final api = RecipientApi();
 
   @override
   void initState() {
@@ -101,7 +103,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
         (formData['tags'] as List<Tag>).map((tag) => tag.tagName).toList();
 
     try {
-      final success = await RecipientApi.updateTags(userId, selectedTags);
+      final success = await api.updateTags(userId, selectedTags);
 
       if (success) {
         context.goNamed('/recipient_home');
@@ -124,6 +126,8 @@ class _RegistrationControllerState extends State<RegistrationController> {
         if (q['type'] != 'compositeAddress' &&
             q['type'] != 'showTags' &&
             q['type'] != 'confirmation' &&
+            q['key'] != 'lastAboutMe' &&
+            // TODO maybe add q['key'] != 'lastReasonForHelp?
             (formData[q['key']]?.toString().trim().isNotEmpty ?? false))
           {
             'question': q['q'],
@@ -140,7 +144,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
   Future<int?> _createUser(Map<String, dynamic> attrMap) async {
     final formQuestions = _buildFormQuestions(formData, registrationQuestions);
 
-    return await RecipientApi.createRecipientUser(
+    return await api.createRecipientUser(
       formData,
       formQuestions,
       attrMap,
@@ -153,7 +157,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
   Future<bool> _updateUser(Map<String, dynamic> attrMap) async {
     final formQuestions = _buildFormQuestions(formData, registrationQuestions);
 
-    return await RecipientApi.updateRecipientUserProfile(
+    return await api.updateRecipientUserProfile(
       formData,
       formQuestions,
       attrMap,
@@ -164,6 +168,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
   /// 
   /// returns list of tag objects on success, empty list on failure
   Future<List<Tag>> _fetchTags(int userId) async {
+    final tagApi = TagApi();
     // TODO --> this is very close to my other formatting function --> abstract?
     final questions = [
       for (var q in registrationQuestions)
@@ -176,7 +181,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
           }
     ];
 
-    return await TagApi.generateTags(userId, questions);
+    return await tagApi.generateTags(userId, questions);
   }
 
   /// executes process to register user and fetch tags at appropriate time
@@ -227,20 +232,16 @@ class _RegistrationControllerState extends State<RegistrationController> {
       children: [
         Scaffold(
           backgroundColor: AppColors.baseYellow,
-          appBar: AppBar(
+          appBar: RecipientAppBar(
             title: SizedBox(
               height: 40,
               child: FittedBox(
                 fit: BoxFit.contain,
-                child: Image.asset('assets/uplift_black.png'),
+                child: Image.asset('assets/uplift_black.png')
               ),
             ),
-            centerTitle: true,
-            backgroundColor: AppColors.baseGreen,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: _stepBack,
-            ),
+            isVerified: false,
+            useGradient: false,
           ),
           body: SafeArea(
             child: Column(

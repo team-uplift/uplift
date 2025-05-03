@@ -16,6 +16,7 @@
 /// - _buildConvertAccountCard
 /// - _buildDeleteAccountCard
 ///
+library;
 
 import 'dart:async';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -23,6 +24,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/api/cognito_helper.dart';
 import 'package:uplift/api/user_api.dart';
+import 'package:uplift/components/basic_info_card.dart';
+import 'package:uplift/components/verify_card.dart';
 import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/models/user_model.dart';
@@ -33,6 +36,7 @@ class RecipientSettingsScreen extends StatefulWidget {
   final VoidCallback? editProfile;
   final VoidCallback? changeEmail;
   final VoidCallback? convertAccount;
+  final VoidCallback onVerifyPressed;
   final User profile;
   final Recipient recipient;
 
@@ -43,6 +47,7 @@ class RecipientSettingsScreen extends StatefulWidget {
     this.convertAccount,
     required this.profile,
     required this.recipient,
+    required this.onVerifyPressed,
   });
 
   @override
@@ -54,6 +59,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
   bool canEdit = false;
   Duration timeRemaining = Duration.zero;
   Timer? countdownTimer;
+  final api = UserApi();
 
   @override
   void initState() {
@@ -115,6 +121,32 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     }
 
     return formData;
+  }
+
+    Map<String, String> _buildNameAddressData() {
+     final Map<String, String> basicInfoData = {};
+
+    final fullName =
+        "${widget.recipient.firstName ?? ''} ${widget.recipient.lastName ?? ''}"
+            .trim();
+    basicInfoData["fullName"] = fullName;
+
+    final addressLine1 = widget.recipient.streetAddress1 ?? '';
+    final addressLine2 = widget.recipient.streetAddress2;
+    final city = widget.recipient.city ?? '';
+    final state = widget.recipient.state ?? '';
+    final zip = widget.recipient.zipCode ?? '';
+    final address = [
+      addressLine1,
+      if (addressLine2 != null && addressLine2.toString().isNotEmpty)
+        addressLine2,
+      "$city, $state ${zip.isNotEmpty ? zip : ''}"
+    ].join('\n');
+    basicInfoData["address"] = address;
+
+    basicInfoData["email"] = widget.profile.email;
+
+    return basicInfoData;
   }
 
   /// starts cooldown timer for profile edit to limit number of api calls
@@ -196,7 +228,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
 
       final attrMap = await getCognitoAttributes();
 
-      final success = await UserApi.updateEmail(
+      final success = await api.updateEmail(
         userId: widget.profile.id!,
         attrMap: attrMap!,
       );
@@ -313,21 +345,37 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final basicInfo = _buildNameAddressData();
     return Scaffold(
         backgroundColor: AppColors.baseYellow,
         body: SafeArea(
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(10),
             children: [
+              VerifyCard(
+                title: "Income Verification", 
+                isVerified: widget.recipient.incomeLastVerified != null,
+                onVerifyPressed: widget.recipient.incomeLastVerified == null
+                  ? widget.onVerifyPressed
+                  : null
+              ),
+              const SizedBox(height: 10),
+              BasicInfoCard(
+                fullName: basicInfo['fullName'],
+                address: basicInfo['address'],
+                email: basicInfo['email'],
+              ),
+              const SizedBox(height: 10),
+              
               _buildEditProfileCard(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               // TODO uncomment below when update email is functional
               // _buildChangeEmailCard(),
               // const SizedBox(height: 16),
               _buildLogoutCard(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               _buildConvertAccountCard(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               _buildDeleteAccountCard(),
             ],
           ),
@@ -340,10 +388,10 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     return Card(
       color: AppColors.warmWhite,
       elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.lavender, width: 1.5),
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: AppColors.baseBlue, width: 4),
       ),
       child: ListTile(
         leading: const Icon(Icons.edit),
@@ -379,10 +427,10 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     return Card(
       color: AppColors.warmWhite,
       elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.lavender, width: 1.5),
+        side: BorderSide(color: AppColors.baseBlue, width: 4),
       ),
       child: ListTile(
         leading: const Icon(Icons.logout),
@@ -405,13 +453,14 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
   }
 
   Widget _buildConvertAccountCard() {
+
     return Card(
       color: AppColors.warmWhite,
       elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.lavender, width: 1.5),
+        side: BorderSide(color: AppColors.baseOrange, width: 4),
       ),
       child: ListTile(
         leading: const Icon(Icons.redo, color: AppColors.baseOrange),
@@ -429,7 +478,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
                     child: const Text("Cancel")),
                 ElevatedButton(
                   onPressed: () {
-                    UserApi.convertToDonor(widget.profile);
+                    api.convertToDonor(widget.profile);
                     Navigator.pop(context);
                     context.goNamed('/redirect');
                   },
@@ -450,10 +499,10 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
     return Card(
       color: AppColors.warmWhite,
       elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.lavender, width: 1.5),
+        side: BorderSide(color: AppColors.baseRed, width: 4),
       ),
       child: ListTile(
         leading: const Icon(Icons.delete_forever, color: AppColors.baseRed),
@@ -471,7 +520,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
                     child: const Text("Cancel")),
                 ElevatedButton(
                   onPressed: () {
-                    UserApi.deleteAccount(widget.profile);
+                    api.deleteAccount(widget.profile);
                     context.goNamed('/redirect');
                   },
                   style: ElevatedButton.styleFrom(

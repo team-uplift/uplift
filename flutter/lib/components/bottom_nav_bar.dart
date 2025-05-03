@@ -1,7 +1,8 @@
 /// bottom_nav_bar.dart
 ///
-/// Navigation bar component for recipient dashboard
+/// navigation bar component for recipient dashboard
 ///
+library;
 
 import 'package:flutter/material.dart';
 import 'package:uplift/constants/constants.dart';
@@ -22,17 +23,21 @@ class BottomNavBar extends StatelessWidget {
         currentIndex: selectedItem,
         onTap: onItemTapped,
         type: BottomNavigationBarType.shifting,
+        iconSize: 30,
         items: const [
+          // PROFILE
           BottomNavigationBarItem(
             icon: Icon(Icons.person, color: AppColors.warmWhite),
             label: 'Profile',
             backgroundColor: AppColors.baseBlue,
           ),
+          // DONATION HISTORY
           BottomNavigationBarItem(
             icon: Icon(Icons.history, color: AppColors.warmWhite),
             label: 'History',
             backgroundColor: AppColors.baseRed,
           ),
+          // SETTINGS
           BottomNavigationBarItem(
             icon: Icon(Icons.settings, color: AppColors.warmWhite),
             label: 'Settings',

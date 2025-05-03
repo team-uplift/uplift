@@ -8,24 +8,33 @@
 /// - _verifyIncome
 /// - _buildProfileData
 ///
+library;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/api/recipient_api.dart';
+import 'package:uplift/components/donor_visible_info_card.dart';
+import 'package:uplift/components/question_carousel.dart';
+import 'package:uplift/components/recipient_tag_section.dart';
+import 'package:uplift/components/verify_card.dart';
 import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/models/tag_model.dart';
-import 'package:uplift/components/recipient_profile_display.dart';
 import 'package:uplift/models/user_model.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:uplift/constants/constants.dart';
+import 'package:uplift/services/income_verification_service.dart';
 
 class RecipientProfileScreen extends StatefulWidget {
   final User profile;
   final Recipient recipient;
+  final VoidCallback onVerifyPressed;
 
   const RecipientProfileScreen(
-      {super.key, required this.profile, required this.recipient});
+      {super.key,
+      required this.profile,
+      required this.recipient,
+      required this.onVerifyPressed});
 
   @override
   State<RecipientProfileScreen> createState() => _RecipientProfileScreenState();
@@ -33,13 +42,14 @@ class RecipientProfileScreen extends StatefulWidget {
 
 class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
   late Recipient _recipient;
+  final api = RecipientApi();
+  final _verificationService = IncomeVerificationService(RecipientApi());
 
   @override
   void initState() {
     super.initState();
     _recipient = widget.recipient;
   }
-
 
   /// displays a fraud warning when a user goes to verify their income
   ///
@@ -109,7 +119,7 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
         await ImagePicker().pickImage(source: source); //image chosen by user
     if (pickedFile == null) return;
 
-    final success = await RecipientApi.uploadIncomeVerificationImage(
+    final success = await api.uploadIncomeVerificationImage(
       widget.recipient.id,
       File(pickedFile.path),
     );
@@ -138,7 +148,7 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
     final fullName =
         "${widget.recipient.firstName ?? ''} ${widget.recipient.lastName ?? ''}"
             .trim();
-    profileData["Name"] = fullName;
+    profileData["name"] = fullName;
 
     final addressLine1 = widget.recipient.streetAddress1 ?? '';
     final addressLine2 = widget.recipient.streetAddress2;
@@ -151,47 +161,76 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
         addressLine2,
       "$city, $state ${zip.isNotEmpty ? zip : ''}"
     ].join('\n');
-    profileData["Address"] = address;
+    profileData["address"] = address;
 
-    profileData["Email"] = widget.profile.email;
-    profileData["About Me"] = widget.recipient.lastAboutMe ?? 'Not provided';
-    profileData["Why I Need Help"] =
+    profileData["email"] = widget.profile.email;
+    profileData["aboutMe"] = widget.recipient.lastAboutMe ?? 'Not provided';
+    profileData["whyINeedHelp"] =
         widget.recipient.lastReasonForHelp ?? 'Not provided';
-
-    for (final q in widget.recipient.formQuestions!) {
-      final question = q['question'];
-      final answer = q['answer'];
-      profileData[question] = answer;
-    }
-
-    if (widget.recipient.incomeLastVerified != null) {
-      profileData["Income Verification"] = "✅ Verified";
-    } else {
-      profileData["Income Verification"] = "❌ Not Verified";
-    }
 
     return profileData;
   }
 
+  // will be useful if we plan on moving basicinfocard back to this screen
+  // Map<String, String> _buildNameAddressData() {
+  //   final Map<String, String> basicInfoData = {};
+
+  //   final fullName =
+  //       "${widget.recipient.firstName ?? ''} ${widget.recipient.lastName ?? ''}"
+  //           .trim();
+  //   basicInfoData["fullName"] = fullName;
+
+  //   final addressLine1 = widget.recipient.streetAddress1 ?? '';
+  //   final addressLine2 = widget.recipient.streetAddress2;
+  //   final city = widget.recipient.city ?? '';
+  //   final state = widget.recipient.state ?? '';
+  //   final zip = widget.recipient.zipCode ?? '';
+  //   final address = [
+  //     addressLine1,
+  //     if (addressLine2 != null && addressLine2.toString().isNotEmpty)
+  //       addressLine2,
+  //     "$city, $state ${zip.isNotEmpty ? zip : ''}"
+  //   ].join('\n');
+  //   basicInfoData["address"] = address;
+
+  //   basicInfoData["email"] = widget.profile.email;
+
+  //   return basicInfoData;
+  // }
+
   @override
   Widget build(BuildContext context) {
-    
+    final isVerified = widget.recipient.incomeLastVerified != null;
     final profileData = _buildProfileData();
     final List<Tag> tags = widget.recipient.tags!
       ..sort((a, b) => b.weight.compareTo(a.weight));
+    final qas = widget.recipient.formQuestions!
+        .map((q) => QuestionAnswer(
+              question: q['question']!,
+              answer: q['answer']!,
+            ))
+        .toList();
 
     return Scaffold(
       backgroundColor: AppColors.baseYellow,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: RecipientProfileDisplay(
-          profileFields: profileData,
-          tags: tags,
-          recipient: widget.recipient,
-          onVerifyPressed: () {
-            _verifyIncome();
-          },
-        ),
+      body: SafeArea(
+        child: ListView(
+            // padding: const EdgeInsets.all(10),
+            children: [
+              if (!isVerified)
+                VerifyCard(
+                    title: "Income Verification",
+                    isVerified: isVerified,
+                    onVerifyPressed: widget.onVerifyPressed),
+              const SizedBox(height: 10),
+              ProfileTagsSection(tags: tags),
+              const SizedBox(height: 10),
+              VisibleInfoCard(
+                aboutMe: profileData["aboutMe"],
+                reasonForNeed: profileData["whyINeedHelp"],
+              ),
+              QuestionCarousel(items: qas)
+            ]),
       ),
     );
   }

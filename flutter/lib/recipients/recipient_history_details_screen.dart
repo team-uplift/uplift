@@ -3,16 +3,22 @@
 /// used to display donation details for recipient
 /// Includes:
 /// - _handleSendThankYou
-///
+/// - _handleVerifyTap
+/// - _thankYouCard widget
+/// - _buildDonationCard widget
+/// - _buildSendThankYou widget
 ///
 library;
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uplift/api/recipient_api.dart';
 import 'package:uplift/components/bottom_nav_bar.dart';
+import 'package:uplift/components/recipient_appbar.dart';
 import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/donation_model.dart';
 import 'package:uplift/models/user_model.dart';
+import 'package:uplift/services/income_verification_service.dart';
 
 class HistoryDetailScreen extends StatefulWidget {
   final Donation item;
@@ -30,13 +36,34 @@ class HistoryDetailScreen extends StatefulWidget {
 
 class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
   late Donation _donation;
+  // ignore: unused_field
   bool _thankYouSent = false;
   final TextEditingController _controller = TextEditingController();
+  final api = RecipientApi();
+  final _verificationService = IncomeVerificationService(RecipientApi());
 
   @override
   void initState() {
     super.initState();
+    // set donation to current item selected
     _donation = widget.item;
+  }
+
+  // function to do verification for income on appbar
+  // note: to be removed when this is rendered within the home_controller
+  Future<void> _handleVerifyTap() async {
+    final success = await _verificationService.verifyIncome(
+      context: context,
+      recipientId: widget.profile.id!,
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content:
+            Text(success ? 'Verification Successful' : 'Verification Failed'),
+      ),
+    );
+    if (success) context.goNamed('/redirect');
   }
 
   /// used to send thank you messages and attach them to donation object on
@@ -45,7 +72,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
     final message = _controller.text.trim();
     if (message.isEmpty) return;
 
-    final success = await RecipientApi.sendThankYouMessage(
+    final success = await api.sendThankYouMessage(
       donationId: _donation.id,
       message: message,
     );
@@ -76,21 +103,17 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.baseYellow,
-      appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: AppColors.baseGreen,
-          title: SizedBox(
-              height: 40,
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: Image.asset('assets/uplift_black.png'),
-              )),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context, _thankYouSent);
-            },
-          )),
+      appBar: RecipientAppBar(
+        title: SizedBox(
+          height: 40,
+          child: FittedBox(
+              fit: BoxFit.contain,
+              child: Image.asset('assets/uplift_black.png')),
+        ),
+        useGradient: false,
+        isVerified: widget.profile.recipientData?.incomeLastVerified != null,
+        onVerifyPressed: _handleVerifyTap,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
@@ -101,10 +124,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
               const SizedBox(height: 24),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 400),
-                transitionBuilder: (child, animation) => FadeTransition(
-                  opacity: animation,
-                  child: child
-                ),
+                transitionBuilder: (child, animation) =>
+                    FadeTransition(opacity: animation, child: child),
                 child: hasThankYou
                     ? _buildThankYouCard(_donation.thankYouMessage!)
                     : _buildSendThankYou(),
@@ -124,7 +145,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
 
   /// builds donation info cards for display
   Widget _buildDonationInfoCard() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Card(
         color: AppColors.warmWhite,
@@ -140,7 +161,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
             children: [
               Text(
                 _donation.donorName,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Text(
@@ -166,11 +188,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
       child: Card(
           elevation: 5,
           color: AppColors.warmWhite,
-          shape:
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: AppColors.lavender, width: 1.5)
-              ),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: AppColors.lavender, width: 1.5)),
           child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -189,9 +209,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.baseGreen.withAlpha(70),
-                      borderRadius: BorderRadius.circular(12)
-                    ),
+                        color: AppColors.baseGreen.withAlpha(70),
+                        borderRadius: BorderRadius.circular(12)),
                     child: Text(message,
                         style: const TextStyle(
                           fontSize: 16,
