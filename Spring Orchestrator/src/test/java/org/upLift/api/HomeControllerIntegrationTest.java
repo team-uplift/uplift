@@ -15,8 +15,7 @@ class HomeControllerIntegrationTest extends BaseControllerIntegrationTest {
 
 	@Test
 	void testIndex() throws Exception {
-		mockMvc.perform(get("/"))
-				.andExpect(redirectedUrl("/swagger-ui/"))
-				.andExpect(status().isFound());
+		mockMvc.perform(get("/")).andExpect(redirectedUrl("/swagger-ui/")).andExpect(status().isFound());
 	}
+
 }
