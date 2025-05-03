@@ -5,8 +5,8 @@ import java.util.Map;
 
 public interface BedrockService {
 
-	public Map<String, Double> getTagsFromPrompt(String prompt);
+	Map<String, Double> getTagsFromPrompt(String prompt);
 
-	public List<String> matchTagsFromPrompt(String prompt);
+	List<String> matchTagsFromPrompt(String prompt);
 
 }

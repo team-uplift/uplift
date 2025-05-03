@@ -93,7 +93,7 @@ VALUES ('food', 'necessities', '2023-10-05 09:20:30.123'),
        ('food-banks', 'necessities', '2023-10-21 18:40:00.654'),
        ('financial-planning', 'self-improvement', '2023-10-22 19:50:10.987'),
        -- tag linked only to recipient 9 (deleted)
-       ('elderly parent', 'support', '2023-10-23 07:38:41.394');
+       ('elderly parent', 'family', '2023-10-23 07:38:41.394');
 
 -- Insert sample data into `messages`
 INSERT INTO messages (donation_id, message, donor_read, created_at)

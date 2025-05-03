@@ -432,6 +432,17 @@ public class Recipient extends AbstractCreatedAt {
 		return tags;
 	}
 
+	/**
+	 * Retrieves just the names of all tags linked to the recipient, selected or not.
+	 * @return SortedSet containing all tag names linked to the recipient, selected or not
+	 */
+	@Transient
+	@JsonIgnore
+	public SortedSet<String> getTagNames() {
+		return tags != null ? tags.stream().map(RecipientTag::getTagName).collect(Collectors.toCollection(TreeSet::new))
+				: null;
+	}
+
 	@JsonIgnore
 	public void setTags(SortedSet<RecipientTag> tags) {
 		this.tags = tags;
@@ -448,6 +459,24 @@ public class Recipient extends AbstractCreatedAt {
 	public SortedSet<RecipientTag> getSelectedTags() {
 		if (tags != null) {
 			return tags.stream().filter(RecipientTag::isSelected).collect(Collectors.toCollection(TreeSet::new));
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Retrieves just the names of all tags selected by the recipient.
+	 * @return SortedSet containing all tag names selected by the recipient
+	 */
+	@Transient
+	@JsonIgnore
+	public SortedSet<String> getSelectedTagNames() {
+		if (tags != null) {
+			return tags.stream()
+				.filter(RecipientTag::isSelected)
+				.map(RecipientTag::getTagName)
+				.collect(Collectors.toCollection(TreeSet::new));
 		}
 		else {
 			return null;

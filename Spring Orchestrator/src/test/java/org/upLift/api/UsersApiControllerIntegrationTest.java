@@ -14,8 +14,6 @@ import org.upLift.model.User;
 import org.upLift.repositories.UserRepository;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -39,7 +37,7 @@ class UsersApiControllerIntegrationTest extends BaseControllerIntegrationTest {
 
 	@BeforeEach
 	void setUp() {
-		todayUtc = ZonedDateTime.now(ZoneOffset.UTC).toLocalDate();
+		todayUtc = getTodayUtc();
 	}
 
 	ResultActions checkUser1(ResultActions result, String prefix) throws Exception {

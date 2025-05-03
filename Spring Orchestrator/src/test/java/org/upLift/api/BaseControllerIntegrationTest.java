@@ -1,6 +1,9 @@
+
 package org.upLift.api;
 
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -9,7 +12,15 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.test.web.servlet.ResultActions;
 import org.upLift.model.TremendousOrderResponse;
+import org.upLift.services.BedrockService;
+import org.upLift.services.TextractService;
 import org.upLift.services.TremendousService;
+
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -20,8 +31,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(BaseControllerIntegrationTest.TestConfig.class)
 abstract class BaseControllerIntegrationTest {
 
+	private static final Logger LOG = LoggerFactory.getLogger(BaseControllerIntegrationTest.class);
+
 	@TestConfiguration
 	static class TestConfig {
+
+		// Create mocks of services that directly use AWS services or the Tremendous API
+		// to avoid incurring charges or burning through our sandbox
 
 		@Bean
 		@Primary
@@ -30,12 +46,73 @@ abstract class BaseControllerIntegrationTest {
 			// Tremendous sandbox calls
 			TremendousService mockService = Mockito.mock(TremendousService.class);
 			// Add an orderId so we can check the log to make sure this Mock is used
-			Mockito.doReturn(new TremendousOrderResponse("TESTING"))
-				.when(mockService)
-				.submitDonationOrder(Mockito.any(), Mockito.any(), Mockito.anyInt());
+			Mockito.when(mockService.submitDonationOrder(Mockito.any(), Mockito.any(), Mockito.anyInt()))
+				.thenReturn(new TremendousOrderResponse("TESTING"));
 			return mockService;
 		}
 
+		@Bean
+		@Primary
+		public BedrockService bedrockService() {
+			// Create a mock of the BedrockService so we're not trying to hit the AWS
+			// Bedrock service with every test run
+			// Also, this way we can control exactly what tags/weights are returned for
+			// repeatable testing
+			BedrockService mockService = Mockito.mock(BedrockService.class);
+
+			var recipientTagMap = new HashMap<String, Double>();
+			recipientTagMap.put("clothing", 0.85);
+			recipientTagMap.put("food", 0.47);
+			recipientTagMap.put("legal-aid", 0.73);
+			recipientTagMap.put("transportation", 0.88);
+			// Return new tag that's not already part of the test data
+			recipientTagMap.put("wheelchair access", 0.93);
+			Mockito.when(mockService.getTagsFromPrompt(Mockito.anyString())).thenAnswer(i -> {
+				LOG.info("Invoking mock getTagsFromPrompt");
+				return recipientTagMap;
+			});
+
+			Mockito.when(mockService.matchTagsFromPrompt(Mockito.anyString())).thenAnswer(i -> {
+				LOG.info("Invoking mock matchTagsFromPrompt");
+				// Recipient 1 selected both "childcare" and "health
+				// Recipient 2 matched "education" and "health", but didn't select either
+				// -
+				// expired income verification
+				// Recipient 5 selected "childcare", also matched "health" but not
+				// selected
+				// Recipient 6 selected "health" - no income verification
+				// Recipient 7 doesn't match any of the tags
+				return Arrays.asList("childcare", "education", "health");
+			});
+
+			return mockService;
+		}
+
+		@Bean
+		@Primary
+		public TextractService textractService() {
+			// Create a mock of the TextractService so we're not trying to hit the AWS
+			// Textract service with every test run
+			TextractService mockService = Mockito.mock(TextractService.class);
+			// Mock service to return true for odd ids and false for even ids
+			Mockito.when(mockService.validateRecipientIncome(Mockito.any(), Mockito.any(Integer.class)))
+				.thenAnswer(invocation -> {
+					LOG.info("Invoking mock validateRecipientIncome method");
+					int id = (int) invocation.getArguments()[1];
+					return id % 2 == 1;
+				});
+			return mockService;
+		}
+
+	}
+
+	/**
+	 * Returns "today" in the UTC timezone, can be used to check date portion of "created
+	 * at" timestamps.
+	 * @return "today" in the UTC timezone
+	 */
+	LocalDate getTodayUtc() {
+		return ZonedDateTime.now(ZoneOffset.UTC).toLocalDate();
 	}
 
 	ResultActions checkDonor1PublicData(ResultActions result, String prefix) throws Exception {
