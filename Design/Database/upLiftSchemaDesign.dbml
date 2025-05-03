@@ -12,8 +12,10 @@ Table users {
     id integer [primary key, increment]
     cognito_id uuid
     email varchar(320) // email is serving as username for Cognito accounts
-    recipient boolean // tracks whether the user is currently primarily a recipient or a donor
+    recipient boolean [not null] // tracks whether the user is currently primarily a recipient or a donor
     created_at timestamp(3) [not null]
+    deleted boolean [not null, default: false] // tracks whether the account has been "deleted" or not
+                                     // we still keep the data in case of potential financial requirements
 
   indexes {
     cognito_id [unique, name: 'UQ_users_cognito_id']

@@ -1,10 +1,8 @@
+# Action that does full CI/CD for Spring Orchestrator, only on push/merge to main
 name: Orchestrator CICD
 
 on:
   push:
-    branches: [ main ]
-    paths: [ Spring Orchestrator/** ]
-  pull_request:
     branches: [ main ]
     paths: [ Spring Orchestrator/** ]
 

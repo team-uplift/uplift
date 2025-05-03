@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.upLift.model.Recipient;
+import org.upLift.model.RecipientTag;
 import org.upLift.model.User;
 
 import java.time.Instant;
@@ -44,6 +45,7 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 		assertThat(recipient.getState(), is("WI"));
 		assertThat(recipient.getZipCode(), is("53703"));
 		assertThat(recipient.getImageUrl(), is("http://example.com/image2.jpg"));
+		assertThat(recipient.getNickname(), is("Janie"));
 		assertThat(recipient.getLastAboutMe(), is("About Jane"));
 		assertThat(recipient.getLastReasonForHelp(), is("Reason 2"));
 
@@ -52,6 +54,31 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 		assertThat(recipient.getIncomeLastVerified(), is(Instant.parse("2023-10-03T15:20:40.321Z")));
 		assertThat(recipient.getTagsLastGenerated(), is(Instant.parse("2023-10-10T11:05:20.123Z")));
 
+		// Check form questions
+		assertThat(recipient.getFormQuestions(), hasSize(12));
+		// Just check content of the first and last questions to check that it's been
+		// parsed as a JSON object correctly
+		var formQuestion1 = recipient.getFormQuestions().getFirst();
+		assertThat(formQuestion1.getQuestion(), is("Tell us about yourself."));
+		assertThat(formQuestion1.getAnswer(), is("1"));
+		var formQuestion12 = recipient.getFormQuestions().getLast();
+		assertThat(formQuestion12.getQuestion(),
+				is("What has been the most emotionally difficult part of your current situation?"));
+		assertThat(formQuestion12.getAnswer(), is("12"));
+
+		// Check recipient tags
+		assertThat(recipient.getTags(), hasSize(7));
+		// Check content of first tag (not selected) and last tag (selected
+		var tag1 = recipient.getTags().getFirst();
+		assertThat(tag1.getTag().getTagName(), is("education"));
+		assertThat(tag1.getWeight(), is(0.9));
+		assertThat(tag1.isSelected(), is(false));
+		assertThat(tag1.getAddedAt(), is(Instant.parse("2023-10-03T12:40:50.789Z")));
+		var tag7 = recipient.getTags().getLast();
+		assertThat(tag7.getTag().getTagName(), is("utilities"));
+		assertThat(tag7.getWeight(), is(0.5));
+		assertThat(tag7.isSelected(), is(true));
+		assertThat(tag7.getAddedAt(), is(Instant.parse("2023-10-19T11:35:20.456Z")));
 	}
 
 	@Test
@@ -68,7 +95,7 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 	void testSaveRecipient() {
 		// Create and save a new user
 		User user = new User();
-		user.setCognitoId("550e8400-e29b-41d4-a716-446655440008");
+		user.setCognitoId("550e8400-e29b-41d4-a716-446655440099");
 		user.setEmail("sarah.johnson@example.com");
 		user.setRecipient(true);
 
@@ -81,6 +108,7 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 		newRecipient.setZipCode("43215");
 		newRecipient.setLastAboutMe("About Sarah");
 		newRecipient.setLastReasonForHelp("Reason 3");
+		newRecipient.setNickname("Fuschia alligator");
 		newRecipient.setImageUrl("http://example.com/image3.jpg");
 		newRecipient.setIdentityLastVerified(Instant.parse("2024-10-27T11:31:43Z"));
 		newRecipient.setIncomeLastVerified(Instant.parse("2024-12-27T11:31:43Z"));
@@ -107,6 +135,7 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 		assertThat(loadedRecipient.getZipCode(), is("43215"));
 		assertThat(loadedRecipient.getLastAboutMe(), is("About Sarah"));
 		assertThat(loadedRecipient.getLastReasonForHelp(), is("Reason 3"));
+		assertThat(loadedRecipient.getNickname(), is("Fuschia alligator"));
 		assertThat(loadedRecipient.getImageUrl(), is("http://example.com/image3.jpg"));
 		assertThat(loadedRecipient.getIdentityLastVerified(), is(Instant.parse("2024-10-27T11:31:43Z")));
 		assertThat(loadedRecipient.getIncomeLastVerified(), is(Instant.parse("2024-12-27T11:31:43Z")));
@@ -115,7 +144,7 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 		var loadedUser = loadedRecipient.getUser();
 		// Validate the parent User properties
 		assertThat(loadedUser.getId(), notNullValue());
-		assertThat(loadedUser.getCognitoId(), is("550e8400-e29b-41d4-a716-446655440008"));
+		assertThat(loadedUser.getCognitoId(), is("550e8400-e29b-41d4-a716-446655440099"));
 		assertThat(loadedUser.getEmail(), is("sarah.johnson@example.com"));
 		assertThat(loadedUser.isRecipient(), is(true));
 	}
@@ -123,19 +152,30 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 	@Test
 	@DisplayName("Test retrieving recipients by last donation timestamp")
 	void testGetRecipientsByLastDonationTimestamp() {
+		// Check that deleted recipient has no last donation timestamp
+		var deletedRecipient = recipientRepository.findById(9)
+			.orElseThrow(() -> new RuntimeException("Deleted recipient 9 not found"));
+		assertThat(deletedRecipient.getUser().isDeleted(), is(true));
+		assertThat(deletedRecipient.getLastDonationTimestamp(), is(nullValue()));
+
 		// Arrange
-		Instant cutoff = Instant.parse("2023-10-23T00:00:00Z"); // before 2023-10-23
+		// before 2023-10-23, this should exclude recipient 1
+		Instant cutoff = Instant.parse("2023-10-23T00:00:00Z");
 
 		// Act
 		List<Recipient> recipients = recipientRepository.getRecipientsByLastDonationTimestamp(cutoff);
 
 		// Assert
 		assertThat(recipients, is(not(empty()))); // Ensure the list is not empty
+		// Recipient 9 excluded because it's deleted, even though the last donated
+		// timestamp is null
 		assertThat(recipients, hasSize(4));
 		// Validate that all recipients meet the criteria
 		for (Recipient recipient : recipients) {
 			assertThat("Recipient's last donation timestamp should be null or before the cutoff",
 					recipient.getLastDonationTimestamp(), anyOf(nullValue(), lessThan(cutoff)));
+			// Check that the expected recipients were returned
+			assertThat(recipient.getId(), is(oneOf(2, 5, 6, 7)));
 		}
 
 		// Validate sorting: null timestamps should come first, followed by earlier
@@ -144,6 +184,10 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 			Recipient previous = recipients.get(i - 1);
 			Recipient current = recipients.get(i);
 
+			if (current.getLastDonationTimestamp() == null) {
+				// Nulls should be ordered before set timestamps
+				assertThat(previous.getLastDonationTimestamp(), is(nullValue()));
+			}
 			if (previous.getLastDonationTimestamp() != null) {
 				// If the previous recipient has a valid timestamp, the current one must
 				// have a later or equal timestamp
@@ -156,22 +200,39 @@ class RecipientRepositoryTest extends BaseRepositoryTest {
 	@Test
 	@DisplayName("Test finding recipients by tags 'food' and 'health' and validate results")
 	void testFindByTags_Tag_TagName() {
-		// Arrange
-		List<String> tags = List.of("food", "health");
+		var deletedRecipient = recipientRepository.findById(9)
+			.orElseThrow(() -> new RuntimeException("Recipient 9 not found"));
+		assertThat(deletedRecipient.getUser().isDeleted(), is(true));
+		var selectedTags = deletedRecipient.getSelectedTags();
+		// Check that deleted recipient is linked to "elderly parent" (the only recipient
+		// that is)
+		// and "food-banks", among other tags
+		assertThat(selectedTags, hasSize(5));
+		for (RecipientTag selectedTag : selectedTags) {
+			assertThat(selectedTag.getTagName(),
+					is(oneOf("elderly parent", "financial-planning", "food-banks", "health", "job-training")));
+		}
+
+		// Arrange - note that deleted recipient 9 has "food-banks" tag selected
+		// Note that recipients 6 and 7 are linked to "food-banks", but didn't select it
+		List<String> tags = List.of("food", "food-banks");
 		Pageable pageable = PageRequest.of(0, 10); // Limit to 10 results
 
 		// Act
-		List<Recipient> recipients = recipientRepository.findByTags_Tag_TagName(tags, pageable);
+		var result1 = recipientRepository.findByTags_Tag_TagName(tags, pageable);
 
 		// Assert
-		assertThat(recipients, is(not(empty()))); // Ensure the list is not empty
-		assertThat(recipients, hasSize(4)); // Ensure exactly 4 recipients are returned
+		assertThat(result1, is(not(empty()))); // Ensure the list is not empty
+		assertThat(result1, hasSize(4)); // Ensure exactly 4 recipients are returned
 
 		// Validate that the returned recipients have the expected IDs
-		List<Integer> recipientIds = recipients.stream().map(Recipient::getId).toList();
-		assertThat(recipientIds, containsInAnyOrder(1, 2, 5, 6)); // Ensure IDs match
-																	// exactly
+		List<Integer> recipientIds = result1.stream().map(Recipient::getId).toList();
+		// Ensure IDs match exactly, excluding the deleted recipient
+		assertThat(recipientIds, containsInAnyOrder(1, 5, 6, 7));
 
+		// Now check against the "elderly parent" tag, only linked to recipient 9
+		var result2 = recipientRepository.findByTags_Tag_TagName(List.of("elderly parent"), pageable);
+		assertThat("Only deleted recipient linked to tag", result2, is(empty()));
 	}
 
 }
