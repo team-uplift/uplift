@@ -15,6 +15,8 @@ import 'package:uplift/screens/home/home_screen.dart';
 import 'package:uplift/screens/home/profile_screen.dart';
 import 'package:uplift/screens/home/quiz_screen.dart';
 import 'package:uplift/screens/home/account_settings_screen.dart';
+import 'package:uplift/screens/home/change_password.dart';
+import 'package:uplift/screens/home/personal_info.dart';
 import 'package:uplift/recipients/recipient_home_controller.dart';
 import 'package:uplift/screens/home/recipient_detail_screen.dart';
 import 'package:uplift/screens/home/recipient_list_screen.dart';
@@ -183,6 +185,20 @@ final GoRouter _router = GoRouter(
       name: '/account_settings',
       builder: (BuildContext context, GoRouterState state) {
         return const AccountSettingsScreen();
+      },
+    ),
+    GoRoute(
+      path: '/change_password',
+      name: '/change_password',
+      builder: (BuildContext context, GoRouterState state) {
+        return const ChangePasswordScreen();
+      },
+    ),
+    GoRoute(
+      path: '/personal_info',
+      name: '/personal_info',
+      builder: (BuildContext context, GoRouterState state) {
+        return const PersonalInfoScreen();
       },
     ),
   ],
