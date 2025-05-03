@@ -140,22 +140,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                       context.pushNamed('/change_password');
                     },
                   ),
-                  // const SizedBox(height: 16),
-                  // SettingsCard(
-                  //   title: "Email Preferences",
-                  //   description: "Manage your email notifications",
-                  //   icon: Icons.email_outlined,
-                  //   onTap: () {
-                  //   },
-                  // ),
-                  // const SizedBox(height: 16),
-                  // SettingsCard(
-                  //   title: "Two-Factor Authentication",
-                  //   description: "Add an extra layer of security",
-                  //   icon: Icons.security_outlined,
-                  //   onTap: () {
-                  //   },
-                  // ),
 
                   const SizedBox(height: 16),
 

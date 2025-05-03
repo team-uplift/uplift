@@ -15,6 +15,15 @@ import java.util.Set;
 public interface RecipientService {
 
 	/**
+	 * Checks if a recipient entry exists with the specified persistence id, deleted or
+	 * not.
+	 * @param id persistence id of a recipient to look for
+	 * @return true if there's a recipient entry with the specified persistence id,
+	 * deleted or not, or false if no such entry exists
+	 */
+	boolean existsById(int id);
+
+	/**
 	 * Retrieves a randomly-selected, randomly-ordered List of tags chosen by at least one
 	 * recipient. If there are at least quantity number of tags, returns the specified
 	 * quantity. If there are fewer tags than the specified quantity, returns all
@@ -44,8 +53,9 @@ public interface RecipientService {
 	 * This method takes in a donor's question and answers and passes those as a prompt to
 	 * amazon bedrock to gather a list of known tags, then matches those tags to
 	 * recipients that meet the donor's preferences in a fair and balanced strategy.
-	 * @param donorQA
-	 * @return
+	 * @param donorQA form questions answered by the donor, used to find matching
+	 * recipients
+	 * @return List of recipients selected based on donor question responses
 	 */
 	List<Recipient> getMatchingRecipientsByDonorPrompt(List<FormQuestion> donorQA);
 

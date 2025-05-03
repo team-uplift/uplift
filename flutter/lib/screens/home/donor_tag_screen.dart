@@ -10,10 +10,12 @@ import '../../constants/constants.dart';
 
 class DonorTagPage extends StatefulWidget {
   final List<Map<String, dynamic>> questionsAnswers;
+  final http.Client? httpClient;
 
   const DonorTagPage({
     super.key,
     required this.questionsAnswers,
+    this.httpClient,
   });
 
   static const baseUrl =
@@ -27,19 +29,29 @@ class _DonorTagPageState extends State<DonorTagPage> {
   List<DonorTag> tags = [];
   List<String> selectedTags = [];
   bool isLoading = true;
+  late final http.Client _httpClient;
 
   @override
   void initState() {
     super.initState();
+    _httpClient = widget.httpClient ?? http.Client();
     fetchDonorTags();
     print('Received questions answers: ${widget.questionsAnswers}');
+  }
+
+  @override
+  void dispose() {
+    if (widget.httpClient == null) {
+      _httpClient.close();
+    }
+    super.dispose();
   }
 
   Future<void> fetchDonorTags() async {
     final url =
         Uri.parse('${DonorTagPage.baseUrl}/recipients/tags/random?quantity=10');
     try {
-      final response = await http.get(url);
+      final response = await _httpClient.get(url);
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         setState(() {
@@ -82,17 +94,12 @@ class _DonorTagPageState extends State<DonorTagPage> {
     setState(() => isLoading = true);
 
     try {
-      // final tagsString = selectedTags.join(',');
       final url =
-          Uri.parse('${DonorTagPage.baseUrl}/recipients/matching').replace(
-              // queryParameters: {
-              //   'tag': tagsString,
-              // },
-              );
+          Uri.parse('${DonorTagPage.baseUrl}/recipients/matching').replace();
 
       debugPrint('Requesting URL: $url');
 
-      final response = await http.post(
+      final response = await _httpClient.post(
         url,
         headers: {
           'Accept': 'application/json',

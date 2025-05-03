@@ -1,20 +1,19 @@
 // test/screens/home/question_page_test.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:uplift/screens/home/question_screen.dart';
 
 void main() {
-  testWidgets('QuestionPage shows an AppBar with title "Questions"', (tester) async {
-    // Build our widget inside a MaterialApp so AppBar can work.
+  testWidgets('QuestionPage shows basic UI elements',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: QuestionPage(),
       ),
     );
-
-    // Look for an AppBar and the title text.
-    expect(find.byType(AppBar), findsOneWidget);
+    // Verify basic UI elements are present
     expect(find.text('Questions'), findsOneWidget);
+    expect(find.byType(AppBar), findsOneWidget);
+    expect(find.byType(Scaffold), findsOneWidget);
   });
 }

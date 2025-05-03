@@ -39,6 +39,11 @@ public class RecipientServiceImpl implements RecipientService {
 	}
 
 	@Override
+	public boolean existsById(int id) {
+		return recipientRepository.existsById(id);
+	}
+
+	@Override
 	public List<Tag> getRandomSelectedTags(int quantity) {
 		List<Tag> allSelectedTags = tagRepository.getSelectedTags();
 		Collections.shuffle(allSelectedTags);
@@ -121,7 +126,7 @@ public class RecipientServiceImpl implements RecipientService {
 			}
 		}
 		else {
-			throw new EntityNotFoundException(id, "Recipient", "Recipient not found.");
+			throw new EntityNotFoundException(id, "Recipient", "Recipient not found");
 		}
 	}
 
@@ -210,8 +215,8 @@ public class RecipientServiceImpl implements RecipientService {
 	/**
 	 * Private method to check if recipient can regenerate tags. As of now the default is
 	 * once every 24 hours.
-	 * @param recipient
-	 * @return
+	 * @param recipient recipient to be checked
+	 * @return true if tags can be generated, false if not
 	 */
 	private Boolean canGenerateTags(Recipient recipient) {
 		// Default to false. Do NOT default to true and change the logic (albeit simpler).

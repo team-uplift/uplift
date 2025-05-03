@@ -42,6 +42,7 @@ class FairnessServiceIntegrationTest {
 		// Recipient 5 selected "childcare", also matched "health" but not selected
 		// Recipient 6 selected "health" - no income verification
 		// Recipient 7 doesn't match any of the tags
+		// Recipient 9 selected "health" but is deleted
 		var tags = List.of("childcare", "education", "health");
 
 		var result = fairnessService.getRecipientsFromTags(tags);
