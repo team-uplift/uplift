@@ -1,8 +1,14 @@
+/// question_carousel.dart
+/// 
+/// a way to display all ther recipients answers to questions in an interactive
+/// way on their home page
+/// 
+/// chatgpt generated
+
 import 'package:flutter/material.dart';
 import 'package:uplift/constants/constants.dart';
 
-/// A model class to hold question/answer pairs. You can replace this
-/// with your own existing model if you have one.
+/// model for question/answer pairs
 class QuestionAnswer {
   final String question;
   final String answer;
@@ -19,10 +25,10 @@ class QuestionCarousel extends StatefulWidget {
   final double cardHeight;
 
   const QuestionCarousel({
-    Key? key,
+    super.key,
     required this.items,
     this.cardHeight = 200,
-  }) : super(key: key);
+  });
 
   @override
   _QuestionCarouselState createState() => _QuestionCarouselState();
@@ -60,7 +66,7 @@ class _QuestionCarouselState extends State<QuestionCarousel> {
               color: AppColors.warmWhite,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
-                side: BorderSide(color: AppColors.lavender, width: 1.5),
+                side: BorderSide(color: AppColors.baseBlue, width: 4),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16),

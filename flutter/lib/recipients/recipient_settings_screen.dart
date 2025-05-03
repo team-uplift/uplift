@@ -16,6 +16,7 @@
 /// - _buildConvertAccountCard
 /// - _buildDeleteAccountCard
 ///
+library;
 
 import 'dart:async';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -390,7 +391,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: AppColors.lavender, width: 1.5),
+        side: BorderSide(color: AppColors.baseBlue, width: 4),
       ),
       child: ListTile(
         leading: const Icon(Icons.edit),
@@ -429,7 +430,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.lavender, width: 1.5),
+        side: BorderSide(color: AppColors.baseBlue, width: 4),
       ),
       child: ListTile(
         leading: const Icon(Icons.logout),
@@ -459,7 +460,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.lavender, width: 1.5),
+        side: BorderSide(color: AppColors.baseOrange, width: 4),
       ),
       child: ListTile(
         leading: const Icon(Icons.redo, color: AppColors.baseOrange),
@@ -501,7 +502,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.lavender, width: 1.5),
+        side: BorderSide(color: AppColors.baseRed, width: 4),
       ),
       child: ListTile(
         leading: const Icon(Icons.delete_forever, color: AppColors.baseRed),

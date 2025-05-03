@@ -23,9 +23,6 @@ class UserApi {
   final http.Client client;
   UserApi({http.Client? client}) : client = client ?? http.Client();
 
-  // static const baseUrl =
-  //     'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
-
   /// fetches a user by a user id
   ///
   /// returns a User object on success, null on failure

@@ -17,6 +17,7 @@ import 'package:http/http.dart' as http;
 import 'package:uplift/constants/constants.dart';
 import 'package:uplift/utils/logger.dart';
 import '../models/donation_model.dart';
+
 // if planning on using JWT for authentication, fastest method would be to
 // use cognito helper functions here
 
@@ -94,11 +95,11 @@ class RecipientApi {
   ///
   /// returns 'true' if verified, 'false' otherwise
   Future<bool> uploadIncomeVerificationImage(int userId, File imageFile) async {
-    // print("start of income verification api call");
     try {
       final request = http.MultipartRequest(
         'PUT',
-        Uri.parse('${AppConfig.baseUrl}/recipients/verification/income/$userId'),
+        Uri.parse(
+            '${AppConfig.baseUrl}/recipients/verification/income/$userId'),
       );
 
       request.files.add(
@@ -124,7 +125,7 @@ class RecipientApi {
 
   /// retrieves list of all donations associated with recipient
   ///
-  /// returns list of donation objects on success, empty list on failure
+  /// returns (list of donation objects, string) on success, (empty list, string) on failure
   Future<(List<Donation>, String)> fetchDonationsForRecipient(
       int recipientId) async {
     try {
@@ -181,7 +182,6 @@ class RecipientApi {
   ///
   /// returns donation object on success, null on failure
   Future<Donation?> sendThankYouMessage({
-    // required int userId,
     required int donationId,
     required String message,
   }) async {

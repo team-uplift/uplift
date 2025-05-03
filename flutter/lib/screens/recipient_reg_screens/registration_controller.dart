@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 import 'package:uplift/api/cognito_helper.dart';
 import 'package:uplift/api/recipient_api.dart';
 import 'package:uplift/api/tag_api.dart';
+import 'package:uplift/components/recipient_appbar.dart';
 import 'package:uplift/constants/constants.dart';
 import 'package:uplift/models/tag_model.dart';
 import 'package:uplift/utils/logger.dart';
@@ -231,20 +232,16 @@ class _RegistrationControllerState extends State<RegistrationController> {
       children: [
         Scaffold(
           backgroundColor: AppColors.baseYellow,
-          appBar: AppBar(
+          appBar: RecipientAppBar(
             title: SizedBox(
               height: 40,
               child: FittedBox(
                 fit: BoxFit.contain,
-                child: Image.asset('assets/uplift_black.png'),
+                child: Image.asset('assets/uplift_black.png')
               ),
             ),
-            centerTitle: true,
-            backgroundColor: AppColors.baseGreen,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: _stepBack,
-            ),
+            isVerified: false,
+            useGradient: false,
           ),
           body: SafeArea(
             child: Column(

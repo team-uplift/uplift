@@ -8,8 +8,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +15,7 @@ import 'package:uplift/api/cognito_helper.dart';
 import 'package:uplift/components/standard_button.dart';
 import 'package:uplift/constants/constants.dart';
 
+// ignore: unused_element
 bool _isLoading = false;
 
 class DonorOrRecipient extends StatefulWidget {
@@ -36,14 +35,11 @@ class _DonorOrRecipientState extends State<DonorOrRecipient> {
     // map to easier to parse dict
     final attrMap = await getCognitoAttributes();
 
-    // TODO abstract all of this into an api file to register user
     final payload = {
       'cognitoId': attrMap?['sub'],
       'email': attrMap?['email'],
       'recipient': false,
     };
-
-    debugPrint('Payload being sent: ${jsonEncode(payload)}');
 
     http.Response? storeUserResponse;
 
@@ -76,6 +72,15 @@ class _DonorOrRecipientState extends State<DonorOrRecipient> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: SizedBox(
+          height: 40,
+          child: FittedBox(
+              fit: BoxFit.contain,
+              child: Image.asset('assets/uplift_black.png')),
+        ),
+        backgroundColor: AppColors.baseGreen, 
+      ),
       backgroundColor: AppColors.baseYellow,
       body: Center(
         child: Padding(

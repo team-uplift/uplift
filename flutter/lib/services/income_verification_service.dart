@@ -1,4 +1,11 @@
-// lib/services/income_verification_service.dart
+/// lib/services/income_verification_service.dart
+/// used to assist with opening gallery or camera and uploading photo
+/// for verification
+/// includes:
+/// - pickImageSource
+/// - verifyIncome
+/// 
+/// combination of tutorials, chatgpt, stackoverflow
 
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -11,6 +18,7 @@ class IncomeVerificationService {
 
   IncomeVerificationService(this.api);
 
+  /// opens the camera and allows user to choose photo
   Future<ImageSource?> pickImageSource(BuildContext context) {
     return showModalBottomSheet<ImageSource>(
       context: context,
@@ -34,11 +42,12 @@ class IncomeVerificationService {
     );
   }
 
+  /// uploads phot to backend for income verification
   Future<bool> verifyIncome({
     required BuildContext context,
     required int recipientId,
   }) async {
-    // 1. Fraud warning
+    // fraud warning
     final proceed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
@@ -57,15 +66,15 @@ class IncomeVerificationService {
     ) ?? false;
     if (!proceed) return false;
 
-    // 2. Pick image source
+    // pick image source
     final source = await pickImageSource(context);
     if (source == null) return false;
 
-    // 3. Pick image
+    // pick image
     final picked = await ImagePicker().pickImage(source: source);
     if (picked == null) return false;
 
-    // 4. Upload
+    // upload
     final file = File(picked.path);
     return await api.uploadIncomeVerificationImage(recipientId, file);
   }

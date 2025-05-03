@@ -4,6 +4,7 @@
 /// details
 /// Includes:
 /// - _loadDaonations
+/// - _buildHistoryCard widget
 ///
 library;
 
@@ -25,12 +26,11 @@ class RecipientHistoryScreen extends StatefulWidget {
     required this.profile,
     required this.recipient,
     RecipientApi? api,
-  })  : api = api ?? RecipientApi();                // ← don’t forget to call super
+  }) : api = api ?? RecipientApi(); // ← don’t forget to call super
 
   @override
   State<RecipientHistoryScreen> createState() => _RecipientHistoryScreenState();
 }
-
 
 class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
   late final RecipientApi api;
@@ -42,19 +42,27 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
     _loadDonations();
   }
 
-  List<Donation> historyItems = [];
+  List<Donation> unthankedItems = [];
+  List<Donation> thankedItems = [];
   String msg = "";
   bool _isLoading = true;
 
-
   /// fetches all donation objects associated with user from api and stores them
-  /// in a list
+  /// in two lists --> thanked and unthanked
   Future<void> _loadDonations() async {
-    final donations =
-        await api.fetchDonationsForRecipient(widget.profile.id!);
+    final donations = await api.fetchDonationsForRecipient(widget.profile.id!);
+    final all = donations.$1;
 
     setState(() {
-      historyItems = donations.$1;
+      unthankedItems = all
+          .where((d) => d.thankYouMessage?.isEmpty ?? true)
+          .toList()
+        ..sort((a, b) =>
+            b.formattedDate.compareTo(a.formattedDate)); // newest first
+      thankedItems = all
+          .where((d) => d.thankYouMessage?.isNotEmpty ?? false)
+          .toList()
+        ..sort((a, b) => b.formattedDate.compareTo(a.formattedDate));
       msg = donations.$2;
       _isLoading = false;
     });
@@ -69,13 +77,13 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
           ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: historyItems.isEmpty
-              // TODO test this
+              child: (unthankedItems.isEmpty && thankedItems.isEmpty)
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.inbox_outlined, size: 64, color: AppColors.baseBlue),
+                          Icon(Icons.inbox_outlined,
+                              size: 64, color: AppColors.baseBlue),
                           const SizedBox(height: 16),
                           Text(
                             msg,
@@ -85,11 +93,80 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
                       ),
                     )
                   : ListView(
-                      children: historyItems
-                          .map((item) => _buildHistoryCard(context, item))
-                          .toList(),
-                    ),
-            ),
+                      children: [
+                        // build unthanked list of donations
+                        if (unthankedItems.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          Card(
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(
+                                  color: AppColors.baseRed, width: 1.5),
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.baseRed.withAlpha(40),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border(
+                                  left: BorderSide(
+                                      color: AppColors.baseRed, width: 5),
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("Needs Thank-You",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                  const SizedBox(height: 8),
+                                  ...unthankedItems.map((item) =>
+                                      _buildHistoryCard(context, item)),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                        // build thanked list of donations
+                        if (thankedItems.isNotEmpty) ...[
+                          const SizedBox(height: 24),
+                          Card(
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(
+                                  color: AppColors.baseBlue, width: 1.5),
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.baseBlue.withAlpha(50),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border(
+                                  left: BorderSide(
+                                      color: AppColors.baseBlue, width: 5),
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("Thanked Donations",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                  const SizedBox(height: 8),
+                                  ...thankedItems.map((item) =>
+                                      _buildHistoryCard(context, item)),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 16),
+                      ],
+                    )),
     );
   }
 
@@ -105,7 +182,10 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
         elevation: 5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: AppColors.lavender, width: 1.5),
+          side: BorderSide(
+            color: hasThankYou ? AppColors.baseBlue : AppColors.baseRed,
+            width: 4,
+          ),
         ),
         child: ListTile(
           title: Text("From ${donation.donorName}",

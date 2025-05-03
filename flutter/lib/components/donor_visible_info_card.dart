@@ -1,8 +1,11 @@
+/// donor_visible_info_card.dart
+/// 
+/// a stylized card for recipients to know which information is visible to 
+/// donors
+
 import 'package:flutter/material.dart';
 import 'package:uplift/constants/constants.dart';
 
-/// A card displaying the donor-visible profile information:
-/// "About Me" and "Why I Need Help" sections.
 class VisibleInfoCard extends StatelessWidget {
   final String? aboutMe;
   final String? reasonForNeed;
@@ -21,7 +24,7 @@ class VisibleInfoCard extends StatelessWidget {
       color: AppColors.warmWhite,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: AppColors.lavender, width: 1.5),
+        side: BorderSide(color: AppColors.baseGreen, width: 4),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),

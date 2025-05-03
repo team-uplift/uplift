@@ -1,3 +1,12 @@
+/// tag_selection_screen.dart
+/// 
+/// screen made for user to select tags when they register
+/// includes:
+/// - _toggleTag
+/// - _sortTagsByWeight
+/// - _submit
+
+
 import 'package:flutter/material.dart';
 import 'package:uplift/components/match_color_legend.dart';
 import 'package:uplift/constants/constants.dart';
@@ -20,6 +29,7 @@ class TagSelection extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _TagSelectionState createState() => _TagSelectionState();
 }
 
@@ -31,13 +41,13 @@ class _TagSelectionState extends State<TagSelection> {
   void initState() {
     super.initState();
 
-    // Rebuild selectedTags from any tags already marked as selected
+    // rebuild selectedTags from any tags already marked as selected
     selectedTags.addAll(
       widget.availableTags.where((tag) => tag.selected),
     );
   }
 
-
+  /// sets state of tags based on user selection
   void _toggleTag(Tag tag) {
     setState(() {
       tag.selected = !tag.selected;
@@ -54,6 +64,7 @@ class _TagSelectionState extends State<TagSelection> {
     });
   }
 
+  /// submits user choices of tags to update their profile
   void _submit() {
     final selectedTags = widget.availableTags
       .where((tag) => tag.selected)
@@ -65,7 +76,7 @@ class _TagSelectionState extends State<TagSelection> {
     }
   }
 
-
+  /// sorts tags by matching weight
   void _sortTagsByWeight() {
     setState(() {
       widget.availableTags.sort((a, b) => b.weight.compareTo(a.weight));
@@ -74,11 +85,11 @@ class _TagSelectionState extends State<TagSelection> {
 
   @override
   Widget build(BuildContext context) {
-    _sortTagsByWeight(); //sorting all tags when page is built
+    _sortTagsByWeight(); // sorting all tags when page is built
     return Column(
       children: [
         const Text(
-          "Select up to 10 interests",
+          "Select up to 10 tags",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),

@@ -14,7 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:uplift/api/cognito_helper.dart';
 import 'package:uplift/api/recipient_api.dart';
 import 'package:uplift/components/bottom_nav_bar.dart';
-import 'package:uplift/constants/constants.dart';
+import 'package:uplift/components/recipient_appbar.dart';
 import 'package:uplift/models/recipient_model.dart';
 import 'package:uplift/models/user_model.dart';
 import 'package:uplift/services/income_verification_service.dart';
@@ -48,10 +48,16 @@ class _RecipientHomeState extends State<RecipientHome> {
   /// initializes all screens necessary for recipient dashboard
   void _loadScreens() {
     _screens = [
-      RecipientProfileScreen(profile: userProfile, recipient: recipientProfile, onVerifyPressed: _handleVerifyTap,),
+      RecipientProfileScreen(
+        profile: userProfile,
+        recipient: recipientProfile,
+        onVerifyPressed: _handleVerifyTap,
+      ),
       RecipientHistoryScreen(profile: userProfile, recipient: recipientProfile),
       RecipientSettingsScreen(
-          profile: userProfile, recipient: recipientProfile, onVerifyPressed: _handleVerifyTap),
+          profile: userProfile,
+          recipient: recipientProfile,
+          onVerifyPressed: _handleVerifyTap),
     ];
   }
 
@@ -90,7 +96,7 @@ class _RecipientHomeState extends State<RecipientHome> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content:
-          Text(success ? 'Verification Successful' : 'Verification Failed'),
+            Text(success ? 'Verification Successful' : 'Verification Failed'),
       ),
     );
     if (success) context.goNamed('/redirect');
@@ -98,22 +104,28 @@ class _RecipientHomeState extends State<RecipientHome> {
 
   @override
   Widget build(BuildContext context) {
+    // check to ensure user is loaded before accessing user
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(
+      appBar: RecipientAppBar(
         title: SizedBox(
           height: 40,
           child: FittedBox(
-            fit: BoxFit.contain,
-            child: Image.asset('assets/uplift_black.png'),
-          ),
+              fit: BoxFit.contain,
+              child: Image.asset('assets/uplift_black.png')),
         ),
-        centerTitle: true,
-        backgroundColor: AppColors.baseGreen,
+        isVerified: recipientProfile.incomeLastVerified != null,
+        onVerifyPressed: _handleVerifyTap,
+        useGradient: false,
       ),
       body: Stack(
         children: [
-          if (_isLoading)
-            const Center(child: CircularProgressIndicator()),
+          if (_isLoading) const Center(child: CircularProgressIndicator()),
           AnimatedOpacity(
             opacity: _isLoading ? 0 : 1,
             duration: const Duration(milliseconds: 500),
@@ -127,8 +139,8 @@ class _RecipientHomeState extends State<RecipientHome> {
                 );
               },
               child: _isLoading
-                ? const SizedBox()  // Don't show anything when loading
-                : _screens[_selectedItem],
+                  ? const SizedBox() // Don't show anything when loading
+                  : _screens[_selectedItem],
             ),
           ),
         ],
@@ -140,4 +152,3 @@ class _RecipientHomeState extends State<RecipientHome> {
     );
   }
 }
-
