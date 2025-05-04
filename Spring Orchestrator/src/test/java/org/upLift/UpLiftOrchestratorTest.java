@@ -10,7 +10,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 /**
- * This serves as a "smoke" test for the configuration, to make sure that the system starts up correctly.
+ * This serves as a "smoke" test for the configuration, to make sure that the system
+ * starts up correctly.
  */
 @SpringBootTest
 class UpLiftOrchestratorTest {
