@@ -284,6 +284,17 @@ class RecipientsApiControllerIntegrationTest extends BaseControllerIntegrationTe
 			.andExpect(jsonPath("$[9].category").doesNotExist())
 			.andExpect(jsonPath("$[9].createdAt", startsWith(todayUtc)));
 
+		// Test trying to update tags too soon after a recipient last updated them
+		mockMvc
+			.perform(post("/recipients/tagGeneration/7").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(formQuestions))
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isTooEarly())
+			.andExpect(jsonPath("$.errorMessage", is("Recipient generated tags too recently.")))
+			.andExpect(jsonPath("$.status", is(425)))
+			.andExpect(jsonPath("$.errorType", is("Too Early")))
+			.andExpect(jsonPath("$.path", is("/recipients/tagGeneration/7")));
+
 		// Test trying to update tags for non-existent recipient
 		mockMvc
 			.perform(post("/recipients/tagGeneration/999").contentType(MediaType.APPLICATION_JSON)
