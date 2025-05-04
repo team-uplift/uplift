@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.upLift.exceptions.EntityNotFoundException;
-import org.upLift.exceptions.ModelException;
-import org.upLift.exceptions.TimingException;
 import org.upLift.model.FormQuestion;
 import org.upLift.model.Recipient;
 import org.upLift.model.RecipientTag;
@@ -55,21 +53,10 @@ public class RecipientsApiController implements RecipientsApi {
 	}
 
 	@Override
-	public ResponseEntity<List<RecipientTag>> updateRecipientTags(Integer recipientId,
-			List<FormQuestion> formQuestions) {
+	public List<RecipientTag> updateRecipientTags(Integer recipientId, List<FormQuestion> formQuestions) {
 		LOG.info("Updating recipient tags for recipient {}", recipientId);
-		try {
-			List<RecipientTag> generatedTags = recipientService.generateRecipientTags(recipientId, formQuestions);
-			return new ResponseEntity<>(generatedTags, HttpStatus.CREATED);
-		}
-		catch (TimingException e) {
-			LOG.warn(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.TOO_EARLY);
-		}
-		catch (ModelException e) {
-			LOG.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		List<RecipientTag> generatedTags = recipientService.generateRecipientTags(recipientId, formQuestions);
+		return generatedTags;
 	}
 
 	@Override

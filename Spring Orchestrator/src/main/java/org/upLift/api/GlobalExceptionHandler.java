@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.upLift.exceptions.BadRequestException;
 import org.upLift.exceptions.EntityNotFoundException;
 import org.upLift.exceptions.ModelException;
+import org.upLift.exceptions.TimingException;
 import org.upLift.model.ErrorResults;
 
 /**
@@ -47,6 +48,13 @@ public class GlobalExceptionHandler {
 	public ErrorResults.GeneralError handleBadRequestException(BadRequestException ex, HttpServletRequest request) {
 		LOG.error("Model exception", ex);
 		return new ErrorResults.GeneralError(ex.getMessage(), HttpStatus.BAD_REQUEST).withPath(request.getRequestURI());
+	}
+
+	@ResponseStatus(HttpStatus.TOO_EARLY)
+	@ExceptionHandler(TimingException.class)
+	public ErrorResults.GeneralError handleTimingException(TimingException ex, HttpServletRequest request) {
+		LOG.error("Timing exception", ex);
+		return new ErrorResults.GeneralError(ex.getMessage(), HttpStatus.TOO_EARLY).withPath(request.getRequestURI());
 	}
 
 }
