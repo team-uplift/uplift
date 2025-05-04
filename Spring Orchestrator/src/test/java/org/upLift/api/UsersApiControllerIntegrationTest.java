@@ -102,6 +102,19 @@ class UsersApiControllerIntegrationTest extends BaseControllerIntegrationTest {
 	}
 
 	@Test
+	void getUserById_NonExistingUser() throws Exception {
+		mockMvc.perform(get("/users/999").contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.errorMessage", is("User not found")))
+			.andExpect(jsonPath("$.status", is(404)))
+			.andExpect(jsonPath("$.errorType", is("Not Found")))
+			.andExpect(jsonPath("$.timestamp").exists())
+			.andExpect(jsonPath("$.path", is("/users/999")))
+			.andExpect(jsonPath("$.notFoundEntityId", is(999)))
+			.andExpect(jsonPath("$.notFoundEntityType", is("User")));
+	}
+
+	@Test
 	void getUserByCognitoId_Recipient() throws Exception {
 		var result = mockMvc
 			.perform(get("/users/cognito/550e8400-e29b-41d4-a716-446655440000").contentType(MediaType.APPLICATION_JSON))
@@ -121,6 +134,12 @@ class UsersApiControllerIntegrationTest extends BaseControllerIntegrationTest {
 
 		// Check user data
 		checkUser3(result, "$");
+	}
+
+	@Test
+	void getUserByCognitoId_NonExistingUser() throws Exception {
+		mockMvc.perform(get("/users/cognito/nonsense").contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isNotFound());
 	}
 
 	@Test
