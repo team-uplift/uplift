@@ -57,7 +57,7 @@ class _DonationCardState extends State<DonationCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.donation.nickname ?? 'Anonymous',
+                    widget.donation.recipient?.nickname ?? 'Anonymous',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,

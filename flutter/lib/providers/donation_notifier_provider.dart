@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-
+import 'package:uplift/models/recipient_model.dart';
 class Donation {
   final int id;
   final double amount;
@@ -12,7 +12,7 @@ class Donation {
   final String recipientName;
   final DateTime createdAt;
   final String? thankYouMessage;
-  final String? nickname;
+  final Recipient? recipient;
   Donation({
     required this.id,
     required this.amount,
@@ -21,7 +21,7 @@ class Donation {
     required this.recipientName,
     required this.createdAt,
     this.thankYouMessage,
-    this.nickname,
+    this.recipient,
   });
 
   factory Donation.fromJson(Map<String, dynamic> json) {
@@ -34,7 +34,9 @@ class Donation {
     final recipientId = json['recipientId'] as int? ?? 0;
     final recipientName = json['recipientName'] as String? ?? 'Anonymous';
     final thankYouMessage = json['thankYouMessage'] as String?;
-    final nickname = json['nickname'] as String?;
+    final recipient = json['recipient'] != null
+        ? Recipient.fromJson(json['recipient'])
+        : null;
     // Parse date with error handling
     DateTime createdAt;
     try {
@@ -52,7 +54,7 @@ class Donation {
       recipientName: recipientName,
       createdAt: createdAt,
       thankYouMessage: thankYouMessage,
-      nickname: nickname,
+      recipient: recipient
     );
   }
 }

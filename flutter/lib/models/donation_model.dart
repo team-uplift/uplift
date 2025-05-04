@@ -1,9 +1,11 @@
+import 'package:uplift/models/recipient_model.dart';
 class Donation {
   final int id;
   final DateTime createdAt;
   final String donorName;
   final int amount; // stored as cents
   final String? thankYouMessage;
+  final Recipient? recipient;
 
   Donation({
     required this.id,
@@ -11,6 +13,7 @@ class Donation {
     required this.donorName,
     required this.amount,
     this.thankYouMessage,
+    this.recipient,
   });
 
   factory Donation.fromJson(Map<String, dynamic> json) {
@@ -20,6 +23,9 @@ class Donation {
       donorName: json['donor']?['nickname'] ?? 'Anonymous',
       amount: json['amount'] ?? 0,
       thankYouMessage: json['thankYouMessage']?['message'],
+      recipient: json['recipient'] != null
+          ? Recipient.fromJson(json['recipient'])
+          : null,
     );
   }
 

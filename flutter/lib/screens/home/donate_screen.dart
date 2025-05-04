@@ -78,7 +78,7 @@ class _DonatePageState extends ConsumerState<DonatePage> {
             "shipping_discount": 0
           }
         },
-        "description": "Donation to ${widget.recipient.firstName}",
+        "description": "Donation to ${widget.recipient.nickname}",
         "item_list": {
           "items": [
             {
@@ -89,7 +89,7 @@ class _DonatePageState extends ConsumerState<DonatePage> {
             }
           ],
           "shipping_address": {
-            "recipient_name": widget.recipient.firstName,
+            "recipient_name": widget.recipient.nickname,
             "line1": "123 Donation Lane",
             "city": "Austin",
             "country_code": "US",
@@ -122,7 +122,7 @@ class _DonatePageState extends ConsumerState<DonatePage> {
             returnURL: "https://samplesite.com/return",
             cancelURL: "https://samplesite.com/cancel",
             transactions: buildTransaction(amount),
-            note: "Donation to ${widget.recipient.firstName}",
+            note: "Donation to ${widget.recipient.nickname}",
             onSuccess: (params) {
               debugPrint("✅ PayPal success: $params");
             },
@@ -295,7 +295,7 @@ class _DonatePageState extends ConsumerState<DonatePage> {
             );
 
             debugPrint(
-                "✅ Logging PayPal transaction: \$${newTransaction.amount} to ${newTransaction.recipient.firstName ?? 'Anonymous'}");
+                "✅ Logging PayPal transaction: \$${newTransaction.amount} to ${newTransaction.recipient.nickname ?? 'Anonymous'}");
 
             ref
                 .read(transactionNotifierProvider.notifier)
@@ -343,7 +343,7 @@ class _DonatePageState extends ConsumerState<DonatePage> {
   @override
   Widget build(BuildContext context) {
     final displayName =
-        widget.recipient.firstName ?? widget.recipient.nickname ?? 'Anonymous';
+        widget.recipient.nickname ?? widget.recipient.nickname ?? 'Anonymous';
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -695,7 +695,7 @@ class _DonatePageState extends ConsumerState<DonatePage> {
             );
 
             debugPrint(
-                "✅ Logging PayPal transaction: \$${newTransaction.amount} to ${newTransaction.recipient.firstName ?? 'Anonymous'}");
+                "✅ Logging PayPal transaction: \$${newTransaction.amount} to ${newTransaction.recipient.nickname ?? 'Anonymous'}");
 
             ref
                 .read(transactionNotifierProvider.notifier)
