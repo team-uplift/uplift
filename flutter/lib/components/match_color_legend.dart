@@ -1,4 +1,12 @@
-/// chatgpt generated legend bar for use in describing tag heat
+/// match_color_legend.dart
+///
+/// A visual legend component that displays:
+/// - Color coding for different match types
+/// - Match status indicators
+/// - Matching criteria explanations
+///
+/// Used in matching screens to help users understand the meaning
+/// of different colors and symbols in the matching interface.
 
 import 'package:flutter/material.dart';
 import 'package:uplift/constants/constants.dart';

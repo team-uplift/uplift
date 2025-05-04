@@ -1,4 +1,16 @@
+/// donation_model.dart
+///
+/// Defines the Donation model that represents a donation transaction:
+/// - Donation amount
+/// - Recipient information
+/// - Transaction date
+/// - Thank you message status
+///
+/// Used throughout the app to track and display donation history
+/// and manage donation-related functionality.
+
 import 'package:uplift/models/recipient_model.dart';
+
 class Donation {
   final int id;
   final DateTime createdAt;

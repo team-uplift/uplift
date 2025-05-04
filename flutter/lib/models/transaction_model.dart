@@ -1,3 +1,14 @@
+/// transaction_model.dart
+///
+/// Defines the Transaction model that represents financial transactions:
+/// - Transaction amount
+/// - Transaction type
+/// - Transaction status
+/// - Timestamp
+///
+/// Used throughout the app to track and manage financial
+/// transactions between donors and recipients.
+
 import 'package:flutter/foundation.dart';
 import 'package:uplift/models/recipient_model.dart';
 

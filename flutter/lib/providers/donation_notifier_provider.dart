@@ -1,9 +1,21 @@
+/// donation_notifier_provider.dart
+///
+/// Provides state management for donations in the app:
+/// - Donation data model
+/// - Donation fetching from API
+/// - Donation state updates
+/// - Error handling for donation operations
+///
+/// Used throughout the app to manage and display donation
+/// information and handle donation-related operations.
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:uplift/models/recipient_model.dart';
+
 class Donation {
   final int id;
   final double amount;
@@ -47,15 +59,14 @@ class Donation {
     }
 
     return Donation(
-      id: id,
-      amount: amount,
-      donorId: donorId,
-      recipientId: recipientId,
-      recipientName: recipientName,
-      createdAt: createdAt,
-      thankYouMessage: thankYouMessage,
-      recipient: recipient
-    );
+        id: id,
+        amount: amount,
+        donorId: donorId,
+        recipientId: recipientId,
+        recipientName: recipientName,
+        createdAt: createdAt,
+        thankYouMessage: thankYouMessage,
+        recipient: recipient);
   }
 }
 

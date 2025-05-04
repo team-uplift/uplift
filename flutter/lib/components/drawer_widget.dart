@@ -1,3 +1,14 @@
+/// drawer_widget.dart
+///
+/// A custom navigation drawer component that provides:
+/// - User profile information
+/// - Navigation menu items
+/// - App settings access
+/// - Logout functionality
+///
+/// Used as the main navigation drawer throughout the app, providing
+/// consistent navigation and user account management.
+
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

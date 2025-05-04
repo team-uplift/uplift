@@ -1,7 +1,13 @@
 /// donor_visible_info_card.dart
-/// 
-/// a stylized card for recipients to know which information is visible to 
-/// donors
+///
+/// A card component that displays:
+/// - Information visible to donors
+/// - Recipient public details
+/// - Privacy-controlled information
+/// - Contact information
+///
+/// Used in recipient profiles to show information that
+/// is specifically meant to be visible to donors.
 
 import 'package:flutter/material.dart';
 import 'package:uplift/constants/constants.dart';
@@ -33,7 +39,8 @@ class VisibleInfoCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.visibility, size: 18, color: AppColors.baseBlue),
+                const Icon(Icons.visibility,
+                    size: 18, color: AppColors.baseBlue),
                 const SizedBox(width: 6),
                 Text(
                   'Donors can see this information',

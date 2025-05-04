@@ -1,6 +1,20 @@
 /// donor_or_recipient.dart
 ///
-/// used to direct new user to appropriate registration form
+/// A screen that allows new users to choose their role in the app:
+/// - Donor registration flow
+/// - Recipient registration flow
+/// - User type storage
+///
+/// This screen serves as the initial role selection point after
+/// authentication, directing users to the appropriate registration
+/// process based on their selection.
+///
+/// Key features:
+/// - Role selection buttons
+/// - Donor data storage
+/// - Navigation to registration flows
+/// - Error handling for API calls
+///
 /// includes:
 /// - _storeDonor
 ///
@@ -26,7 +40,6 @@ class DonorOrRecipient extends StatefulWidget {
 }
 
 class _DonorOrRecipientState extends State<DonorOrRecipient> {
-  
   /// stores a donor when a donor is created
   Future<void> storeDonor() async {
     setState(() {
@@ -79,7 +92,7 @@ class _DonorOrRecipientState extends State<DonorOrRecipient> {
               fit: BoxFit.contain,
               child: Image.asset('assets/uplift_black.png')),
         ),
-        backgroundColor: AppColors.baseGreen, 
+        backgroundColor: AppColors.baseGreen,
       ),
       backgroundColor: AppColors.baseYellow,
       body: Center(

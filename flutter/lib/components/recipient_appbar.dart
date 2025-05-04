@@ -1,6 +1,13 @@
 /// recipient_appbar.dart
-/// 
-/// appbar for recipient profile
+///
+/// A custom app bar component for recipient screens that provides:
+/// - Profile picture display
+/// - Navigation controls
+/// - Action buttons
+/// - Status indicators
+///
+/// Used in recipient-specific screens to maintain consistent
+/// navigation and user interface elements.
 
 import 'package:flutter/material.dart';
 import 'package:uplift/constants/constants.dart';

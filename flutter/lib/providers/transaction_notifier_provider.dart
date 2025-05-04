@@ -1,3 +1,14 @@
+/// transaction_notifier_provider.dart
+///
+/// Provides state management for financial transactions:
+/// - Transaction data model
+/// - Transaction state updates
+/// - Transaction history
+/// - Transaction status tracking
+///
+/// Used throughout the app to manage and track financial
+/// transactions between donors and recipients.
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uplift/models/transaction_model.dart';

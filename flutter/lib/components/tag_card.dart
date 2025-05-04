@@ -1,8 +1,13 @@
 /// tag_card.dart
 ///
-/// Creates cards to display tag information. The individual cards are
-/// generated from tag objects and are also passed a function in case they
-/// need to be used with clicks during registration.
+/// A reusable card component that displays:
+/// - Individual tag information
+/// - Tag status
+/// - Tag management controls
+/// - Visual indicators for tag importance
+///
+/// Used throughout the app to display individual tags
+/// with consistent styling and interaction patterns.
 /// Includes:
 /// - _backgroundColorByWeight
 /// - _shadowByWeight
@@ -43,8 +48,7 @@ class TagCard extends StatelessWidget {
   ///
   /// returns the box shadow object
   BoxShadow _shadowByWeight(double weight) {
-    final Color lowShadow =
-        Colors.black.withAlpha(100); 
+    final Color lowShadow = Colors.black.withAlpha(100);
     final Color highShadow =
         Color(AppColors.baseOrange.toARGB32()).withAlpha(200);
 
@@ -56,7 +60,7 @@ class TagCard extends StatelessWidget {
 
     return BoxShadow(
       color: shadowColor,
-      blurRadius: 3 + (10 * weight), 
+      blurRadius: 3 + (10 * weight),
       offset: Offset(0, 4 + (2 * weight)),
     );
   }
@@ -74,7 +78,6 @@ class TagCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final bgColor = _backgroundColorByWeight(tag.weight);
 
     return GestureDetector(

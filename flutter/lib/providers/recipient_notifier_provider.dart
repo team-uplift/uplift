@@ -1,3 +1,14 @@
+/// recipient_notifier_provider.dart
+///
+/// Provides state management for recipient data:
+/// - Recipient profile information
+/// - Recipient verification status
+/// - Recipient matching criteria
+/// - Recipient updates
+///
+/// Used throughout the app to manage recipient profiles
+/// and handle recipient-related operations.
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uplift/models/recipient_model.dart';
 

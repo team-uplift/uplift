@@ -1,3 +1,15 @@
+/// tag_model.dart
+///
+/// Defines the Tag model that represents categorization and matching criteria:
+/// - Tag name
+/// - Tag weight/importance
+/// - Tag category
+///
+/// Used throughout the app to categorize recipients and donors,
+/// enabling the matching algorithm to find suitable donation pairs.
+
+import 'package:flutter/material.dart';
+
 class Tag {
   final DateTime createdAt;
   final String tagName;
@@ -24,11 +36,10 @@ class Tag {
   }
 
   Map<String, dynamic> toJson() => {
-    'createdAt': createdAt.toIso8601String(),
-    'tagName': tagName,
-    'weight': weight,
-    'addedAt': addedAt.toIso8601String(),
-    'selected': selected,
-  };
+        'createdAt': createdAt.toIso8601String(),
+        'tagName': tagName,
+        'weight': weight,
+        'addedAt': addedAt.toIso8601String(),
+        'selected': selected,
+      };
 }
-

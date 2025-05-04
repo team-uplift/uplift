@@ -1,8 +1,14 @@
 /// question_carousel.dart
-/// 
-/// a way to display all ther recipients answers to questions in an interactive
-/// way on their home page
-/// 
+///
+/// An interactive carousel component that displays:
+/// - Multiple choice questions
+/// - Question navigation controls
+/// - Progress indicators
+/// - Answer submission functionality
+///
+/// Used in onboarding and survey screens to present questions
+/// in an engaging, swipeable format.
+///
 /// chatgpt generated
 
 import 'package:flutter/material.dart';
@@ -20,7 +26,7 @@ class QuestionAnswer {
 class QuestionCarousel extends StatefulWidget {
   /// List of question/answer items to display
   final List<QuestionAnswer> items;
-  
+
   /// Height of each card; defaults to 200
   final double cardHeight;
 

@@ -1,5 +1,17 @@
+/// user_model.dart
+///
+/// Defines the User model that extends the base UpliftUser:
+/// - Additional user attributes
+/// - User preferences
+/// - Account status
+/// - Profile completion
+///
+/// Used to extend the base user functionality with
+/// additional features and attributes.
+
 import 'package:uplift/models/donor_model.dart';
 import 'package:uplift/models/recipient_model.dart';
+import 'package:uplift/models/UpliftUser.dart';
 
 class User {
   final int? id;
@@ -23,7 +35,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     final bool recipientFlag = json['recipient'];
 
-    if(recipientFlag) {
+    if (recipientFlag) {
       return User(
         id: json['id'],
         cognitoId: json['cognitoId'],
@@ -42,7 +54,6 @@ class User {
         donorData: Donor.fromJson(json['donorData']),
       );
     }
-    
   }
 
   Map<String, dynamic> toJson() {

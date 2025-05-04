@@ -1,3 +1,14 @@
+/// quiz_module.dart
+///
+/// An interactive quiz component that provides:
+/// - Question display
+/// - Answer options
+/// - Score tracking
+/// - Progress indicators
+///
+/// Used in educational sections to present
+/// interactive quizzes and assessments.
+
 import 'package:flutter/material.dart';
 
 class QuizModule extends StatelessWidget {
