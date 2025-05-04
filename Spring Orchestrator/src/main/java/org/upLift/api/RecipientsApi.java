@@ -76,7 +76,9 @@ public interface RecipientsApi {
 			@ApiResponse(responseCode = "400", description = "Invalid input"),
 			@ApiResponse(responseCode = "404", description = "Recipient not found") })
 	@RequestMapping(value = "/recipients/tagGeneration/{recipientId}", method = RequestMethod.POST)
-	ResponseEntity<List<RecipientTag>> updateRecipientTags(
+	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseBody
+	List<RecipientTag> updateRecipientTags(
 			@Parameter(in = ParameterIn.PATH, description = "Recipient id to generate tags for", required = true,
 					schema = @Schema()) @PathVariable("recipientId") Integer recipientId,
 			@Parameter(in = ParameterIn.DEFAULT, description = "A new set of form questions if needed. "

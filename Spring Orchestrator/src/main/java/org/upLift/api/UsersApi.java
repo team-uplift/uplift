@@ -66,8 +66,10 @@ public interface UsersApi {
 
 					@ApiResponse(responseCode = "404", description = "User not found") })
 	@GetMapping(value = "/users/{userId}", produces = { "application/json" })
-	ResponseEntity<User> getUserById(@Parameter(in = ParameterIn.PATH, description = "ID of user to return",
-			required = true, schema = @Schema()) @PathVariable("userId") Integer userId);
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	User getUserById(@Parameter(in = ParameterIn.PATH, description = "ID of user to return", required = true,
+			schema = @Schema()) @PathVariable("userId") Integer userId);
 
 	@Operation(summary = "Find user by Cognito sub", description = "Returns a single user, identified by Cognito sub",
 			security = { @SecurityRequirement(name = "api_key"),

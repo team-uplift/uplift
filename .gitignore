@@ -10,6 +10,7 @@
 **/*.iml
 /logs
 /Spring Orchestrator/logs
+/coverageReport
 
 
 /flutter/android/app/.cxx/Debug

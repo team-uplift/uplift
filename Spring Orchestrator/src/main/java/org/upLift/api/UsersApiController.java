@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.upLift.exceptions.EntityNotFoundException;
 import org.upLift.model.Donor;
 import org.upLift.model.Recipient;
 import org.upLift.model.User;
@@ -37,14 +38,14 @@ public class UsersApiController implements UsersApi {
 	}
 
 	@Override
-	public ResponseEntity<User> getUserById(Integer userId) {
+	public User getUserById(Integer userId) {
 		LOG.info("Retrieving user: {}", userId);
 		var user = userService.getUserById(userId);
 		if (user.isPresent()) {
-			return new ResponseEntity<>(user.get(), HttpStatus.OK);
+			return user.get();
 		}
 		else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new EntityNotFoundException(userId, "User", "User not found");
 		}
 	}
 

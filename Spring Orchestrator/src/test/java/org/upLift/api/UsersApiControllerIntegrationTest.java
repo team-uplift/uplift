@@ -14,6 +14,8 @@ import org.upLift.model.User;
 import org.upLift.repositories.UserRepository;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -100,6 +102,19 @@ class UsersApiControllerIntegrationTest extends BaseControllerIntegrationTest {
 	}
 
 	@Test
+	void getUserById_NonExistingUser() throws Exception {
+		mockMvc.perform(get("/users/999").contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.errorMessage", is("User not found")))
+			.andExpect(jsonPath("$.status", is(404)))
+			.andExpect(jsonPath("$.errorType", is("Not Found")))
+			.andExpect(jsonPath("$.timestamp").exists())
+			.andExpect(jsonPath("$.path", is("/users/999")))
+			.andExpect(jsonPath("$.notFoundEntityId", is(999)))
+			.andExpect(jsonPath("$.notFoundEntityType", is("User")));
+	}
+
+	@Test
 	void getUserByCognitoId_Recipient() throws Exception {
 		var result = mockMvc
 			.perform(get("/users/cognito/550e8400-e29b-41d4-a716-446655440000").contentType(MediaType.APPLICATION_JSON))
@@ -119,6 +134,12 @@ class UsersApiControllerIntegrationTest extends BaseControllerIntegrationTest {
 
 		// Check user data
 		checkUser3(result, "$");
+	}
+
+	@Test
+	void getUserByCognitoId_NonExistingUser() throws Exception {
+		mockMvc.perform(get("/users/cognito/nonsense").contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -183,6 +204,11 @@ class UsersApiControllerIntegrationTest extends BaseControllerIntegrationTest {
 		var result = mockMvc.perform(put("/users").contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(updatedUser)));
 
+		// This recipient's tagsLastGenerated is dynamically set to 5 hours ago so it's
+		// always within the cutoff to not allow new tags, so just check that it's on the
+		// right day
+		var tagsLastGenerated = ZonedDateTime.now(ZoneOffset.UTC).minusHours(5).toLocalDate();
+
 		result.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id", is(7)))
 			.andExpect(jsonPath("$.cognitoId", is("550e8400-e29b-41d4-a716-446655440007")))
@@ -208,7 +234,7 @@ class UsersApiControllerIntegrationTest extends BaseControllerIntegrationTest {
 			.andExpect(jsonPath("$.recipientData.formQuestions[0].question", is("question7")))
 			.andExpect(jsonPath("$.recipientData.formQuestions[0].answer", is("answer7")))
 			.andExpect(jsonPath("$.recipientData.createdAt", is("2023-10-27T11:32:57.123Z")))
-			.andExpect(jsonPath("$.recipientData.tagsLastGenerated", is("2023-10-27T11:31:43.471Z")))
+			.andExpect(jsonPath("$.recipientData.tagsLastGenerated", startsWith(tagsLastGenerated.toString())))
 			// identity last verified is dynamically set to 10 days before "now", so just
 			// check the date
 			.andExpect(jsonPath("$.recipientData.identityLastVerified", startsWith(todayUtc.minusDays(10).toString())))

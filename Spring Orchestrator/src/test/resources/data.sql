@@ -43,7 +43,7 @@ VALUES (1, 'John', 'Doe', '123 Elm St', '', 'Springfield', 'IL', '62701', 'About
        (7, 'Test', 'User', NULL, NULL, NULL, NULL, NULL,
         'About test', 'Test reason', '[{"question":"question7","answer":"answer7"}]', 'https://example.com/image7.jpg',
         DATEADD('DAY', -10, CURRENT_TIMESTAMP), DATEADD('DAY', -100, CURRENT_TIMESTAMP), 'Purple koala',
-        '2023-10-27 11:31:43.471', NULL,
+        DATEADD('HOUR', -5, CURRENT_TIMESTAMP), NULL,
             '2023-10-27 11:32:57.123'),
        (9, 'Robert', 'Wilson', '567 Cedar Lane', 'Unit 12', 'Portland', 'OR', '97201',
         'About Robert', 'Need assistance with basics',
