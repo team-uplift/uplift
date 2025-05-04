@@ -1,3 +1,14 @@
+/// ModelProvider.dart
+///
+/// Provides a centralized provider for model management:
+/// - Model instantiation
+/// - Model state management
+/// - Model synchronization
+/// - Data persistence
+///
+/// Used throughout the app to manage and coordinate
+/// different model instances and their states.
+
 /*
 * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 *
@@ -34,17 +45,18 @@ class ModelProvider implements amplify_core.ModelProviderInterface {
   static final ModelProvider _instance = ModelProvider();
 
   static ModelProvider get instance => _instance;
-  
+
   amplify_core.ModelType getModelTypeByModelName(String modelName) {
-    switch(modelName) {
+    switch (modelName) {
       case "UpliftUser":
         return UpliftUser.classType;
       default:
-        throw Exception("Failed to find model in model provider for model name: " + modelName);
+        throw Exception(
+            "Failed to find model in model provider for model name: " +
+                modelName);
     }
   }
 }
-
 
 class ModelFieldValue<T> {
   const ModelFieldValue.value(this.value);

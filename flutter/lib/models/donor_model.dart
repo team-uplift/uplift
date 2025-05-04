@@ -1,3 +1,16 @@
+/// donor_model.dart
+///
+/// Defines the Donor model that represents a donation provider:
+/// - Personal information
+/// - Donation preferences
+/// - Donation history
+/// - Matching criteria
+///
+/// Used throughout the app to manage donor profiles and
+/// facilitate the donation matching process.
+
+import 'package:uplift/models/donor_tag_model.dart';
+
 class Donor {
   final int id;
   final String nickname;

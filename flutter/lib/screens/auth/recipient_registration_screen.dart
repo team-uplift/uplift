@@ -1,3 +1,23 @@
+/// recipient_registration_screen.dart
+///
+/// A registration screen for new recipients that collects:
+/// - Personal information
+/// - Verification details
+/// - Financial information
+/// - Support requirements
+///
+/// This screen handles the recipient registration process, including:
+/// - Multi-step form flow
+/// - Document verification
+/// - Data validation
+/// - Progress tracking
+///
+/// Key features:
+/// - Step-by-step registration
+/// - Document upload
+/// - Verification status
+/// - Form validation
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/components/standard_button.dart';
@@ -8,7 +28,8 @@ class RecipientRegistrationPage extends StatefulWidget {
   const RecipientRegistrationPage({super.key});
 
   @override
-  State<RecipientRegistrationPage> createState() => _RecipientRegistrationPageState();
+  State<RecipientRegistrationPage> createState() =>
+      _RecipientRegistrationPageState();
 }
 
 class _RecipientRegistrationPageState extends State<RecipientRegistrationPage> {
@@ -29,14 +50,12 @@ class _RecipientRegistrationPageState extends State<RecipientRegistrationPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    "Recipient Registration",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    )
-                  ),
+                  const Text("Recipient Registration",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      )),
                   const SizedBox(
                     height: 20,
                   ),
@@ -56,7 +75,10 @@ class _RecipientRegistrationPageState extends State<RecipientRegistrationPage> {
                   const SizedBox(height: 40),
                   const StandardButton(title: 'REGISTER'),
                   const SizedBox(height: 20),
-                  TextButton(onPressed: ()=> context.go('/login'), child: const Text('Already have an account? Log in.'),),
+                  TextButton(
+                    onPressed: () => context.go('/login'),
+                    child: const Text('Already have an account? Log in.'),
+                  ),
                 ],
               ),
             ),

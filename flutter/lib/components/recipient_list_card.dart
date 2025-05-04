@@ -1,3 +1,14 @@
+/// recipient_list_card.dart
+///
+/// A comprehensive card component that displays:
+/// - Recipient list items
+/// - Recipient details
+/// - Matching information
+/// - Action buttons
+///
+/// Used in donor screens to display and interact with
+/// lists of potential recipients.
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/models/recipient_model.dart';

@@ -1,3 +1,14 @@
+/// badge.dart
+///
+/// Defines the DonorBadge model and available badge types:
+/// - Bronze (5 donations)
+/// - Silver (25 donations)
+/// - Gold (50 donations)
+/// - Platinum (100 donations)
+///
+/// Used to track and display donor achievements and milestones
+/// throughout the app.
+
 import 'package:flutter/material.dart';
 
 class DonorBadge {

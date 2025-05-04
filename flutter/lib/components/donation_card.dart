@@ -1,3 +1,14 @@
+/// donation_card.dart
+///
+/// A reusable card component that displays donation information including:
+/// - Recipient name/nickname
+/// - Donation date
+/// - Donation amount
+/// - Thank you message status
+///
+/// Used in donation history and tracking screens to show individual donation entries
+/// with a consistent, clean design.
+
 import 'package:flutter/material.dart';
 import 'package:uplift/providers/donation_notifier_provider.dart';
 
@@ -11,7 +22,6 @@ class DonationCard extends StatefulWidget {
 }
 
 class _DonationCardState extends State<DonationCard> {
-
   String _formatDate(DateTime date) {
     try {
       return '${date.month}/${date.day}/${date.year}';
@@ -19,7 +29,7 @@ class _DonationCardState extends State<DonationCard> {
       return 'Invalid date';
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -57,7 +67,7 @@ class _DonationCardState extends State<DonationCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.donation.nickname ?? 'Anonymous',
+                    widget.donation.recipient?.nickname ?? 'Anonymous',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -93,6 +103,5 @@ class _DonationCardState extends State<DonationCard> {
         ),
       ),
     );
-    
   }
 }

@@ -1,3 +1,15 @@
+/// recipient_model.dart
+///
+/// Defines the Recipient model that represents a donation recipient:
+/// - Personal information
+/// - Verification status
+/// - Location data
+/// - Profile content
+/// - Tag associations
+///
+/// Used throughout the app to manage recipient profiles and
+/// facilitate the donation matching process.
+
 import 'package:uplift/models/tag_model.dart';
 import 'package:uplift/utils/logger.dart';
 
@@ -22,29 +34,26 @@ class Recipient {
   final List<Tag>? tags;
   final DateTime? tagsLastGenerated;
 
-
-  const Recipient({
-    required this.id,
-    this.firstName,
-    this.lastName,
-    this.streetAddress1,
-    this.streetAddress2,
-    this.city,
-    this.state,
-    this.zipCode,
-    this.lastAboutMe,
-    this.lastReasonForHelp,
-    this.formQuestions,
-    this.identityLastVerified,
-    this.incomeLastVerified,
-    this.nickname,
-    this.createdAt,
-    this.imageURL,
-    this.lastDonationTimestamp,
-    this.tags,
-    this.tagsLastGenerated
-    
-  });
+  const Recipient(
+      {required this.id,
+      this.firstName,
+      this.lastName,
+      this.streetAddress1,
+      this.streetAddress2,
+      this.city,
+      this.state,
+      this.zipCode,
+      this.lastAboutMe,
+      this.lastReasonForHelp,
+      this.formQuestions,
+      this.identityLastVerified,
+      this.incomeLastVerified,
+      this.nickname,
+      this.createdAt,
+      this.imageURL,
+      this.lastDonationTimestamp,
+      this.tags,
+      this.tagsLastGenerated});
 
   factory Recipient.fromJson(Map<String, dynamic> json) {
     try {
@@ -73,8 +82,9 @@ class Recipient {
         lastAboutMe: json['lastAboutMe'] as String?,
         lastReasonForHelp: json['lastReasonForHelp'] as String?,
         formQuestions: (json['formQuestions'] as List<dynamic>?)
-          ?.map((e) => Map<String, dynamic>.from(e))
-          .toList() ?? [],
+                ?.map((e) => Map<String, dynamic>.from(e))
+                .toList() ??
+            [],
         identityLastVerified: json['identityLastVerified'] != null
             ? DateTime.parse(json['identityLastVerified'])
             : null,
@@ -168,5 +178,4 @@ class Recipient {
       tags: tags ?? this.tags,
     );
   }
-
 }

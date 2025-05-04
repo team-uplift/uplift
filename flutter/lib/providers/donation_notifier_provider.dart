@@ -1,8 +1,20 @@
+/// donation_notifier_provider.dart
+///
+/// Provides state management for donations in the app:
+/// - Donation data model
+/// - Donation fetching from API
+/// - Donation state updates
+/// - Error handling for donation operations
+///
+/// Used throughout the app to manage and display donation
+/// information and handle donation-related operations.
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:uplift/models/recipient_model.dart';
 
 class Donation {
   final int id;
@@ -12,7 +24,7 @@ class Donation {
   final String recipientName;
   final DateTime createdAt;
   final String? thankYouMessage;
-  final String? nickname;
+  final Recipient? recipient;
   Donation({
     required this.id,
     required this.amount,
@@ -21,7 +33,7 @@ class Donation {
     required this.recipientName,
     required this.createdAt,
     this.thankYouMessage,
-    this.nickname,
+    this.recipient,
   });
 
   factory Donation.fromJson(Map<String, dynamic> json) {
@@ -34,7 +46,9 @@ class Donation {
     final recipientId = json['recipientId'] as int? ?? 0;
     final recipientName = json['recipientName'] as String? ?? 'Anonymous';
     final thankYouMessage = json['thankYouMessage'] as String?;
-    final nickname = json['nickname'] as String?;
+    final recipient = json['recipient'] != null
+        ? Recipient.fromJson(json['recipient'])
+        : null;
     // Parse date with error handling
     DateTime createdAt;
     try {
@@ -45,15 +59,14 @@ class Donation {
     }
 
     return Donation(
-      id: id,
-      amount: amount,
-      donorId: donorId,
-      recipientId: recipientId,
-      recipientName: recipientName,
-      createdAt: createdAt,
-      thankYouMessage: thankYouMessage,
-      nickname: nickname,
-    );
+        id: id,
+        amount: amount,
+        donorId: donorId,
+        recipientId: recipientId,
+        recipientName: recipientName,
+        createdAt: createdAt,
+        thankYouMessage: thankYouMessage,
+        recipient: recipient);
   }
 }
 

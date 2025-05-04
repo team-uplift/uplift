@@ -1,3 +1,14 @@
+/// standard_text_field.dart
+///
+/// A reusable text input component that provides:
+/// - Consistent text field styling
+/// - Input validation
+/// - Error states
+/// - Helper text support
+///
+/// Used throughout the app to maintain consistent
+/// text input styling and behavior.
+
 import 'package:flutter/material.dart';
 
 class StandardTextField extends StatelessWidget {

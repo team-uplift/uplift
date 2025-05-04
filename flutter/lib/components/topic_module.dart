@@ -1,3 +1,14 @@
+/// topic_module.dart
+///
+/// A module component that displays:
+/// - Topic information
+/// - Topic content
+/// - Progress tracking
+/// - Navigation controls
+///
+/// Used in educational and informational sections
+/// to present topic-based content in a structured way.
+
 import 'package:flutter/material.dart';
 
 class TopicModule extends StatelessWidget {
@@ -33,10 +44,7 @@ class TopicModule extends StatelessWidget {
                   ),
                   Text(
                     description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600]
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],
               ),

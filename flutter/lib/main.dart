@@ -1,3 +1,26 @@
+/// main.dart
+///
+/// Main application entry point and router configuration.
+///
+/// The GoRouter configuration defines all application routes:
+/// - Authentication routes (/login, /donor_registration, /recipient_registration)
+/// - Main app routes (/home, /profile, /dashboard)
+/// - Recipient-specific routes (/recipient_home, /recipient_list, /recipient_detail)
+/// - Donor-specific routes (/donate, /donor_questionnaire, /donor_tag)
+/// - Settings routes (/account_settings, /change_password, /personal_info)
+///
+/// Each route is configured with:
+/// - Path definition
+/// - Route name
+/// - Builder function for widget creation
+/// - Optional state/parameter handling
+///
+/// The router uses GoRouter for declarative routing with support for:
+/// - Deep linking
+/// - Route parameters
+/// - State management
+/// - Navigation history
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

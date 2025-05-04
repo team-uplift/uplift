@@ -1,3 +1,14 @@
+/// settings_card.dart
+///
+/// A card component for settings management that provides:
+/// - Settings options display
+/// - Toggle controls
+/// - Settings categories
+/// - User preferences management
+///
+/// Used in settings screens to display and manage
+/// user preferences and app configuration options.
+
 import 'package:flutter/material.dart';
 
 class SettingsCard extends StatelessWidget {

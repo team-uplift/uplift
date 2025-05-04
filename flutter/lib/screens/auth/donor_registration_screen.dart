@@ -1,3 +1,23 @@
+/// donor_registration_screen.dart
+///
+/// A registration screen for new donors that collects:
+/// - Personal information
+/// - Contact details
+/// - Account preferences
+/// - Initial setup data
+///
+/// This screen handles the donor registration process, including:
+/// - Form validation
+/// - Data submission
+/// - Error handling
+/// - Navigation to next steps
+///
+/// Key features:
+/// - Form input validation
+/// - API integration
+/// - Progress tracking
+/// - User feedback
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/components/standard_button.dart';
@@ -29,14 +49,12 @@ class _DonorRegistrationPageState extends State<DonorRegistrationPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    "Donor Registration",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    )
-                  ),
+                  const Text("Donor Registration",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      )),
                   const SizedBox(
                     height: 20,
                   ),
@@ -50,9 +68,15 @@ class _DonorRegistrationPageState extends State<DonorRegistrationPage> {
                   const SizedBox(height: 10),
                   const StandardTextField(title: 'Confirm Password'),
                   const SizedBox(height: 40),
-                  StandardButton(title: 'REGISTER', onPressed: (){},),
+                  StandardButton(
+                    title: 'REGISTER',
+                    onPressed: () {},
+                  ),
                   const SizedBox(height: 20),
-                  TextButton(onPressed: ()=> context.go('/login'), child: const Text('Already have an account? Log in.'),),
+                  TextButton(
+                    onPressed: () => context.go('/login'),
+                    child: const Text('Already have an account? Log in.'),
+                  ),
                 ],
               ),
             ),

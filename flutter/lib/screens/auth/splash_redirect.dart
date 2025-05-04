@@ -1,7 +1,22 @@
 /// splash_redirect.dart
 ///
-/// used to redirect user after Amplify authenticator. directs users
-/// to appropriate homepage or registration
+/// A splash screen that handles initial app routing based on authentication state:
+/// - Authentication status check
+/// - User role verification
+/// - Initial route determination
+/// - Loading state management
+///
+/// This screen serves as the app's entry point, determining whether to:
+/// - Show the login screen for unauthenticated users
+/// - Direct to donor/recipient home based on user role
+/// - Handle authentication errors
+///
+/// Key features:
+/// - Authentication state management
+/// - Role-based routing
+/// - Error handling
+/// - Loading indicators
+///
 /// includes:
 /// - _handleRedirect
 /// - playQuickSplash
@@ -127,8 +142,7 @@ class _SplashRedirectorState extends State<SplashRedirector> {
       if (user == null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
-          context
-              .goNamed('/donor_or_recipient'); // triggers registration flow
+          context.goNamed('/donor_or_recipient'); // triggers registration flow
         });
       } else {
         if (user.recipient == true) {
@@ -139,7 +153,8 @@ class _SplashRedirectorState extends State<SplashRedirector> {
               await playQuickSplash(context);
             }
             if (!mounted) return;
-            context.goNamed('/recipient_home', extra: user); // logs recipient in
+            context.goNamed('/recipient_home',
+                extra: user); // logs recipient in
           });
         } else {
           log.info("route to donor dashboard");

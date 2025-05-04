@@ -1,3 +1,14 @@
+/// donor_tag_card.dart
+///
+/// A specialized card component that displays:
+/// - Donor preference tags
+/// - Tag matching status
+/// - Tag importance indicators
+/// - Tag management controls
+///
+/// Used in donor profiles to show and manage the tags
+/// that represent donor preferences and matching criteria.
+
 import 'package:flutter/material.dart';
 import 'package:uplift/models/donor_tag_model.dart';
 

@@ -1,7 +1,12 @@
 /// verify_card.dart
 ///
-/// display card for verification status that can be clicked if unverified to
-/// start user verification process
+/// A card component used for verification purposes, displaying:
+/// - Verification status
+/// - Required verification information
+/// - Action buttons for verification process
+///
+/// Used in verification screens to guide users through the verification process
+/// with clear visual feedback and actions.
 
 import 'package:flutter/material.dart';
 import 'package:uplift/constants/constants.dart';

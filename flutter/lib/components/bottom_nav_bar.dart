@@ -1,8 +1,13 @@
 /// bottom_nav_bar.dart
 ///
-/// navigation bar component for recipient dashboard
+/// A custom bottom navigation bar component that provides:
+/// - Main navigation items
+/// - Navigation state management
+/// - Visual feedback for current section
+/// - Consistent navigation across the app
 ///
-library;
+/// Used as the primary navigation method throughout the app,
+/// providing easy access to main sections.
 
 import 'package:flutter/material.dart';
 import 'package:uplift/constants/constants.dart';

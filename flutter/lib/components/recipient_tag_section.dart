@@ -1,7 +1,13 @@
 /// recipient_tag_section.dart
 ///
-/// card that displays recipient tags neatly
-library;
+/// A section component that displays:
+/// - Recipient's tags/categories
+/// - Tag management controls
+/// - Tag visualization
+///
+/// Used in recipient profiles to show and manage the tags
+/// associated with a recipient's profile.
+
 import 'package:flutter/material.dart';
 import 'package:uplift/components/match_color_legend.dart';
 import 'package:uplift/components/tag_card.dart';
