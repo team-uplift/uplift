@@ -97,10 +97,4 @@ public class TextractServiceImpl implements TextractService {
 		return false;
 	}
 
-	private void setRegion() {
-		if (string_region.equals("us-east-1")) {
-			region = Region.US_EAST_1;
-		}
-	}
-
 }
