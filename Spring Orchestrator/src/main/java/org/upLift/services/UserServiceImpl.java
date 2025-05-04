@@ -1,3 +1,10 @@
+/**
+ * The UserServiceImpl encapsulates user‐centric operations and enforces all related business rules. It verifies
+ * existence of users (donor or recipient), looks them up by ID or Cognito ID (including child data), and creates new
+ * users including auto-provisioning missing donor/recipient details and assigning a random nickname and avatar. Profile updates
+ * only modify fields relevant to the user’s current role and forbid type changes. It also lets you convert between
+ * donor and recipient (or soft-delete a user), throwing domain-specific exceptions for invalid or missing data.
+ */
 package org.upLift.services;
 
 import org.apache.logging.log4j.LogManager;

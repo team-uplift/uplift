@@ -1,3 +1,14 @@
+/**
+ * The FairnessServiceImpl is responsible for turning a donor’s tag selections into a ranked, size-limited list of
+ * recipients who best match those interests and who are most in need. It first loads every RecipientTag for the given
+ * tags—optionally filtering out anyone without verified income—then accumulates selected and unselected tag weights per
+ * recipient. Next it computes an overall “fairness” score by combining that tag relevance with how long it’s been since
+ * each recipient’s last donation (capped at one year) and by applying a multiplier to boost any recipients who matched
+ * selected tags. After sorting recipients by this composite weight (and breaking ties by donation timestamp and ID), it
+ * trims or expands the list to exactly the configured number of matches—pulling in extra, unmatched recipients by
+ * recency if there aren’t enough direct matches. All of this is governed by injectable properties for the match count
+ * and whether to exclude unverified incomes, making the service both flexible and testable.
+ */
 package org.upLift.services;
 
 import jakarta.transaction.Transactional;

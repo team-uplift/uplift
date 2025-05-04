@@ -1,3 +1,12 @@
+/**
+ * The TremendousServiceImpl orchestrates the creation and submission of donation orders to the external Tremendous API
+ * using Spring’s reactive WebClient. When submitDonationOrder is invoked with a recipient, donor, and donation amount,
+ * it builds a TremendousOrderRequest and forwards it to the private postTremendousTransaction method. There, it issues
+ * an HTTP POST—injecting the Tremendous base URL and API key from environment variables—serializes the request as JSON,
+ * and retrieves the response reactively. It registers error handlers for HTTP 400 and 422 statuses that log the error
+ * body and rethrow a RuntimeException with a “Bad request” message. Finally, it converts the successful response into
+ * a TremendousOrderResponse and blocks until the remote call completes, returning that response to the caller.
+ */
 package org.upLift.services;
 
 import org.slf4j.Logger;

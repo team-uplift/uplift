@@ -1,3 +1,14 @@
+/**
+ * The BedrockServiceImpl encapsulates all interactions with the underlying LLM “Bedrock” chat service to translate
+ * free-form text into structured tags and weights or to pick the best matching tags from a known list. When you call
+ * getTagsFromPrompt, it builds a carefully constrained prompt instructing the model to emit at least 15 comma-separated
+ * tag:weight pairs, invokes the chat API via ChatClient.create(chatModel), then parses and normalizes the response into
+ * a Map<String,Double>. Likewise, matchTagsFromPrompt first loads every existing tag from the database, weaves them
+ * into a RAG-style prompt asking the model to pick the most relevant ones for a given text, and then breaks the comma
+ * list back into a List<String>. Throughout, it handles null or empty responses gracefully, lower-cases and trims tag
+ * names, logs the raw model output, and centralizes all prompt construction and parsing logic so the rest of the
+ * application can work with plain Java collections rather than raw LLM calls.
+ */
 package org.upLift.services;
 
 import org.slf4j.Logger;
