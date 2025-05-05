@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.upLift.model.Recipient;
 import software.amazon.awssdk.core.SdkBytes;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.*;
 class TextractServiceImplTest {
 
 	@BeforeEach
-    public void init() {
+	public void init() {
 		ReflectionTestUtils.setField(service, "income_threshold", 30000);
 		ReflectionTestUtils.setField(service, "string_region", "us-east-1");
 	}
