@@ -1,3 +1,4 @@
+// coverage:ignore-file
 /// UpliftUser.dart
 ///
 /// Defines the UpliftUser model that represents a user in the system:

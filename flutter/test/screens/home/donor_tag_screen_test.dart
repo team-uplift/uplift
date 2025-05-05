@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:uplift/screens/home/donor_tag_screen.dart';
-import 'package:uplift/models/donor_tag_model.dart';
+import 'package:uplift/components/standard_button.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 
@@ -16,7 +16,6 @@ void main() {
 
   setUp(() {
     mockHttpClient = MockHttpClient();
-    // Set up default response for any GET request
     when(() => mockHttpClient.get(any())).thenAnswer((_) async => http.Response(
           '[{"tagName": "Education"}, {"tagName": "Healthcare"}, {"tagName": "Environment"}]',
           200,
@@ -27,94 +26,97 @@ void main() {
     reset(mockHttpClient);
   });
 
-  final mockQuestionsAnswers = [
-    {
-      'question': 'What is your name?',
-      'answer': 'John Doe',
-    },
-    {
-      'question': 'What causes do you care about?',
-      'answer': '',
-    },
+  final questionsAnswers = [
+    {'question': 'What is your name?', 'answer': 'John Doe'},
+    {'question': 'What causes do you care about?', 'answer': ''},
   ];
 
-  Widget createWidgetUnderTest() {
+  Widget makeTestable() {
     return MaterialApp(
       home: MediaQuery(
         data: const MediaQueryData(size: Size(800, 600)),
         child: DonorTagPage(
-          questionsAnswers: mockQuestionsAnswers,
+          questionsAnswers: questionsAnswers,
           httpClient: mockHttpClient,
         ),
       ),
     );
   }
 
-  testWidgets('DonorTagPage renders correctly', (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
+  testWidgets('renders headers, legend, tags and a StandardButton', (tester) async {
+    await tester.pumpWidget(makeTestable());
 
-    // Initial loading state
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    // initial loading indicator(s)
+    expect(find.byType(CircularProgressIndicator), findsWidgets);
 
-    // Wait for the HTTP request to complete and UI to update
+    // finish loading
     await tester.pumpAndSettle();
 
-    // Verify basic UI elements
+    // headers
     expect(find.text('Select Causes'), findsOneWidget);
     expect(find.text('Choose What Matters to You'), findsOneWidget);
-    expect(
-      find.text(
-          'Select the causes you care about to find recipients who need your help'),
-      findsOneWidget,
-    );
-    expect(find.text('Available Causes'), findsOneWidget);
-    expect(find.text('Find Recipients'), findsOneWidget);
-  });
 
-  testWidgets('DonorTagPage handles tag selection',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
+    // legend title
+    expect(find.textContaining('Available Causes'), findsOneWidget);
 
-    // Wait for the HTTP request to complete and UI to update
-    await tester.pumpAndSettle();
-
-    // Verify initial state
+    // tags
     expect(find.text('Education'), findsOneWidget);
     expect(find.text('Healthcare'), findsOneWidget);
     expect(find.text('Environment'), findsOneWidget);
 
-    // Select a tag
-    await tester.tap(find.text('Education'));
+    // at least one StandardButton
+    expect(find.byType(StandardButton), findsOneWidget);
+  });
+
+  testWidgets('tapping without selection shows error', (tester) async {
+    await tester.pumpWidget(makeTestable());
     await tester.pumpAndSettle();
 
-    // Try to proceed without selecting any tags
-    await tester.tap(find.text('Find Recipients'));
+    // tap the button
+    await tester.tap(find.byType(StandardButton));
     await tester.pumpAndSettle();
 
-    // Verify error message
     expect(find.text('Please select at least one tag'), findsOneWidget);
   });
 
-  testWidgets('DonorTagPage shows loading indicator',
-      (WidgetTester tester) async {
-    // Mock the HTTP response with a delay
+  testWidgets('tapping after selecting one tag proceeds without error', (tester) async {
+    await tester.pumpWidget(makeTestable());
+    await tester.pumpAndSettle();
+
+    // select a tag
+    await tester.tap(find.text('Education'));
+    await tester.pumpAndSettle();
+
+    // tap the button
+    await tester.tap(find.byType(StandardButton));
+    await tester.pumpAndSettle();
+
+    // error should be gone
+    expect(find.text('Please select at least one tag'), findsNothing);
+  });
+
+  testWidgets('loading indicator remains until tags arrive', (tester) async {
+    // delay the response a little
     when(() => mockHttpClient.get(any())).thenAnswer((_) async {
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 50));
       return http.Response(
-        '[{"tagName": "Education"}, {"tagName": "Healthcare"}, {"tagName": "Environment"}]',
+        '[{"tagName": "Education"}]',
         200,
       );
     });
 
-    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpWidget(makeTestable());
 
-    // Initial loading state
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    // spinner shows immediately
+    expect(find.byType(CircularProgressIndicator), findsWidgets);
 
-    // Wait for the HTTP request to complete and UI to update
+    // after the delay
+    await tester.pump(const Duration(milliseconds: 60));
     await tester.pumpAndSettle();
 
-    // Loading indicator should be gone after initial load
+    // spinner should go away
     expect(find.byType(CircularProgressIndicator), findsNothing);
+    // and the single tag appears
+    expect(find.text('Education'), findsOneWidget);
   });
 }

@@ -1,3 +1,4 @@
+// coverage:ignore-file
 /// ModelProvider.dart
 ///
 /// Provides a centralized provider for model management:

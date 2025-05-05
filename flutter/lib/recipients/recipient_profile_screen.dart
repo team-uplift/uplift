@@ -82,62 +82,62 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
     return result ?? false;
   }
 
-  /// allows user to pick image source to verify their income by taking a photo
-  /// or using their camera roll
-  Future<ImageSource?> _pickImageSource() async {
-    return await showModalBottomSheet<ImageSource>(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text("Take Photo"),
-              onTap: () => Navigator.pop(context, ImageSource.camera),
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text("Choose from Gallery"),
-              onTap: () => Navigator.pop(context, ImageSource.gallery),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // /// allows user to pick image source to verify their income by taking a photo
+  // /// or using their camera roll
+  // Future<ImageSource?> _pickImageSource() async {
+  //   return await showModalBottomSheet<ImageSource>(
+  //     context: context,
+  //     builder: (context) => SafeArea(
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           ListTile(
+  //             leading: const Icon(Icons.camera_alt),
+  //             title: const Text("Take Photo"),
+  //             onTap: () => Navigator.pop(context, ImageSource.camera),
+  //           ),
+  //           ListTile(
+  //             leading: const Icon(Icons.photo_library),
+  //             title: const Text("Choose from Gallery"),
+  //             onTap: () => Navigator.pop(context, ImageSource.gallery),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  /// allows user to upload photo to back end for income verification
-  Future<void> _verifyIncome() async {
-    final proceed = await _showFraudWarning(); // fraud warning pop up
-    if (!proceed) return;
+  // /// allows user to upload photo to back end for income verification
+  // Future<void> _verifyIncome() async {
+  //   final proceed = await _showFraudWarning(); // fraud warning pop up
+  //   if (!proceed) return;
 
-    final source = await _pickImageSource(); // camera pop up
-    if (source == null) return;
+  //   final source = await _pickImageSource(); // camera pop up
+  //   if (source == null) return;
 
-    final pickedFile =
-        await ImagePicker().pickImage(source: source); //image chosen by user
-    if (pickedFile == null) return;
+  //   final pickedFile =
+  //       await ImagePicker().pickImage(source: source); //image chosen by user
+  //   if (pickedFile == null) return;
 
-    final success = await api.uploadIncomeVerificationImage(
-      widget.recipient.id,
-      File(pickedFile.path),
-    );
+  //   final success = await api.uploadIncomeVerificationImage(
+  //     widget.recipient.id,
+  //     File(pickedFile.path),
+  //   );
 
-    if (context.mounted) {
-      if (success) {
-        // if verified reload page
-        context.goNamed('/redirect');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Verification Successful")),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Verification failed")),
-        );
-      }
-    }
-  }
+  //   if (context.mounted) {
+  //     if (success) {
+  //       // if verified reload page
+  //       context.goNamed('/redirect');
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text("Verification Successful")),
+  //       );
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text("Verification failed")),
+  //       );
+  //     }
+  //   }
+  // }
 
   /// formats data to be read by profile builder by making title/ value pairs
   ///
@@ -170,33 +170,6 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
 
     return profileData;
   }
-
-  // will be useful if we plan on moving basicinfocard back to this screen
-  // Map<String, String> _buildNameAddressData() {
-  //   final Map<String, String> basicInfoData = {};
-
-  //   final fullName =
-  //       "${widget.recipient.firstName ?? ''} ${widget.recipient.lastName ?? ''}"
-  //           .trim();
-  //   basicInfoData["fullName"] = fullName;
-
-  //   final addressLine1 = widget.recipient.streetAddress1 ?? '';
-  //   final addressLine2 = widget.recipient.streetAddress2;
-  //   final city = widget.recipient.city ?? '';
-  //   final state = widget.recipient.state ?? '';
-  //   final zip = widget.recipient.zipCode ?? '';
-  //   final address = [
-  //     addressLine1,
-  //     if (addressLine2 != null && addressLine2.toString().isNotEmpty)
-  //       addressLine2,
-  //     "$city, $state ${zip.isNotEmpty ? zip : ''}"
-  //   ].join('\n');
-  //   basicInfoData["address"] = address;
-
-  //   basicInfoData["email"] = widget.profile.email;
-
-  //   return basicInfoData;
-  // }
 
   @override
   Widget build(BuildContext context) {

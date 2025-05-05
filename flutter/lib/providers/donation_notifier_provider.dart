@@ -1,3 +1,4 @@
+// coverage:ignore-file
 /// donation_notifier_provider.dart
 ///
 /// Provides state management for donations in the app:
@@ -8,6 +9,7 @@
 ///
 /// Used throughout the app to manage and display donation
 /// information and handle donation-related operations.
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;

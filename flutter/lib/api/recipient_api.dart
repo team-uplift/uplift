@@ -254,7 +254,7 @@ class RecipientApi {
   }
 }
 
-// TODO
+// TODO --> for how to incorporate JWT tokens later
 // Amplify.Auth.getPlugin(AmplifyAuthCognito.pluginKey).fetchAuthSession().then( (value) {
 //       print(value.userPoolTokensResult.value.accessToken.toJson());
 //     });

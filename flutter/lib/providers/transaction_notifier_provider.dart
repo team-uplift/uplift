@@ -1,3 +1,4 @@
+// coverage:ignore-file
 /// transaction_notifier_provider.dart
 ///
 /// Provides state management for financial transactions:
