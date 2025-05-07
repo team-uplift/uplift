@@ -1,3 +1,12 @@
+/**
+ * The MessageServiceImpl centralizes all business logic around donor–recipient messaging. It allows fetching individual
+ * messages by ID or listing all thank-you messages sent by a particular donor. When sending a new message, it enforces
+ * that the message is tied to an existing donation (throwing an EntityNotFoundException if the donation doesn’t exist)
+ * and prevents duplicate thank-you notes for the same donation (throwing a ModelException if one has already been sent).
+ * Finally, it supports marking a message as read by the donor—retrieving the message, flipping its donorRead flag,
+ * saving the update, or raising an EntityNotFoundException if no such message exists. Throughout, it logs key steps
+ * and delegates all persistence to the injected repositories.
+ */
 package org.upLift.services;
 
 import org.slf4j.Logger;

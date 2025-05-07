@@ -7,6 +7,10 @@ import org.upLift.model.Recipient;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Service interface for managing fairness in recipient matching. Provides methods to
+ * calculate recipient weights and retrieve recipients based on donor-selected tags.
+ */
 @Validated
 public interface FairnessService {
 
@@ -47,42 +51,84 @@ public interface FairnessService {
 
 		private double unselectedTagWeight;
 
+		/**
+		 * Constructs a new instance of {@code RecipientWithMatchedTagWeights}.
+		 * @param recipient the recipient with the matched tag and associated weights
+		 */
 		public RecipientWithMatchedTagWeights(Recipient recipient) {
 			this.recipient = recipient;
 		}
 
+		/**
+		 * Gets the recipient associated with the matched tags.
+		 * @return the recipient
+		 */
 		public Recipient getRecipient() {
 			return recipient;
 		}
 
+		/**
+		 * Checks if the recipient has any selected tags.
+		 * @return {@code true} if the recipient has selected tags, {@code false}
+		 * otherwise
+		 */
 		public boolean hasSelectedTags() {
 			return selectedTagWeight > 0;
 		}
 
+		/**
+		 * Gets the total weight of the selected tags.
+		 * @return the total weight of the selected tags
+		 */
 		public double getSelectedTagWeight() {
 			return selectedTagWeight;
 		}
 
+		/**
+		 * Adds the selected tag weight to the total weight of the selected tags.
+		 * @param weight the weight to add
+		 */
 		public void addSelectedTagWeight(double weight) {
 			this.selectedTagWeight += weight;
 		}
 
+		/**
+		 * Sets the total weight of the selected tags.
+		 * @param selectedTagWeight the total weight of the selected tags
+		 */
 		public void setSelectedTagWeight(double selectedTagWeight) {
 			this.selectedTagWeight = selectedTagWeight;
 		}
 
+		/**
+		 * Checks if the recipient has any unselected tags.
+		 * @return {@code true} if the recipient has unselected tags, {@code false}
+		 * otherwise
+		 */
 		public boolean hasUnselectedTags() {
 			return unselectedTagWeight > 0;
 		}
 
+		/**
+		 * Gets the total weight of the unselected tags.
+		 * @return the total weight of the unselected tags
+		 */
 		public double getUnselectedTagWeight() {
 			return unselectedTagWeight;
 		}
 
+		/**
+		 * Adds the specified weight to the total weight of the unselected tags.
+		 * @param weight the weight to add
+		 */
 		public void addUnselectedTagWeight(double weight) {
 			this.unselectedTagWeight += weight;
 		}
 
+		/**
+		 * Sets the total weight of the unselected tags.
+		 * @param unselectedTagWeight the total weight of the unselected tags
+		 */
 		public void setUnselectedTagWeight(double unselectedTagWeight) {
 			this.unselectedTagWeight = unselectedTagWeight;
 		}

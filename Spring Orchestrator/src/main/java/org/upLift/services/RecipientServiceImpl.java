@@ -1,3 +1,16 @@
+/**
+ * The RecipientServiceImpl coordinates all recipient-related operations, from simple existence checks and random tag
+ * sampling to complex tag generation and matching workflows. It delegates persistence to the RecipientRepository and
+ * tag lookups to the TagRepository, while orchestration of AI-driven tag inference is handled through the
+ * BedrockService. When a donor’s form responses arrive, it assembles those answers into a prompt and uses Bedrock to
+ * generate or match tags, then persists new tags (or updates existing ones) on the recipient—ensuring at most one tag
+ * generation per 24-hour window or else throwing a TimingException. For straightforward tag-based matching, it also
+ * exposes a method backed by Spring Data paging to fetch recipients whose tags intersect a donor’s selected interests.
+ * Finally, it offers an alternate matching path that turns form answers into a tag list, feeds them to a fairness
+ * engine (via FairnessService), and returns a ranked list of candidates. Throughout, it enforces domain constraints
+ * (throwing EntityNotFoundException or ModelException as needed), uses PageRequest to limit result sets, and
+ * centralizes all business rules around recipient tagging and retrieval.
+ */
 package org.upLift.services;
 
 import jakarta.transaction.Transactional;
