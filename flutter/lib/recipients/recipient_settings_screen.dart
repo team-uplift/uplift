@@ -311,7 +311,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: AppColors.baseBlue, width: 4),
+        side: BorderSide(color: AppColors.baseGreen, width: 4),
       ),
       child: ListTile(
         leading: const Icon(Icons.edit),
@@ -352,7 +352,7 @@ class _RecipientSettingsScreenState extends State<RecipientSettingsScreen> {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.baseBlue, width: 4),
+        side: BorderSide(color: AppColors.baseGreen, width: 4),
       ),
       child: ListTile(
         leading: const Icon(Icons.logout),

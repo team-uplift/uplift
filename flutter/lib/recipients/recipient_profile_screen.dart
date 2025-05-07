@@ -82,63 +82,6 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
     return result ?? false;
   }
 
-  // /// allows user to pick image source to verify their income by taking a photo
-  // /// or using their camera roll
-  // Future<ImageSource?> _pickImageSource() async {
-  //   return await showModalBottomSheet<ImageSource>(
-  //     context: context,
-  //     builder: (context) => SafeArea(
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           ListTile(
-  //             leading: const Icon(Icons.camera_alt),
-  //             title: const Text("Take Photo"),
-  //             onTap: () => Navigator.pop(context, ImageSource.camera),
-  //           ),
-  //           ListTile(
-  //             leading: const Icon(Icons.photo_library),
-  //             title: const Text("Choose from Gallery"),
-  //             onTap: () => Navigator.pop(context, ImageSource.gallery),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // /// allows user to upload photo to back end for income verification
-  // Future<void> _verifyIncome() async {
-  //   final proceed = await _showFraudWarning(); // fraud warning pop up
-  //   if (!proceed) return;
-
-  //   final source = await _pickImageSource(); // camera pop up
-  //   if (source == null) return;
-
-  //   final pickedFile =
-  //       await ImagePicker().pickImage(source: source); //image chosen by user
-  //   if (pickedFile == null) return;
-
-  //   final success = await api.uploadIncomeVerificationImage(
-  //     widget.recipient.id,
-  //     File(pickedFile.path),
-  //   );
-
-  //   if (context.mounted) {
-  //     if (success) {
-  //       // if verified reload page
-  //       context.goNamed('/redirect');
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text("Verification Successful")),
-  //       );
-  //     } else {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text("Verification failed")),
-  //       );
-  //     }
-  //   }
-  // }
-
   /// formats data to be read by profile builder by making title/ value pairs
   ///
   /// returns a Map<String, String>
@@ -178,7 +121,10 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
     final List<Tag> tags = widget.recipient.tags!
       ..sort((a, b) => b.weight.compareTo(a.weight));
     final qas = widget.recipient.formQuestions!
-        .map((q) => QuestionAnswer(
+    // TODO actually remove this from the submission itself and not the display
+    .where((q) => q['question'] != "Tell us about yourself.")
+        .map((q) => 
+        QuestionAnswer(
               question: q['question']!,
               answer: q['answer']!,
             ))
@@ -202,6 +148,7 @@ class _RecipientProfileScreenState extends State<RecipientProfileScreen> {
                 aboutMe: profileData["aboutMe"],
                 reasonForNeed: profileData["whyINeedHelp"],
               ),
+              const SizedBox(height: 10),
               QuestionCarousel(items: qas)
             ]),
       ),
