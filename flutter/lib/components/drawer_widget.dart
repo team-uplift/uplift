@@ -14,7 +14,28 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/constants/constants.dart';
 
-void logout(dynamic context) async {
+
+// void logout(dynamic context) async {
+  
+//   print('DrawerWidget context: ${context.runtimeType}');
+//   logout(context);
+
+//   try {
+//     await Amplify.Auth.signOut(
+//       options: const SignOutOptions(globalSignOut: true),
+//     );
+
+//     // Clear GoRouter navigation history and force redirect to Authenticator root
+//     if (context.mounted) {
+//       context.goNamed('/redirect');
+//     }
+//   } on AuthException catch (e) {
+//     debugPrint("Sign out error: ${e.message}");
+//   }
+// }
+void logout(BuildContext context) async {
+  print('DrawerWidget context: ${context.runtimeType}');
+
   try {
     await Amplify.Auth.signOut(
       options: const SignOutOptions(globalSignOut: true),
@@ -22,7 +43,7 @@ void logout(dynamic context) async {
 
     // Clear GoRouter navigation history and force redirect to Authenticator root
     if (context.mounted) {
-      context.go('/redirect');
+      context.goNamed('/redirect');
     }
   } on AuthException catch (e) {
     debugPrint("Sign out error: ${e.message}");
@@ -84,7 +105,7 @@ class DrawerWidget extends StatelessWidget {
               title: const Text("Logout"),
               onTap: () {
                 logout(context);
-                context.goNamed('/redirect');
+                // context.goNamed('/redirect');
               },
             )
           ],

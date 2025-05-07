@@ -132,7 +132,16 @@ class DonationNotifier extends StateNotifier<List<Donation>> {
       }
     } catch (e) {
       debugPrint('Error fetching donations: $e');
-      rethrow;
+      // Optionally, check for NotAuthorizedServiceException specifically
+      if (e.toString().contains('NotAuthorizedServiceException')) {
+        // User is likely logged out, so clear donations or set an error state
+        state = [];
+        // Optionally, notify the UI (e.g., via a separate error state or callback)
+      } else {
+        // Handle other errors as needed
+        state = [];
+      }
+      // Do not rethrow, just handle gracefully
     }
   }
 }
