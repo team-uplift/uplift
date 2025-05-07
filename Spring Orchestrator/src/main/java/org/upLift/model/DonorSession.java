@@ -15,8 +15,8 @@ import org.upLift.configuration.NotUndefined;
 import java.util.Objects;
 
 /**
- * Note that this class is currently unused - it was added as part of a plan to track donor metadata
- * which hasn't yet been implemented.
+ * Note that this class is currently unused - it was added as part of a plan to track
+ * donor metadata which hasn't yet been implemented.
  */
 @Validated
 @NotUndefined
