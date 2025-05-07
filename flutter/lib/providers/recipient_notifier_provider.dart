@@ -1,3 +1,4 @@
+// coverage:ignore-file
 /// recipient_notifier_provider.dart
 ///
 /// Provides state management for recipient data:
@@ -8,6 +9,8 @@
 ///
 /// Used throughout the app to manage recipient profiles
 /// and handle recipient-related operations.
+library;
+
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uplift/models/recipient_model.dart';

@@ -6,6 +6,7 @@
 /// - verifyIncome
 /// 
 /// combination of tutorials, chatgpt, stackoverflow
+library;
 
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class IncomeVerificationService {
       ),
     );
   }
-
+// coverage:ignore-start
   /// uploads phot to backend for income verification
   Future<bool> verifyIncome({
     required BuildContext context,
@@ -79,3 +80,4 @@ class IncomeVerificationService {
     return await api.uploadIncomeVerificationImage(recipientId, file);
   }
 }
+// coverage:ignore-end

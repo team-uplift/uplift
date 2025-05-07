@@ -17,6 +17,8 @@ class AppColors {
 class AppConfig {
   static const baseUrl =
       'http://ec2-54-162-45-38.compute-1.amazonaws.com/uplift';
+  // number of hours before a user can re-edit profile
+  static const cooldownTime = 24;
 }
 
 class FormVariables {

@@ -211,9 +211,9 @@ class _RecipientHistoryScreenState extends State<RecipientHistoryScreen> {
                     profile: widget.profile,
                   ),
                 ));
-            if (refresh == true) {
+            // if (refresh == true) {
               await _loadDonations();
-            }
+            // }
           },
         ),
       ),

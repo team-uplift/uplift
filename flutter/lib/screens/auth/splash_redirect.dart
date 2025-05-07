@@ -43,7 +43,7 @@ class SplashRedirector extends StatefulWidget {
 class _SplashRedirectorState extends State<SplashRedirector> {
   final api = UserApi();
   // toggle for turning splash screen on and off
-  final quicksplash = false;
+  final quicksplash = true;
 
   @override
   void initState() {

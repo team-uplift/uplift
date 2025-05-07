@@ -242,6 +242,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
             ),
             isVerified: false,
             useGradient: false,
+            onBackPressed: _stepBack,
           ),
           body: SafeArea(
             child: Column(
@@ -279,7 +280,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
                       color: AppColors.warmWhite,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
-                        side: BorderSide(color: AppColors.lavender, width: 1.5)
+                        side: BorderSide(color: AppColors.baseBlue, width: 2)
                       ),
                       elevation: 5,
                       child: Padding(

@@ -17,6 +17,7 @@ class RecipientAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget title;
   final bool isVerified;
   final VoidCallback? onVerifyPressed;
+  final VoidCallback? onBackPressed;
   final bool useGradient; // used to dislay blue green gradient vs solid green
 
   const RecipientAppBar({
@@ -24,6 +25,7 @@ class RecipientAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     this.isVerified = false,
     this.onVerifyPressed,
+    this.onBackPressed,
     this.useGradient = true,
   });
 
@@ -32,7 +34,20 @@ class RecipientAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final canPop = ModalRoute.of(context)?.canPop ?? false;
+
     return AppBar(
+      leading: onBackPressed != null
+        ? IconButton(
+            onPressed: onBackPressed, 
+            icon: const Icon(Icons.arrow_back, color: AppColors.warmWhite)
+          )
+        : canPop
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back, color: AppColors.warmWhite),
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          : null,
       title: title,
       centerTitle: true,
       elevation: 0,

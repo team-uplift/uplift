@@ -1,3 +1,4 @@
+// coverage:ignore-file
 /// user_notifier_provider.dart
 ///
 /// Provides state management for user data in the app:

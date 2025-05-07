@@ -30,7 +30,7 @@ class VisibleInfoCard extends StatelessWidget {
       color: AppColors.warmWhite,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: AppColors.baseGreen, width: 4),
+        side: BorderSide(color: AppColors.baseOrange, width: 4),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),

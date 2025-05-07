@@ -26,7 +26,7 @@ class VerifyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // change border color if unverified to make it more pronounced
-    final borderColor = isVerified ? AppColors.baseGreen : AppColors.baseRed;
+    final borderColor = isVerified ? AppColors.baseBlue : AppColors.baseRed;
     final elevation = isVerified ? 5.0 : 8.0;
     final cardColor = isVerified ? AppColors.warmWhite : Colors.red[100];
 

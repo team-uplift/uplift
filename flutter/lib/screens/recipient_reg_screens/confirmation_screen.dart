@@ -162,6 +162,7 @@ class Confirmation extends StatelessWidget {
         color: AppColors.lightBeige,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: AppColors.baseGreen, width: 2)
         ),
         child: InkWell(
           onTap: onEdit,
