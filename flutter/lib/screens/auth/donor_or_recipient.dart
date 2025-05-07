@@ -86,6 +86,7 @@ class _DonorOrRecipientState extends State<DonorOrRecipient> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: SizedBox(
           height: 40,
           child: FittedBox(

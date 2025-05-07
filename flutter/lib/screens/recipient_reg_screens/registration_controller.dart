@@ -242,6 +242,7 @@ class _RegistrationControllerState extends State<RegistrationController> {
             ),
             isVerified: false,
             useGradient: false,
+            onBackPressed: _stepBack,
           ),
           body: SafeArea(
             child: Column(
