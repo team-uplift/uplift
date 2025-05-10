@@ -47,7 +47,17 @@ class Donation {
     final donorId = json['donorId'] as int? ?? 0;
     final recipientId = json['recipientId'] as int? ?? 0;
     final recipientName = json['recipientName'] as String? ?? 'Anonymous';
-    final thankYouMessage = json['thankYouMessage'] as String?;
+
+    // Parse thankYouMessage correctly
+    String? thankYouMessage;
+    if (json['thankYouMessage'] != null) {
+      if (json['thankYouMessage'] is Map) {
+        thankYouMessage = json['thankYouMessage']['message'] as String?;
+      } else if (json['thankYouMessage'] is String) {
+        thankYouMessage = json['thankYouMessage'] as String;
+      }
+    }
+
     final recipient = json['recipient'] != null
         ? Recipient.fromJson(json['recipient'])
         : null;
@@ -72,10 +82,36 @@ class Donation {
   }
 }
 
-class DonationNotifier extends StateNotifier<List<Donation>> {
-  DonationNotifier() : super([]);
+class DonationState {
+  final List<Donation> donations;
+  final String? error;
+  final bool isLoading;
+
+  DonationState({
+    required this.donations,
+    this.error,
+    this.isLoading = false,
+  });
+
+  DonationState copyWith({
+    List<Donation>? donations,
+    String? error,
+    bool? isLoading,
+  }) {
+    return DonationState(
+      donations: donations ?? this.donations,
+      error: error,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
+}
+
+class DonationNotifier extends StateNotifier<DonationState> {
+  DonationNotifier() : super(DonationState(donations: []));
 
   Future<void> fetchDonations() async {
+    state = state.copyWith(isLoading: true, error: null);
+
     try {
       // Get current user attributes
       final attributes = await Amplify.Auth.fetchUserAttributes();
@@ -88,6 +124,8 @@ class DonationNotifier extends StateNotifier<List<Donation>> {
         throw Exception('Failed to get user authentication information');
       }
 
+      debugPrint('Fetching user info for cognito ID: $cognitoId');
+
       // Get user info from backend
       final userResponse = await http.get(
         Uri.parse(
@@ -98,8 +136,12 @@ class DonationNotifier extends StateNotifier<List<Donation>> {
         },
       );
 
+      debugPrint('User response status: ${userResponse.statusCode}');
+      debugPrint('User response body: ${userResponse.body}');
+
       if (userResponse.statusCode != 200) {
-        throw Exception('Failed to get user information');
+        throw Exception(
+            'Failed to get user information: ${userResponse.statusCode}');
       }
 
       final userData = jsonDecode(userResponse.body);
@@ -107,8 +149,10 @@ class DonationNotifier extends StateNotifier<List<Donation>> {
       final userId = userData['id'];
 
       if (userId == null) {
-        throw Exception('Failed to get user ID');
+        throw Exception('Failed to get user ID from response');
       }
+
+      debugPrint('Fetching donations for user ID: $userId');
 
       // Fetch donations for the user
       final response = await http.get(
@@ -124,29 +168,56 @@ class DonationNotifier extends StateNotifier<List<Donation>> {
       debugPrint('Donations response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        debugPrint('Parsed donations data: $data');
-        state = data.map((json) => Donation.fromJson(json)).toList();
+        try {
+          final List<dynamic> data = jsonDecode(response.body);
+          debugPrint('Parsed donations data: $data');
+
+          if (data is! List) {
+            throw Exception(
+                'Expected a list of donations but got: ${data.runtimeType}');
+          }
+
+          final donations = data.map((json) {
+            try {
+              return Donation.fromJson(json);
+            } catch (e) {
+              debugPrint('Error parsing donation: $e');
+              debugPrint('Problematic JSON: $json');
+              rethrow;
+            }
+          }).toList();
+
+          state = state.copyWith(
+            donations: donations,
+            isLoading: false,
+          );
+        } catch (e) {
+          debugPrint('Error parsing donations response: $e');
+          throw Exception('Failed to parse donations data: $e');
+        }
       } else {
-        throw Exception('Failed to fetch donations');
+        throw Exception('Failed to fetch donations: ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Error fetching donations: $e');
-      // Optionally, check for NotAuthorizedServiceException specifically
       if (e.toString().contains('NotAuthorizedServiceException')) {
-        // User is likely logged out, so clear donations or set an error state
-        state = [];
-        // Optionally, notify the UI (e.g., via a separate error state or callback)
+        state = state.copyWith(
+          donations: [],
+          error: 'Please log in to view your donations',
+          isLoading: false,
+        );
       } else {
-        // Handle other errors as needed
-        state = [];
+        state = state.copyWith(
+          donations: [],
+          error: 'Failed to load donations: ${e.toString()}',
+          isLoading: false,
+        );
       }
-      // Do not rethrow, just handle gracefully
     }
   }
 }
 
 final donationNotifierProvider =
-    StateNotifierProvider<DonationNotifier, List<Donation>>((ref) {
+    StateNotifierProvider<DonationNotifier, DonationState>((ref) {
   return DonationNotifier();
 });

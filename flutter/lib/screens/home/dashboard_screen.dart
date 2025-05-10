@@ -22,10 +22,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    final donations = ref.watch(donationNotifierProvider);
+    final donationState = ref.watch(donationNotifierProvider);
+    final donations = donationState.donations;
     double totalDonations = 0.0;
 
     try {
@@ -40,7 +40,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     return Scaffold(
       drawer: const DrawerWidget(),
       appBar: AppBar(
-        
         title: const Text(
           "Your Impact",
           style: TextStyle(
@@ -58,19 +57,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Hero Section with Gradient
+                  // Hero Section
                   Container(
+                    width: double.infinity,
                     padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.baseBlue,
-                      // gradient: LinearGradient(
-                      //   begin: Alignment.topLeft,
-                      //   end: Alignment.bottomRight,
-                      //   colors: [
-                      //     Theme.of(context).primaryColor,
-                      //     Theme.of(context).primaryColor.withOpacity(0.8),
-                      //   ],
-                      // ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,50 +167,85 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             // Donations List
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              sliver: donations.isEmpty
-                  ? SliverToBoxAdapter(
+              sliver: donationState.isLoading
+                  ? const SliverToBoxAdapter(
                       child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.volunteer_activism_outlined,
-                              size: 64,
-                              color: Colors.grey[400],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              "No donations yet",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey[800],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Start making a difference by helping someone in need",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                        child: Padding(
+                          padding: EdgeInsets.all(24.0),
+                          child: CircularProgressIndicator(),
                         ),
                       ),
                     )
-                  : SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          if (index >= donations.length) return null;
-                          final donation = donations[index];
-
-                          return DonationCard(donation: donation);
-                        },
-                        childCount: donations.length,
-                      ),
-                    ),
+                  : donationState.error != null
+                      ? SliverToBoxAdapter(
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.error_outline,
+                                    size: 64,
+                                    color: Colors.grey[400],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    donationState.error!,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[800],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      : donations.isEmpty
+                          ? SliverToBoxAdapter(
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.volunteer_activism_outlined,
+                                      size: 64,
+                                      color: Colors.grey[400],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      "No donations yet",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.grey[800],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      "Start making a difference by helping someone in need",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[600],
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                                  if (index >= donations.length) return null;
+                                  final donation = donations[index];
+                                  return DonationCard(donation: donation);
+                                },
+                                childCount: donations.length,
+                              ),
+                            ),
             ),
           ],
         ),

@@ -45,6 +45,8 @@ import 'package:uplift/recipients/recipient_home_controller.dart';
 import 'package:uplift/screens/home/recipient_detail_screen.dart';
 import 'package:uplift/screens/home/recipient_list_screen.dart';
 import 'package:uplift/screens/recipient_reg_screens/registration_controller.dart';
+import 'package:uplift/screens/donation_detail.dart';
+import 'package:uplift/providers/donation_notifier_provider.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
@@ -223,6 +225,14 @@ final GoRouter _router = GoRouter(
       name: '/personal_info',
       builder: (BuildContext context, GoRouterState state) {
         return const PersonalInfoScreen();
+      },
+    ),
+    GoRoute(
+      path: '/donation_detail',
+      name: '/donation_detail',
+      builder: (BuildContext context, GoRouterState state) {
+        final donation = state.extra as Donation;
+        return DonationDetailScreen(donation: donation);
       },
     ),
   ],

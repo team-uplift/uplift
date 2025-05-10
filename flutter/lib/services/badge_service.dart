@@ -9,18 +9,13 @@ class BadgeService {
 
   BadgeService(this.ref);
 
-  Future<int> getDonationCount() async {
-    // Fetch donations first
-    await ref.read(donationNotifierProvider.notifier).fetchDonations();
-
-    // Then get the count
-    final donations = ref.read(donationNotifierProvider);
-    print('Fetched donations: ${donations.length}');
-    return donations.length;
+  int getDonationCount() {
+    final donationState = ref.read(donationNotifierProvider);
+    return donationState.donations.length;
   }
 
   Future<void> incrementDonationCount() async {
-    // No need to increment locally as we're using the actual donation count
+    // Implementation for incrementing donation count
   }
 
   Future<List<String>> getUnlockedBadgeIds() async {
@@ -38,7 +33,7 @@ class BadgeService {
   }
 
   Future<List<DonorBadge>> getBadges() async {
-    final donationCount = await getDonationCount();
+    final donationCount = getDonationCount();
     print('Current donation count: $donationCount'); // Debug log
 
     return allBadges.map((badge) {
