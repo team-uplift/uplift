@@ -97,11 +97,6 @@ public class Message extends AbstractCreatedEntity {
 		this.message = message;
 	}
 
-	public Message donorRead(boolean donorRead) {
-		this.donorRead = donorRead;
-		return this;
-	}
-
 	@Schema(example = "true", description = "indicates if the donor has already seen this message or not")
 
 	public boolean isDonorRead() {
