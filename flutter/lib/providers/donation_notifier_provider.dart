@@ -185,7 +185,9 @@ class DonationNotifier extends StateNotifier<DonationState> {
               debugPrint('Problematic JSON: $json');
               rethrow;
             }
-          }).toList();
+          }).toList()
+            ..sort((a, b) => b.createdAt
+                .compareTo(a.createdAt)); // Sort by date, newest first
 
           state = state.copyWith(
             donations: donations,
