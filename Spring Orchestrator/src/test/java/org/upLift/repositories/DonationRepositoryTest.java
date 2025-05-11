@@ -1,5 +1,6 @@
 package org.upLift.repositories;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.upLift.model.Donation;
@@ -16,6 +17,9 @@ class DonationRepositoryTest extends BaseRepositoryTest {
 
 	@Autowired
 	private DonationRepository donationRepository;
+
+	@Autowired
+	private EntityManager entityManager;
 
 	@Test
 	void findForPublicById() {
@@ -59,6 +63,31 @@ class DonationRepositoryTest extends BaseRepositoryTest {
 		assertThat(donations, everyItem(hasProperty("donor", notNullValue())));
 
 		assertThat(donations, hasItems(hasProperty("amount", is(50)), hasProperty("amount", is(100))));
+	}
+
+	@Test
+	void saveDonation() {
+		var donation = new Donation();
+		donation.setDonorId(3);
+		donation.setRecipientId(2);
+		donation.setAmount(75);
+
+		var savedDonation = donationRepository.save(donation);
+
+		// Ensure changes are flushed to the database
+		entityManager.flush();
+		entityManager.clear();
+
+		// Reload the donor from the database
+		var loadedDonation = donationRepository.findById(savedDonation.getId())
+			.orElseThrow(() -> new RuntimeException("Donation not found"));
+
+		assertThat(loadedDonation.getDonor(), is(notNullValue()));
+		assertThat(loadedDonation.getDonorId(), is(3));
+		assertThat(loadedDonation.getRecipient(), is(notNullValue()));
+		assertThat(loadedDonation.getRecipientId(), is(2));
+		assertThat(loadedDonation.getAmount(), is(75));
+		assertThat(loadedDonation.getThankYouMessage(), is(nullValue()));
 	}
 
 }
