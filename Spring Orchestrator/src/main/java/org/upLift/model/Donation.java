@@ -8,7 +8,6 @@ import org.springframework.validation.annotation.Validated;
 import org.upLift.configuration.NotUndefined;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -49,10 +48,6 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 
 	public Donation id(Integer id) {
 		return (Donation) super.id(id);
-	}
-
-	public Donation createdAt(Instant createdAt) {
-		return (Donation) super.createdAt(createdAt);
 	}
 
 	public Donation donor(Donor donor) {

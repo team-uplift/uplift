@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.upLift.configuration.NotUndefined;
 
-import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -111,10 +110,6 @@ public class Message extends AbstractCreatedEntity {
 
 	public void setDonorRead(boolean donorRead) {
 		this.donorRead = donorRead;
-	}
-
-	public Message createdAt(Instant createdAt) {
-		return (Message) super.createdAt(createdAt);
 	}
 
 	@Override
