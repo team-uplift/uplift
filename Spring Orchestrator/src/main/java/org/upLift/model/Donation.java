@@ -50,11 +50,6 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 		return (Donation) super.id(id);
 	}
 
-	public Donation donor(Donor donor) {
-		this.donor = donor;
-		return this;
-	}
-
 	/**
 	 * Get donorId
 	 * @return donorId
@@ -86,17 +81,10 @@ public class Donation extends AbstractCreatedEntity implements Comparable<Donati
 		this.donor = donor;
 	}
 
-	public Donation recipient(Recipient recipient) {
-
-		this.recipient = recipient;
-		return this;
-	}
-
 	/**
 	 * Get recipientId
 	 * @return recipientId
 	 **/
-
 	@Schema(example = "202", requiredMode = Schema.RequiredMode.REQUIRED,
 			description = "persistence index of the recipient who received this donation")
 
