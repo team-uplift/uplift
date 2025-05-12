@@ -55,8 +55,7 @@ class DonorRepositoryTest extends BaseRepositoryTest {
 		user.setRecipient(false);
 
 		// Create a new donor
-		Donor newDonor = new Donor();
-		newDonor.setNickname("GenerousDonor");
+		Donor newDonor = new Donor().nickname("GenerousDonor");
 
 		user.setDonorData(newDonor);
 
@@ -74,6 +73,7 @@ class DonorRepositoryTest extends BaseRepositoryTest {
 
 		// Validate the saved donor
 		assertThat(loadedDonor.getId(), notNullValue());
+		assertThat(loadedDonor, is(savedDonor));
 		assertThat(loadedDonor.getNickname(), is("GenerousDonor"));
 		// Ensure createdAt is set
 		assertThat(loadedDonor.getCreatedAt(), is(notNullValue()));
