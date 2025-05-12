@@ -145,7 +145,7 @@ public class Recipient extends AbstractCreatedAt {
 	}
 
 	public Recipient id(Integer id) {
-		this.id = id;
+		setId(id);
 		return this;
 	}
 
@@ -163,7 +163,7 @@ public class Recipient extends AbstractCreatedAt {
 	}
 
 	public Recipient firstName(String firstName) {
-		this.firstName = firstName;
+		setFirstName(firstName);
 		return this;
 	}
 
@@ -178,7 +178,7 @@ public class Recipient extends AbstractCreatedAt {
 	}
 
 	public Recipient lastName(String lastName) {
-		this.lastName = lastName;
+		setLastName(lastName);
 		return this;
 	}
 
@@ -193,7 +193,7 @@ public class Recipient extends AbstractCreatedAt {
 	}
 
 	public Recipient streetAddress1(String streetAddress1) {
-		this.streetAddress1 = streetAddress1;
+		setStreetAddress1(streetAddress1);
 		return this;
 	}
 
@@ -208,7 +208,7 @@ public class Recipient extends AbstractCreatedAt {
 	}
 
 	public Recipient streetAddress2(String streetAddress2) {
-		this.streetAddress2 = streetAddress2;
+		setStreetAddress2(streetAddress2);
 		return this;
 	}
 
@@ -223,7 +223,7 @@ public class Recipient extends AbstractCreatedAt {
 	}
 
 	public Recipient city(String city) {
-		this.city = city;
+		setCity(city);
 		return this;
 	}
 
@@ -238,7 +238,7 @@ public class Recipient extends AbstractCreatedAt {
 	}
 
 	public Recipient state(String state) {
-		this.state = state;
+		setState(state);
 		return this;
 	}
 
@@ -250,6 +250,11 @@ public class Recipient extends AbstractCreatedAt {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public Recipient zipCode(String zipCode) {
+		setZipCode(zipCode);
+		return this;
 	}
 
 	@Schema(example = "02138", description = "US postal zip code")
@@ -273,7 +278,6 @@ public class Recipient extends AbstractCreatedAt {
 	}
 
 	public Recipient lastAboutMe(String lastAboutMe) {
-
 		this.lastAboutMe = lastAboutMe;
 		return this;
 	}
