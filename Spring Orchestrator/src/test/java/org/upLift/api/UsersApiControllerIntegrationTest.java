@@ -187,18 +187,17 @@ class UsersApiControllerIntegrationTest extends BaseControllerIntegrationTest {
 			.email("updated@example.com")
 			.recipient(true);
 
-		Recipient recipientData = new Recipient();
-		recipientData.setId(7);
-		recipientData.setLastAboutMe("Updated about me");
-		recipientData.setLastReasonForHelp("Updated reason");
-		recipientData.setNickname("Pink flamingo");
-		recipientData.setFirstName("Updated");
-		recipientData.setLastName("Name");
-		recipientData.setStreetAddress1("789 Update St");
-		recipientData.setStreetAddress2("Suite 101");
-		recipientData.setCity("Chicago");
-		recipientData.setState("IL");
-		recipientData.setZipCode("60601");
+		Recipient recipientData = new Recipient().id(7)
+			.lastAboutMe("Updated about me")
+			.lastReasonForHelp("Updated reason")
+			.nickname("Pink flamingo")
+			.firstName("Updated")
+			.lastName("Name")
+			.streetAddress1("789 Update St")
+			.streetAddress2("Suite 101")
+			.city("Chicago")
+			.state("IL")
+			.zipCode("60601");
 		updatedUser.setRecipientData(recipientData);
 
 		var result = mockMvc.perform(put("/users").contentType(MediaType.APPLICATION_JSON)
