@@ -23,11 +23,6 @@ public abstract class AbstractCreatedEntity extends AbstractEntity {
 	@JsonProperty("createdAt")
 	private Instant createdAt;
 
-	public AbstractCreatedEntity createdAt(Instant createdAt) {
-		this.createdAt = createdAt;
-		return this;
-	}
-
 	/**
 	 * Get createdAt
 	 * @return createdAt

@@ -12,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.upLift.configuration.NotUndefined;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -69,10 +68,6 @@ public class Tag extends AbstractCreatedAt implements Comparable<Tag>, Serializa
 
 	public void setCategory(String category) {
 		this.category = category;
-	}
-
-	public Tag createdAt(Instant createdAt) {
-		return (Tag) super.createdAt(createdAt);
 	}
 
 	@Override

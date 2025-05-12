@@ -23,11 +23,6 @@ public abstract class AbstractCreatedAt {
 	@JsonProperty("createdAt")
 	private Instant createdAt;
 
-	public AbstractCreatedAt createdAt(Instant createdAt) {
-		this.createdAt = createdAt;
-		return this;
-	}
-
 	/**
 	 * Get createdAt
 	 * @return createdAt
